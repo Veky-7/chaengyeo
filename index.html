@@ -1,232 +1,340 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>챙겨드림</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&display=swap">
+<meta name="theme-color" content="#EDE8DD">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
-:root{--bg:#FBF7EE;--ink:#1A1F2B;--sub:#5A6070;--line:#E3DCCB;--btn:#1E6B4E;--btn2:#17553E;--yes:#1E6B4E;--no:#9A3B3B;--card:#FFFFFF;--warn:#B5731A;--callbg:#0F2D46;--callink:#FFFFFF}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12151C;--ink:#F4F1E8;--sub:#B8BCC6;--line:#2B3140;--card:#1B2029;--btn:#2E9B72;--btn2:#25805D;--yes:#2E9B72;--no:#C05252;--warn:#E0A64C}}
-:root[data-theme="dark"]{--bg:#12151C;--ink:#F4F1E8;--sub:#B8BCC6;--line:#2B3140;--card:#1B2029;--btn:#2E9B72;--btn2:#25805D;--yes:#2E9B72;--no:#C05252;--warn:#E0A64C}
+:root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:22px;line-height:1.45;padding-inline:20px;padding-block:calc(20px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;min-height:100dvh}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
-header b{font-size:22px;font-weight:900;letter-spacing:-.01em}
-header small{font-size:15px;color:var(--sub);font-weight:500}
-.who{font-size:16px;color:var(--sub);margin-top:2px}
-main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px;text-align:center}
-.hint{font-size:24px;font-weight:700;text-wrap:balance;max-width:22ch}
-.hint small{display:block;font-size:17px;color:var(--sub);font-weight:500;margin-top:6px}
-.mic{width:min(64vw,260px);height:min(64vw,260px);border-radius:50%;border:0;background:var(--btn);color:#fff;font:inherit;font-weight:900;font-size:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 30px rgba(30,107,78,.35);cursor:pointer;position:relative}
-.mic:active{background:var(--btn2);transform:scale(.98)}
-.mic svg{width:64px;height:64px;fill:#fff}
-.mic.on{animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(30,107,78,.45)}50%{box-shadow:0 0 0 26px rgba(30,107,78,0)}}
-.heard{width:100%;max-width:560px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px 18px;font-size:22px;font-weight:700;text-align:left}
-.heard small{display:block;font-size:15px;color:var(--sub);font-weight:500;margin-bottom:4px}
-.ask{width:100%;max-width:560px;background:var(--card);border:3px solid var(--btn);border-radius:22px;padding:20px 18px;font-size:24px;font-weight:700;line-height:1.5;text-wrap:balance}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:560px}
-.big{border:0;border-radius:18px;padding:22px 10px;font:inherit;font-weight:900;font-size:28px;color:#fff;cursor:pointer;min-height:88px}
-.big.yes{background:var(--yes)} .big.no{background:var(--no)}
-.big:active{filter:brightness(.9)}
-.status{width:100%;max-width:560px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;font-size:21px;font-weight:700;text-align:left}
-.status .step{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)} .status .step:first-of-type{border-top:0}
-.status .dot{width:16px;height:16px;border-radius:50%;background:var(--line);flex:none;margin-top:8px}
-.status .step.done .dot{background:var(--yes)} .status .step.now .dot{background:var(--warn);animation:pulse 1.2s infinite}
-.status .step.now{color:var(--ink)} .status .step:not(.done):not(.now){color:var(--sub);font-weight:500}
-.foot{font-size:15px;color:var(--sub);text-align:center;margin-top:16px}
-.foot b{color:var(--warn)}
-input.txt{width:100%;max-width:560px;font:inherit;font-size:22px;padding:14px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
-.small{font-size:16px;color:var(--sub);font-weight:500}
-.item{border:3px solid var(--line);background:var(--card);border-radius:20px;padding:16px 18px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;display:grid;gap:4px}
-.item.online{border-color:var(--btn)} .item:active{filter:brightness(.95)}
-.item b{font-size:23px;font-weight:900} .item span{font-size:18px;color:var(--sub);font-weight:500}
-.item .due{font-size:17px;font-weight:700;color:var(--warn)}
-button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16px;text-decoration:underline;cursor:pointer;padding:8px}
-/* 전화 화면 */
-.call{position:fixed;inset:0;background:var(--callbg);color:var(--callink);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(60px + env(safe-area-inset-top)) 24px calc(50px + env(safe-area-inset-bottom));z-index:50;text-align:center}
-.call .from{font-size:20px;opacity:.85}
-.call .name{font-size:38px;font-weight:900;margin-top:6px}
-.call .ring{width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:64px;animation:ringpulse 1.1s ease-in-out infinite}
-@keyframes ringpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.call .msg{font-size:26px;font-weight:700;line-height:1.5;max-width:26ch;text-wrap:balance}
-.call .msg.sub{font-size:19px;font-weight:500;opacity:.85;margin-top:10px}
-.call .ans{width:100%;max-width:420px;display:grid;gap:12px}
-.call .big{font-size:30px}
-.call .big.yes{background:#2FA36F}
-.call .big.no{background:rgba(255,255,255,.14)}
+html{height:100%}
+body{margin:0;min-height:100dvh;background:var(--paper);color:var(--ink);font-family:'Gowun Dodum','Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:19px;line-height:1.5;-webkit-text-size-adjust:100%;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-2;background:var(--paper)}
+.bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.62;filter:brightness(1.10) saturate(.75) contrast(.92)}
+.bg:after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 30% 20%,rgba(255,255,255,.10),rgba(60,45,25,.10) 100%)}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));position:relative;isolation:isolate}
+.pen{font-family:'Nanum Pen Script',cursive;-webkit-text-stroke:.55px currentColor}
+.batang{font-family:'Gowun Batang','Batang',serif}
+/* 머리 */
+.top{display:flex;justify-content:space-between;align-items:center;font-size:13px;letter-spacing:.18em;color:var(--sub)}
+.top .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#C9BFB0;margin-right:6px;vertical-align:1px}
+.top .dot.on{background:var(--green)}
+.rule{height:1px;background:var(--ink);opacity:.28;margin:8px 0 14px}
+h1{margin:0;font-size:clamp(48px,15vw,66px);line-height:1.05;font-weight:400;color:var(--ink)}
+.under{display:block;margin:-2px 0 6px}
+.lead{font-size:20px;line-height:1.45;color:var(--sub)}
+/* 화면 공통 */
+.screen{display:flex;flex-direction:column;gap:12px;flex:1}
 [hidden]{display:none!important}
-@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+/* 종이 시트 */
+.sheet{position:relative;background-image:repeating-linear-gradient(180deg,transparent 0 41px,var(--line) 41px 42px),url("assets/paper_sheet.jpg");background-size:auto,cover;background-color:var(--sheet);box-shadow:0 1px 0 rgba(0,0,0,.04),0 8px 18px rgba(70,50,20,.12),0 1px 2px rgba(0,0,0,.06);padding:16px 18px 26px;line-height:42px;clip-path:polygon(0 0,100% 0,100% 96%,96% 99%,90% 96%,84% 100%,77% 97%,70% 100%,63% 96%,56% 99%,49% 96%,42% 100%,35% 97%,28% 100%,21% 96%,14% 99%,7% 97%,0 100%)}
+.sheet .dog{position:absolute;right:0;top:0;width:0;height:0;border-style:solid;border-width:0 26px 26px 0;border-color:transparent var(--paper) transparent transparent;filter:drop-shadow(-2px 2px 2px rgba(0,0,0,.12))}
+.sheet .t{font-size:27px;color:var(--ink);line-height:1.25;margin:2px 0 10px}
+.sheet .row{display:flex;gap:14px;align-items:baseline;font-size:20px;line-height:42px}
+.sheet .row b{color:var(--sub);font-weight:400;min-width:52px;font-size:17px}
+.sheet .row span{font-weight:700;font-family:'Gowun Batang',serif}
+.sheet .say{font-size:30px;line-height:1.25;color:var(--ink);padding:4px 0}
+.sheet .say small{display:block;font-family:'Gowun Dodum',sans-serif;-webkit-text-stroke:0;font-size:15px;color:var(--mute);letter-spacing:.06em;margin-bottom:2px}
+.note{font-size:16px;line-height:1.45;color:var(--mute)}
+.hl{background:linear-gradient(180deg,transparent 58%,var(--hl) 58% 92%,transparent 92%);padding:0 2px}
+/* 마이크 */
+.micwrap{position:relative;display:flex;align-items:center;justify-content:center;padding:14px 0 6px}
+.ring{position:absolute;width:250px;height:250px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.listening .ring{animation:spin 9s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.mic{width:196px;height:196px;border-radius:50%;border:0;background:var(--terra);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 8px 0 var(--terra2),0 16px 24px rgba(0,0,0,.14);transform:rotate(-2deg);cursor:pointer;font-family:inherit}
+.mic:active{transform:rotate(-2deg) translateY(4px);box-shadow:0 4px 0 var(--terra2),0 10px 16px rgba(0,0,0,.14)}
+.mic span{font-family:'Nanum Pen Script',cursive;font-size:30px;line-height:1;margin-top:6px;-webkit-text-stroke:.4px #fff}
+.listening .mic{animation:breathe 1.3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:rotate(-2deg) scale(1)}50%{transform:rotate(-2deg) scale(1.04)}}
+.hint{position:absolute;left:8px;top:6px;color:var(--terra);font-size:26px;line-height:1.2;transform:rotate(-10deg)}
+.hint svg{position:absolute;left:28px;top:34px;transform:rotate(20deg)}
+.cap{position:absolute;right:-6px;bottom:-4px;width:112px;transform:rotate(6deg);mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%);mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%)}
+.foot{font-size:16px;line-height:1.45;color:var(--mute);text-align:center;margin-top:4px}
+/* 버튼 */
+.btn{display:flex;align-items:center;justify-content:center;width:100%;border:0;border-radius:14px;min-height:76px;padding:14px 16px;font-family:'Gowun Dodum',sans-serif;font-size:25px;font-weight:700;cursor:pointer;color:#fff;background:var(--terra);box-shadow:0 6px 0 var(--terra2),0 12px 18px rgba(0,0,0,.12);transform:rotate(-.6deg)}
+.btn:active{transform:rotate(-.6deg) translateY(4px);box-shadow:0 2px 0 var(--terra2)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:2px solid var(--ink);min-height:62px;font-size:21px;transform:none}
+.btn.ghost:active{background:rgba(0,0,0,.05);transform:none;box-shadow:none}
+.btn.small{min-height:56px;font-size:20px}
+.btns{display:grid;gap:12px;margin-top:6px}
+/* 찾아드림 카드 */
+.cards{display:grid;gap:14px}
+.card{position:relative;text-align:left;border:0;padding:14px 16px 20px;font-family:inherit;color:var(--ink);cursor:pointer;background-image:url("assets/paper_sheet.jpg");background-size:cover;background-color:var(--sheet);box-shadow:0 1px 0 rgba(0,0,0,.04),0 8px 18px rgba(70,50,20,.12);clip-path:polygon(0 0,100% 0,100% 94%,94% 98%,86% 95%,78% 100%,70% 96%,61% 99%,52% 95%,43% 100%,34% 96%,25% 99%,16% 95%,8% 99%,0 96%);display:grid;gap:3px}
+.card:nth-child(2n){transform:rotate(.5deg)} .card:nth-child(2n+1){transform:rotate(-.4deg)}
+.card:active{filter:brightness(.97)}
+.card .place{font-family:'Gowun Batang',serif;font-weight:700;font-size:23px;line-height:1.25}
+.card .cls{font-size:19px;color:var(--ink)}
+.card .when{font-size:16px;color:var(--sub);line-height:1.4}
+.card .tag{position:absolute;right:12px;top:10px;font-family:'Nanum Pen Script',cursive;font-size:20px;line-height:1;color:var(--terra);border:2px solid var(--terra);border-radius:6px;padding:4px 8px;transform:rotate(6deg);background:rgba(246,243,234,.7)}
+.card .tag.visit{color:var(--sub);border-color:var(--sub)}
+.card .due{font-size:16px;color:var(--terra);font-weight:700;margin-top:2px}
+/* 진행 */
+.watch{border:2px solid var(--ink);border-radius:8px;padding:0;overflow:hidden;background:#fff;transform:rotate(-.6deg)}
+.watch .bar{display:flex;gap:6px;align-items:center;padding:6px 10px;border-bottom:1px solid #ddd;background:#F2EFE7;font-size:13px;color:var(--sub);letter-spacing:.04em}
+.watch .bar i{width:9px;height:9px;border-radius:50%;background:#D9D2C5;display:inline-block}
+.watch .body{padding:12px 14px;font-size:16px;color:var(--sub);min-height:64px;line-height:1.45}
+.watch .body b{color:var(--ink);font-size:18px;display:block;margin-bottom:2px}
+.steps{display:grid;gap:0}
+.step{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dashed rgba(42,43,40,.18);font-size:21px;color:var(--mute)}
+.step:last-child{border-bottom:0}
+.step .box{width:30px;height:30px;border:2px solid var(--ink);border-radius:6px;flex:none;position:relative;background:rgba(255,255,255,.4)}
+.step.done{color:var(--ink)} .step.done .box:after{content:"";position:absolute;left:5px;top:-6px;width:11px;height:24px;border:solid var(--terra);border-width:0 4px 4px 0;transform:rotate(40deg);border-radius:0 0 3px 0}
+.step.now{color:var(--ink);font-weight:700} .step.now .box{border-color:var(--terra);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{background:rgba(207,95,42,.25)}}
+.hand{width:96px;transform:rotate(8deg);mix-blend-mode:multiply;align-self:flex-end;margin:-8px 4px -10px 0}
+/* 결과 */
+.stamp{position:absolute;right:14px;top:14px;font-family:'Nanum Pen Script',cursive;font-size:34px;line-height:1;color:var(--terra);border:3px solid var(--terra);border-radius:8px;padding:6px 10px;transform:rotate(-12deg);opacity:.9;background:rgba(246,243,234,.6)}
+.env{width:150px;mix-blend-mode:multiply;margin:-6px auto 0;display:block}
+/* 전화 알림 */
+.call{position:fixed;inset:0;z-index:50;background:var(--paper);display:flex;flex-direction:column;padding:calc(24px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));max-width:430px;margin:0 auto;left:0;right:0;animation:up .35s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.call .bgi{position:absolute;inset:0;z-index:-1;background:url("assets/paper_bg.jpg") center/cover;opacity:.62;filter:brightness(1.10) saturate(.75) contrast(.92)}
+.call .halm{width:150px;mix-blend-mode:multiply;align-self:flex-end;margin:-16px 0 -8px}
+.call .ringing{font-size:15px;letter-spacing:.14em;color:var(--terra);display:flex;align-items:center;gap:8px}
+.call .ringing i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--terra);animation:blink .8s steps(2) infinite}
+.call .msg{font-size:28px;line-height:1.35;font-family:'Gowun Batang',serif;font-weight:700;margin:6px 0 2px}
+.call .msg2{font-size:18px;color:var(--sub);line-height:1.5}
+/* 그만 읽기 */
+#stopsay{position:fixed;left:50%;transform:translateX(-50%) rotate(-1deg);bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;border:2px solid var(--terra);background:var(--sheet);color:var(--terra);border-radius:999px;padding:10px 22px;font-family:'Nanum Pen Script',cursive;font-size:28px;line-height:1;box-shadow:0 6px 14px rgba(0,0,0,.15);cursor:pointer}
+input.txt{width:100%;font:inherit;font-family:'Nanum Pen Script',cursive;font-size:30px;line-height:42px;padding:0;border:0;background:transparent;color:var(--ink);outline:none}
+input.txt::placeholder{color:var(--mute)}
+.link{background:none;border:0;color:var(--mute);font:inherit;font-size:16px;text-decoration:underline;cursor:pointer;padding:6px;align-self:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style></head><body>
+<div class="bg"><img src="assets/paper_bg.jpg" alt=""></div>
+<div class="app">
+  <div class="top"><div id="crumb">말하기</div><div><span class="dot" id="dot"></span><span id="who">챙겨드림</span></div></div>
+  <div class="rule"></div>
 
-<header><div><b>챙겨드림</b><div class="who" id="who">김현순 님</div></div><small id="conn">연결 확인 중…</small></header>
-
-<main id="main">
-  <!-- 1. 대기 -->
-  <section id="s-idle">
-    <div class="hint">눌러서 말씀하세요<small>예: "수영장 신청할 수 있는 거 있어?"</small></div>
-    <button class="mic" id="mic" type="button" aria-label="말하기"><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5a4 4 0 0 0 4 4zm6-4a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.9V22h2v-3.1A8 8 0 0 0 20 11h-2z"/></svg><span id="miclabel">말하기</span></button>
-    <div id="typewrap" hidden><input class="txt" id="typed" placeholder="여기에 적어도 돼요"><div class="row" style="margin-top:10px"><button class="big yes" id="typedok" type="button">보내기</button><button class="big no" id="typedcancel" type="button">취소</button></div></div>
+  <!-- 1 말하기 -->
+  <section class="screen" id="s-idle">
+    <h1 class="pen" id="title1">말씀만<br>하세요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="lead" id="lead1">편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요</div>
+    <div class="micwrap" id="micwrap">
+      <div class="hint pen">여기 눌러요<svg width="70" height="60" viewBox="0 0 90 60" fill="none"><path d="M6 8 C 30 4, 55 20, 78 46" stroke="#CF5F2A" stroke-width="3" stroke-linecap="round"/><path d="M62 46 L 79 47 L 74 32" stroke="#CF5F2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg class="ring" viewBox="0 0 250 250" fill="none"><path d="M125 18 C 190 14, 236 60, 232 125 C 236 190, 186 236, 125 232 C 60 236, 14 190, 18 125 C 14 62, 62 14, 125 18 Z" stroke="#CF5F2A" stroke-width="3" stroke-dasharray="9 8" stroke-linecap="round"/></svg>
+      <button class="mic" id="mic" type="button" aria-label="말하기"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel">말하기</span></button>
+    </div>
+    <div class="sheet" id="sheet1" style="transform:rotate(.6deg)"><div class="dog"></div>
+      <div class="say pen" id="ex1">“수영장 신청할 수 있는 거 있어?”</div>
+      <div class="say pen" id="ex2">“에코수영장 실버반 신청해줘”</div>
+      <div id="typewrap" hidden><input class="txt" id="typed" placeholder="여기에 적어도 돼요"></div>
+      <img class="cap" src="assets/swim_cap.jpg" alt="">
+    </div>
+    <div class="btns" id="typebtns" hidden><button class="btn small" id="typedok" type="button">이렇게 보내기</button></div>
     <button class="link" id="totype" type="button">말하기가 안 되면 글로 적기</button>
+    <div class="foot">전화로도 똑같이 돼요</div>
   </section>
 
-  <!-- 2. 확인 -->
-  <section id="s-confirm" hidden style="display:flex;flex-direction:column;gap:18px;align-items:center;width:100%">
-    <div class="heard" id="heard"><small>이렇게 들었어요</small><span id="heardtext"></span></div>
-    <div class="ask" id="asktext"></div>
-    <div class="row"><button class="big yes" id="yes" type="button">응, 맞아</button><button class="big no" id="no" type="button">아니</button></div>
-  </section>
-
-  <!-- 3. 진행 -->
-  <section id="s-progress" hidden style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%">
-    <div class="hint">신청하러 갔어요<small>다 되면 전화처럼 알려드릴게요. 화면은 그대로 두세요.</small></div>
-    <div class="status" id="steps"></div>
-    <div class="small" id="note"></div>
-    <button class="link" id="reset" type="button">처음으로</button>
-  </section>
-
-  <!-- 5. 찾아드림 목록 -->
-  <section id="s-list" hidden style="display:flex;flex-direction:column;gap:14px;align-items:center;width:100%">
-    <div class="hint" id="listhint">지금 신청할 수 있는 거예요<small>누르면 그걸로 신청할게요</small></div>
-    <div id="list" style="width:100%;max-width:560px;display:grid;gap:12px"></div>
+  <!-- 5 찾아드림 -->
+  <section class="screen" id="s-list" hidden>
+    <h1 class="pen" id="listtitle">지금 할 수<br>있는 거예요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="lead" id="listlead">누르면 그걸로 신청할게요</div>
+    <div class="cards" id="cards"></div>
     <button class="link" id="listback" type="button">처음으로</button>
   </section>
 
-  <!-- 4. 안내(방문·전화 등) -->
-  <section id="s-info" hidden style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%">
-    <div class="ask" id="infotext"></div>
-    <div class="row"><button class="big yes" id="infook" type="button">알겠어요</button><button class="big no" id="infocall" type="button">전화 걸기</button></div>
+  <!-- 2 확인 -->
+  <section class="screen" id="s-confirm" hidden>
+    <h1 class="pen">이 정보로<br>신청할게요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="sheet" style="transform:rotate(-.5deg)"><div class="dog"></div>
+      <div class="t pen" id="formtitle">에코체육센터 실버반 신청서</div>
+      <div class="row"><b>이름</b><span id="f-name">—</span></div>
+      <div class="row"><b>반</b><span id="f-class">—</span></div>
+      <div class="row"><b>시간</b><span id="f-time">—</span></div>
+      <div class="row"><b>생년·주소·전화</b><span>적어둔 것 그대로</span></div>
+    </div>
+    <div class="note">한 번 적어두신 것을 제가 대신 넣어요. <span class="hl">주민번호 뒷자리·계좌·비밀번호는 저장하지 않아요.</span></div>
+    <div class="btns"><button class="btn" id="yes" type="button">맞아요, 신청해 주세요</button><button class="btn ghost" id="no" type="button">고칠 게 있어요</button></div>
   </section>
-</main>
-<div class="foot" id="foot">아무 일이 없으면 이 화면은 조용합니다.</div>
 
-<!-- 전화 화면 -->
-<div class="call" id="call" hidden>
-  <div><div class="from">챙겨드림에서 알려드려요</div><div class="name" id="callname">김현순 님</div></div>
-  <div class="ring">📞</div>
-  <div><div class="msg" id="callmsg"></div><div class="msg sub" id="callsub"></div></div>
-  <div class="ans"><button class="big yes" id="callanswer" type="button">듣기</button><button class="big no" id="callclose" type="button">닫기</button></div>
+  <!-- 3 진행 -->
+  <section class="screen" id="s-progress" hidden>
+    <h1 class="pen">제가 대신<br>하고 있어요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="lead" id="proglead">—</div>
+    <div class="watch"><div class="bar"><i></i><i></i><i></i><span id="watchsite">공단 통합예약</span></div><div class="body"><b>제가 보고 있는 화면</b><span id="watchnote">화면을 열고 있어요…</span></div></div>
+    <div class="steps" id="steps"></div>
+    <img class="hand" src="assets/hand_raise.jpg" alt="">
+    <div class="note" id="prognote">다 되면 전화처럼 알려드릴게요. 화면은 그대로 두셔도 돼요.</div>
+    <button class="link" id="reset" type="button">처음으로</button>
+  </section>
+
+  <!-- 4 결과 -->
+  <section class="screen" id="s-result" hidden>
+    <img class="env" src="assets/envelope_open.jpg" alt="">
+    <h1 class="pen" id="restitle" style="text-align:center">접수됐어요</h1>
+    <div class="sheet" style="transform:rotate(.4deg)"><div class="dog"></div><div class="stamp" id="stamp">접수됨</div>
+      <div class="t pen" id="res-t">—</div>
+      <div class="row"><b>다음</b><span id="res-next">—</span></div>
+      <div class="row"><b>알림</b><span>결과 나오면 전화로</span></div>
+    </div>
+    <div class="note">사이트에 실제로 적힌 것만 알려드려요. 순번·당첨 가능성은 추측하지 않아요.</div>
+    <div class="btns"><button class="btn" id="resok" type="button">네, 알겠어요</button></div>
+  </section>
+
+  <!-- 6 안내 -->
+  <section class="screen" id="s-info" hidden>
+    <h1 class="pen">이건 이렇게<br>하셔야 해요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="sheet" style="transform:rotate(-.4deg)"><div class="dog"></div><div class="say pen" id="infotext" style="font-size:27px;line-height:1.35"></div></div>
+    <div class="btns"><button class="btn" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
+  </section>
 </div>
+
+<!-- 전화 알림 -->
+<div class="call" id="call" hidden><div class="bgi"></div>
+  <div class="top"><div>전화 알림</div><div>챙겨드림</div></div><div class="rule"></div>
+  <div class="ringing"><i></i>챙겨드림에서 전화 왔어요</div>
+  <h1 class="pen" style="margin-top:6px">새 소식<br>편지가 왔어요</h1>
+  <img class="halm" src="assets/halmoni_phone.jpg" alt="">
+  <div class="sheet" style="transform:rotate(-.6deg)"><div class="dog"></div><div class="msg" id="callmsg"></div><div class="msg2" id="callsub"></div></div>
+  <div class="note" style="margin-top:8px">돈·계좌·인증번호는 절대 묻지 않아요.</div>
+  <div class="btns" style="margin-top:auto"><button class="btn" id="callanswer" type="button">듣기</button><button class="btn ghost" id="callclose" type="button">나중에</button></div>
+</div>
+<button id="stopsay" type="button" hidden>그만 읽기</button>
 
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
-  var NAME=(function(){try{var q=new URLSearchParams(location.search).get("n");if(q){localStorage.setItem("cbdr_name",q);return q}return localStorage.getItem("cbdr_name")||"어르신"}catch(e){return "어르신"}})(); document.getElementById("who").textContent=NAME+" 님"; document.getElementById("callname").textContent=NAME+" 님";
-  // ── 말 → 뜻 (시연용 규칙: 이 공단의 강습·시설만)
+  var NAME=(function(){try{var q=new URLSearchParams(location.search).get("n");if(q){localStorage.setItem("cbdr_name",q);return q}return localStorage.getItem("cbdr_name")||"어르신"}catch(e){return "어르신"}})();
+  $("who").textContent="챙겨드림 · "+NAME+" 님";
+  // ── 지금 열려 있는 것 (아이디어팀이 공단 공지를 읽어 넣음 · 2026-09-14 밤)
+  var OPEN=[{"대상": "만 65세 이상", "마감": "2026-09-16", "반": "신규 실버반", "방식": "온라인", "비고": "추첨 9/17 10시 · 당첨되면 9/17~18 에코체육센터 직접 등록", "시간": "화·목·금 오후 2시~2시50분 · 10월 1일 시작", "시설": "에코체육센터", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "서신동 국민체육센터", "마감": "2026-09-17", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/18 10시 · 등록 9/18~19 직접", "시간": "월·수·금 오후 2시 (또는 오전 10시 · 화목금 10시50분) · 10월 시작", "시설": "도내기샘수영장", "시작": "2026-09-16", "종목": "수영 강습", "지역": "전주"}, {"대상": "", "마감": "2026-09-16", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/17 10시 · 등록 9/17~18 직접", "시간": "화·목·금 저녁 6시50분~7시40분 · 10월 1일 시작", "시설": "덕진수영장", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "부양벨트 필요", "마감": "2026-09-15", "반": "아쿠아로빅", "방식": "방문", "비고": "10월 회차는 공지 전", "시간": "월·수·금 오후 1시30분 · 지금 하는 회차 9/16~10/14", "시설": "덕진수영장", "시작": "2026-09-14", "안내": "평일 저녁 7시 전에 안내실로. 선착순이에요.", "전화": "063-239-2650", "종목": "아쿠아로빅", "지역": "전주"}, {"대상": "수원시 밖 사람도 돼요 · 선착순", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "온라인", "비고": "9/29~30 06:00~21:00 온라인 또는 방문 · 수원시민 우선은 9/28 방문만 · 10/1~11 수영장 휴장", "시간": "오전·저녁·아쿠아로빅 등 (반 목록은 9/29에 열림)", "시설": "광교웰빙국민체육센터", "시작": "2026-09-29", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원"}, {"시설": "탄천종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 한 달 단위 · 반 목록은 9/23에 열림", "대상": "기초~상급은 대기 접수", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "신규 매월 23일~말일 · 인터넷 09:00~24:00 · 선착순", "전화": "031-725-7120", "지역": "성남"}, {"시설": "성남종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/23 10시에 열림", "대상": "성남 시민 9/23부터 · 다른 지역은 9/27부터", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "선착순 · 인터넷 또는 방문", "전화": "031-754-3100", "지역": "성남"}, {"시설": "판교스포츠센터 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/24에 열림", "대상": "관내·관외 날짜 다름", "방식": "온라인", "시작": "2026-09-24", "마감": "2026-09-30", "비고": "선착순 · 신청 뒤 48시간 안에 결제", "전화": "031-724-4660", "지역": "성남"}];
+  // ── 화면
+  var secs=["s-idle","s-list","s-confirm","s-progress","s-result","s-info"];
+  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-result":"결과","s-info":"안내"};
+  function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});$("crumb").textContent=crumbs[id]||"";window.scrollTo(0,0)}
+  // ── 목소리
+  var stopBtn=$("stopsay");
+  function shutUp(){try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true;}
+  stopBtn.addEventListener("click",shutUp);
+  function speak(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); speechSynthesis.speak(u); stopBtn.hidden=false; }catch(e){} }
+  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ r2=null; }; r2.start(); }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) arm(); else if(r2){ try{r2.stop()}catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
+  // ── 말 → 뜻
   function parse(t){
     t=(t||"").replace(/\s+/g,"");
     var r={raw:t,시설:null,종목:null,반:null,사람:NAME};
     if(/에코/.test(t)) r.시설="에코체육센터";
     else if(/덕진/.test(t)) r.시설="덕진수영장";
     else if(/완산/.test(t)) r.시설="완산수영장";
-    else if(/도내기|도내기샘|서신/.test(t)) r.시설="도내기샘수영장";
+    else if(/도내기|서신/.test(t)) r.시설="도내기샘수영장";
     else if(/라온/.test(t)) r.시설="라온체육센터";
     else if(/광교|수원/.test(t)) r.시설="광교웰빙국민체육센터";
     else if(/탄천|야탑/.test(t)) r.시설="탄천종합운동장 수영장";
     else if(/판교/.test(t)) r.시설="판교스포츠센터 수영장";
     else if(/성남|분당/.test(t)) r.시설="탄천종합운동장 수영장";
-    if(/아쿠아|아쿠아로빅|물에어로빅/.test(t)) r.종목="아쿠아로빅";
-    else if(/수영|강습|수영장/.test(t)) r.종목="수영 강습";
-    if(/집중|평영|접영/.test(t)) r.반="평영·접영 집중반 (월·수·금 10:50)";
-    else if(/실버|기초|초급|신규|처음/.test(t)||r.종목==="수영 강습") r.반="신규 실버반 (화·목·금 오후 2시)";
+    if(/아쿠아|물에어로빅/.test(t)) r.종목="아쿠아로빅";
+    else if(/수영|강습/.test(t)) r.종목="수영 강습";
+    if(/집중|평영|접영/.test(t)) r.반="평영·접영 집중반";
+    else if(/실버|기초|초급|신규|처음/.test(t)||r.종목==="수영 강습") r.반="신규 실버반";
     return r;
   }
-  function isFind(t){ t=(t||"").replace(/\s+/g,""); if(/신청해줘|신청해|넣어줘|신청할게|해줘/.test(t)) return false; return /있어|있나|있냐|있을까|뭐있|어떤|찾아|알려|뭐가|뭐야|뭐뭐|어디|은\?|는\?|은$|는$|어때|되나|돼\?|될까/.test(t) || /광교|수원|전주|성남|서울|부산|대구|인천|광주|대전|울산|용인|고양|화성|청주|천안/.test(t); }
-  function question(r){
-    if(!r.시설&&!r.종목) return null;
-    if(r.종목==="아쿠아로빅") return {info:"아쿠아로빅은 인터넷으로 신청이 안 돼요.\n덕진수영장 안내실에 직접 가셔야 해요.\n평일 저녁 7시 전에요.\n전화 063-239-2650","tel":"0632392650"};
-    if(/광교웰빙|탄천|판교|성남종합/.test(r.시설)){ var g=OPEN.filter(function(o){return o.시설===r.시설})[0]||OPEN.filter(function(o){return o.지역==="수원"})[0]; if(g){ var st=new Date(g.시작+"T00:00:00+09:00"); if(st>new Date()) return {info:g.시설+" 신규 접수는 "+(st.getMonth()+1)+"월 "+st.getDate()+"일부터예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.", tel:(g.전화||"").replace(/-/g,"")}; } }
-    if(!r.시설) r.시설="에코체육센터";
-    if(!r.종목) r.종목="수영 강습";
-    if(!r.반) r.반="신규 실버반 (화·목·금 오후 2시)";
-    return {ask:r.시설+" 10월 "+r.반+"\n신청할게요. 맞아요?"};
-  }
-  // ── 화면 전환
-  var secs=["s-idle","s-confirm","s-progress","s-info","s-list"];
-  function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});window.scrollTo(0,0)}
+  function isFind(t){ t=(t||"").replace(/\s+/g,""); if(/신청해줘|신청해|넣어줘|신청할게|해줘/.test(t)) return false; return /있어|있나|있냐|있을까|뭐있|어떤|찾아|알려|뭐가|뭐야|어디|은\?|는\?|은$|는$|어때|되나|돼\?|될까/.test(t) || /광교|수원|전주|성남|분당|서울|부산|대구|인천|광주|대전|울산|용인|고양|화성|청주|천안/.test(t); }
+  function item(r){ return OPEN.filter(function(o){return o.시설===r.시설 && (!r.종목||o.종목===r.종목||(r.종목==="수영 강습"&&o.종목==="수영 강습"))})[0] || OPEN.filter(function(o){return o.시설===r.시설})[0]; }
+  function dueText(iso){ if(!iso) return ""; var d=new Date(iso+"T23:59:59+09:00"), now=new Date(); var days=Math.floor((d-now)/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; if(days===2) return "모레까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
+  function fromText(iso){ if(!iso) return null; var d=new Date(iso+"T00:00:00+09:00"); return d>new Date()?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
   var cur=null;
-  var OPEN=[{"대상": "만 65세 이상", "마감": "2026-09-16", "반": "신규 실버반", "방식": "온라인", "비고": "추첨 9/17 10시 · 당첨되면 9/17~18 에코체육센터 직접 등록", "시간": "화·목·금 오후 2시~2시50분 · 10월 1일 시작", "시설": "에코체육센터", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "서신동 국민체육센터", "마감": "2026-09-17", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/18 10시 · 등록 9/18~19 직접", "시간": "월·수·금 오후 2시 (또는 오전 10시 · 화목금 10시50분) · 10월 시작", "시설": "도내기샘수영장", "시작": "2026-09-16", "종목": "수영 강습", "지역": "전주"}, {"대상": "", "마감": "2026-09-16", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/17 10시 · 등록 9/17~18 직접", "시간": "화·목·금 저녁 6시50분~7시40분 · 10월 1일 시작", "시설": "덕진수영장", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "부양벨트 필요", "마감": "2026-09-15", "반": "아쿠아로빅", "방식": "방문", "비고": "10월 회차는 공지 전", "시간": "월·수·금 오후 1시30분 · 지금 하는 회차 9/16~10/14", "시설": "덕진수영장", "시작": "2026-09-14", "안내": "평일 저녁 7시 전에 안내실로. 선착순이에요.", "전화": "063-239-2650", "종목": "아쿠아로빅", "지역": "전주"}, {"대상": "수원시 밖 사람도 돼요 · 선착순", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "온라인", "비고": "9/29~30 06:00~21:00 온라인 또는 방문 · 수원시민 우선은 9/28 방문만 · 10/1~11 수영장 휴장", "시간": "오전·저녁·아쿠아로빅 등 (반 목록은 9/29에 열림)", "시설": "광교웰빙국민체육센터", "시작": "2026-09-29", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원"}, {"시설": "탄천종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 한 달 단위 · 반 목록은 9/23에 열림", "대상": "성남 야탑 · 기초~상급은 「대기 접수」(관내 거주 확인 뒤 순번 문자)", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "신규 매월 23일~말일 · 인터넷 09:00~24:00 · 선착순 · 기존회원은 15~20일", "전화": "031-725-7120", "지역": "성남"}, {"시설": "성남종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/23 10시에 열림", "대상": "성남 시민 9/23부터 · 다른 지역은 9/27부터", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "선착순 · 인터넷 또는 방문 07~19시", "전화": "031-754-3100", "지역": "성남"}, {"시설": "판교스포츠센터 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/24에 열림", "대상": "관내·관외 날짜 다름", "방식": "온라인", "시작": "2026-09-24", "마감": "2026-09-30", "비고": "선착순 · 신청 뒤 48시간 안에 결제해야 완료", "전화": "031-724-4660", "지역": "성남"}];
-  function dueText(iso){ if(!iso) return ""; var d=new Date(iso+"T23:59:59+09:00"), now=new Date(); var days=Math.floor((d-now)/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
+  function info(msg,tel){ $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
+  function confirmWith(o){
+    cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
+    $("formtitle").textContent=o.시설+" "+o.반+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=o.반; $("f-time").textContent=(o.시간||"").split("·")[0].trim()||"—";
+    show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. 맞아요?");
+  }
   var REGION=null;
   function showList(){
-    var items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남" && (!REGION || (o.지역||"")===REGION)});
-    if(!items.length){ $("listhint").innerHTML="지금 신청할 수 있는 건 없어요<small>새로 열리면 먼저 알려드릴게요</small>"; $("list").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
-    $("listhint").innerHTML="지금 신청할 수 있는 거 "+items.length+"개예요<small>누르면 그걸로 신청할게요</small>";
-    $("list").innerHTML=items.map(function(o,i){ return '<button class="item '+(o.방식==="온라인"?"online":"")+'" type="button" data-i="'+i+'"><b>'+o.시설+' · '+o.반+'</b><span>'+o.시간+(o.대상?' · '+o.대상:'')+'</span><span class="due">'+(o.방식==="온라인"?"인터넷 접수 · ":"직접 가야 해요 · ")+dueText(o.마감)+'</span></button>'; }).join("");
-    [].forEach.call($("list").querySelectorAll(".item"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; if(o.방식!=="온라인"){ var msg=o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+" 전화 "+(o.전화||"063-239-2650"); $("infotext").textContent=msg; $("infocall").dataset.tel=(o.전화||"0632392650").replace(/-/g,""); show("s-info"); speak(msg); return; } cur={raw:"목록에서 선택",사람:NAME,시설:o.시설,종목:o.종목||"수영 강습",반:o.반}; $("heardtext").textContent="목록에서 골랐어요"; $("asktext").textContent=o.시설+" 10월 "+o.반+" 신청할게요. 맞아요?"; show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. 맞아요?"); }); });
+    var items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남" && (!REGION||(o.지역||"")===REGION)});
+    if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
+    $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(REGION?REGION+" · ":"")+items.length+"개 — 누르면 그걸로 신청할게요";
+    $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(o.방식==="온라인"?"":"visit")+'">'+(o.방식==="온라인"?"인터넷":"직접 가요")+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+o.시간+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
+    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||""),o.전화); return; } var ft=fromText(o.시작); if(ft){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o); }); });
     show("s-list");
-    var say="지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.";
-    speak(say);
+    speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
   function heard(text){
-    if(isFind(text)){ REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
+    shutUp();
+    if(isFind(text)){
+      REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
       var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
-      if(sport){ var msg2=sport+"은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."; $("infotext").textContent=msg2; $("infocall").dataset.tel=""; show("s-info"); speak(msg2); fetch(NT+REQ,{method:"POST",body:JSON.stringify({type:"찾기요청",종목:sport,원문:text,시각:new Date().toISOString()}),headers:{"Content-Type":"text/plain"}}).catch(function(){}); return; }
-      var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|성남|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|전주|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
-      if(other&&other!=="전주"&&other!=="성남"&&!/수원|광교/.test(text)){ var msg=other+" 수영장은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."; $("infotext").textContent=msg; $("infocall").dataset.tel=""; show("s-info"); speak(msg); fetch(NT+REQ,{method:"POST",body:JSON.stringify({type:"찾기요청",지역:other,원문:text,시각:new Date().toISOString()}),headers:{"Content-Type":"text/plain"}}).catch(function(){}); return; } $("heardtext").textContent=text; showList(); return; }
-    var r=parse(text),q=question(r);
-    cur=r;
-    if(!q){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
-    if(q.info){ $("infotext").textContent=q.info; $("infocall").dataset.tel=q.tel; show("s-info"); speak(q.info.replace(/\n/g," ")); return; }
-    $("heardtext").textContent=text; $("asktext").textContent=q.ask; show("s-confirm"); speak(q.ask.replace(/\n/g," "));
+      if(sport){ info(sport+"은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
+      var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
+      if(other){ info(other+" 수영장은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."); post({type:"찾기요청",지역:other,원문:text}); return; }
+      showList(); return;
+    }
+    var r=parse(text);
+    if(!r.시설&&!r.종목){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
+    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요."), aq&&aq.전화||"063-239-2650"); return; }
+    if(!r.시설) r.시설="에코체육센터";
+    var o=item(r);
+    if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
+    var ft=fromText(o.시작); if(ft){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; }
+    if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 접수는 끝났어요. 다음 달에 다시 열리면 알려드릴게요.",o.전화); return; }
+    o.raw=r.raw; confirmWith(o);
   }
   // ── 음성 인식
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null, listening=false;
   if(SR){ rec=new SR(); rec.lang="ko-KR"; rec.interimResults=true; rec.continuous=false;
-    rec.onresult=function(e){var s="";for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript; $("miclabel").textContent=s||"듣는 중…"; if(e.results[e.results.length-1].isFinal){stop(); heard(s);} };
-    rec.onerror=function(e){stop(); $("miclabel").textContent="다시 눌러 주세요"; if(e.error==="not-allowed"){$("typewrap").hidden=false;} };
+    rec.onresult=function(e){var s="";for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript; $("ex1").textContent="“"+(s||"…")+"”"; if(e.results[e.results.length-1].isFinal){stop(); heard(s);} };
+    rec.onerror=function(e){stop(); if(e.error==="not-allowed"){ $("lead1").textContent="마이크를 못 열었어요. 아래에 적어 주세요"; toType(); } else { $("miclabel").textContent="다시 눌러요"; } };
     rec.onend=function(){ if(listening) stop(); };
   }
-  function start(){ if(!rec){$("typewrap").hidden=false;return} try{ rec.start(); listening=true; $("mic").classList.add("on"); $("miclabel").textContent="듣는 중…"; }catch(e){} }
-  function stop(){ listening=false; $("mic").classList.remove("on"); try{rec&&rec.stop()}catch(e){} }
-  $("mic").addEventListener("click",function(){ if(listening){stop(); $("miclabel").textContent="말하기";} else start(); });
-  $("totype").addEventListener("click",function(){$("typewrap").hidden=false;$("typed").focus()});
-  $("typedcancel").addEventListener("click",function(){$("typewrap").hidden=true});
-  $("typedok").addEventListener("click",function(){var v=$("typed").value.trim(); if(v){$("typewrap").hidden=true; heard(v);} });
-  $("no").addEventListener("click",function(){ show("s-idle"); $("miclabel").textContent="다시 말하기"; speak("네, 다시 말씀해 주세요."); });
-  $("infook").addEventListener("click",function(){show("s-idle")});
-  $("infocall").addEventListener("click",function(){ if(this.dataset.tel) location.href="tel:"+this.dataset.tel; else show("s-idle"); });
-  $("reset").addEventListener("click",function(){show("s-idle")});
-  $("listback").addEventListener("click",function(){show("s-idle")});
-  // ── 목소리
-  var stopBtn=document.createElement("button"); stopBtn.type="button"; stopBtn.className="big no"; stopBtn.id="stopsay"; stopBtn.textContent="그만 읽기"; stopBtn.hidden=true;
-  stopBtn.style.cssText="position:fixed;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;font-size:26px;min-height:72px";
-  document.body.appendChild(stopBtn);
-  function shutUp(){ try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true; }
-  stopBtn.addEventListener("click",shutUp);
-  function speak(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); speechSynthesis.speak(u); stopBtn.hidden=false; }catch(e){} }
-  // 「그만」 「됐어」 「알았어」 — 읽는 동안 말로도 멈춤 (되는 폰에서만)
-  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어|그만해/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ r2=null; }; r2.start(); }catch(x){ r2=null; } } var obs=new MutationObserver(function(){ if(!stopBtn.hidden) arm(); else if(r2){ try{r2.stop()}catch(x){} } }); obs.observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
-  // ── 전화 화면
+  function start(){ if(!rec){toType();return} shutUp(); try{ rec.start(); listening=true; $("micwrap").classList.add("listening"); $("miclabel").textContent="듣는 중"; $("title1").innerHTML="듣고<br>있어요"; $("ex1").textContent="“…”"; $("ex2").hidden=true; }catch(e){} }
+  function stop(){ listening=false; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="말씀만<br>하세요"; try{rec&&rec.stop()}catch(e){} }
+  function resetIdle(){ $("ex1").textContent="“수영장 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("lead1").textContent="편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요"; }
+  function toType(){ $("ex1").hidden=true; $("ex2").hidden=true; $("typewrap").hidden=false; $("typebtns").hidden=false; $("typed").focus(); }
+  $("mic").addEventListener("click",function(){ if(listening) stop(); else start(); });
+  $("totype").addEventListener("click",toType);
+  $("typedok").addEventListener("click",function(){ var v=$("typed").value.trim(); if(v){ $("ex1").hidden=false; $("ex1").textContent="“"+v+"”"; heard(v); } });
+  $("typed").addEventListener("keydown",function(e){ if(e.key==="Enter") $("typedok").click(); });
+  $("no").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
+  $("infook").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  $("infocall").addEventListener("click",function(){ if(this.dataset.tel) location.href="tel:"+this.dataset.tel; });
+  $("reset").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  $("listback").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  $("resok").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  // ── 전화 알림
   var pendingMsg="";
-  function ring(msg,sub){ pendingMsg=msg+" "+(sub||""); $("callmsg").textContent=msg; $("callsub").textContent=sub||""; $("call").hidden=false; try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){} speak("챙겨드림에서 알려드려요."); }
+  function ring(msg,sub){ pendingMsg=msg+" "+(sub||""); $("callmsg").textContent=msg; $("callsub").textContent=sub||""; $("call").hidden=false; try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){} speak("챙겨드림에서 전화 왔어요. 듣기를 눌러 주세요."); }
   $("callanswer").addEventListener("click",function(){ speak(pendingMsg); });
-  $("callclose").addEventListener("click",function(){ $("call").hidden=true; speechSynthesis.cancel(); });
+  $("callclose").addEventListener("click",function(){ shutUp(); $("call").hidden=true; });
+  // ── 진행 단계
+  var STEPS=[["강좌를 찾았어요","진행중"],["신청서를 쓰고 있어요","진행중2"],["보내기 전에 자녀가 한 번 확인","제출"],["접수 완료","완료"]];
+  var ORDER=["요청","진행중","진행중2","제출","완료"];
+  function renderSteps(state,note){
+    var idx=ORDER.indexOf(state);
+    $("steps").innerHTML=STEPS.map(function(s){var k=ORDER.indexOf(s[1]);var cls=k<=idx&&state!=="요청"&&k<idx?"done":(k===idx?"now":"");if(state==="완료")cls="done";return '<div class="step '+cls+'"><span class="box"></span><span>'+s[0]+'</span></div>'}).join("");
+    $("watchnote").textContent=note||({"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"자녀가 확인하고 있어요","완료":"접수 내역을 확인했어요"}[state]||"");
+  }
   // ── 사무실 연결 (ntfy 공개 중계 · 주소는 무작위 · 개인정보 최소)
   var REQ="cbdr-req-0e0b6b7df99c5db4", RES="cbdr-res-db09565ac6f83574", NT="https://ntfy.sh/";
-  var STEPS=[["받았어요","요청"],["공단 화면 열기","진행중"],["강습 고르기","진행중2"],["신청 넣기","제출"],["신청 확인","완료"]];
-  function renderSteps(state,note){
-    var order=["요청","진행중","진행중2","제출","완료"], idx=order.indexOf(state);
-    $("steps").innerHTML=STEPS.map(function(s){var k=order.indexOf(s[1]);var cls=k<idx?"done":(k===idx?"now":"");return '<div class="step '+cls+'"><span class="dot"></span><span>'+s[0]+'</span></div>'}).join("");
-    $("note").textContent=note||"";
-  }
+  function post(o){ o.사람=NAME; o.시각=new Date().toISOString(); return fetch(NT+REQ,{method:"POST",body:JSON.stringify(o),headers:{"Content-Type":"text/plain"}}); }
   var es=null;
   function connect(){
-    try{ es=new EventSource(NT+RES+"/sse"); }catch(e){ $("conn").textContent="사무실 연결 없음"; return; }
-    es.onopen=function(){ $("conn").textContent="사무실 연결됨"; };
-    es.onerror=function(){ $("conn").textContent="연결 다시 시도 중…"; };
-    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message); if(d.type==="list"&&d.items){OPEN=d.items;return;} if($("s-progress").hidden) return; renderSteps(d.상태,d.메모); if(d.상태==="완료"&&d.결과&&!$("s-progress").dataset.rang){ $("s-progress").dataset.rang="1"; ring(d.결과,d.메모); } if(d.상태==="확인필요"&&d.결과){ $("note").textContent=d.결과; speak(d.결과); } }catch(e){} };
+    try{ es=new EventSource(NT+RES+"/sse"); }catch(e){ return; }
+    es.onopen=function(){ $("dot").classList.add("on"); };
+    es.onerror=function(){ $("dot").classList.remove("on"); };
+    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message);
+      if(d.type==="list"&&d.items){ OPEN=d.items; return; }
+      if(d.type==="ring"&&d.결과){ ring(d.결과,d.메모); return; }
+      if($("s-progress").hidden) return;
+      renderSteps(d.상태,d.메모);
+      if(d.상태==="완료"&&d.결과){ $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; ring(d.결과,d.메모); show("s-result"); }
+      if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
+    }catch(e){} };
   }
   $("yes").addEventListener("click",function(){
-    var r=cur; if(!r) return;
-    var req={사람:r.사람,시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청",시각:new Date().toISOString()};
-    show("s-progress"); renderSteps("요청",""); delete $("s-progress").dataset.rang;
-    speak("네, 신청하러 갈게요. 다 되면 알려드릴게요.");
-    fetch(NT+REQ,{method:"POST",body:JSON.stringify(req),headers:{"Content-Type":"text/plain"}}).then(function(r){ if(!r.ok) throw 0; }).catch(function(){ $("note").textContent="⚠️ 사무실에 못 보냈어요. 자녀에게 전화로 알려주세요."; });
+    var r=cur; if(!r) return; shutUp();
+    $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=(r.시설.indexOf("광교")>=0?"수원도시공사 예약결제":(/탄천|판교|성남/.test(r.시설)?"성남도시개발공사 체육시설":"전주시설공단 통합예약"));
+    show("s-progress"); renderSteps("요청","");
+    speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
+    post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="⚠️ 사무실에 못 보냈어요. 자녀에게 전화로 알려주세요."; });
   });
   connect();
 })();
 </script>
-
 </body></html>
