@@ -149,6 +149,7 @@ input.txt::placeholder{color:var(--mute)}
       <div class="row"><b>시간</b><span id="f-time">—</span></div>
       <div class="row"><b>생년·주소·전화</b><span>적어둔 것 그대로</span></div>
     </div>
+    <div class="note" id="confnote" style="color:var(--terra);font-weight:700"></div>
     <div class="note">한 번 적어두신 것을 제가 대신 넣어요. <span class="hl">주민번호 뒷자리·계좌·비밀번호는 저장하지 않아요.</span></div>
     <div class="btns"><button class="btn" id="yes" type="button">맞아요, 신청해 주세요</button><button class="btn ghost" id="no" type="button">고칠 게 있어요</button></div>
   </section>
@@ -239,12 +240,13 @@ input.txt::placeholder{color:var(--mute)}
   function item(r){ return OPEN.filter(function(o){return o.시설===r.시설 && (!r.종목||o.종목===r.종목||(r.종목==="수영 강습"&&o.종목==="수영 강습"))})[0] || OPEN.filter(function(o){return o.시설===r.시설})[0]; }
   function dueText(iso){ if(!iso) return ""; var d=new Date(iso+"T23:59:59+09:00"), now=new Date(); var days=Math.floor((d-now)/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; if(days===2) return "모레까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
   function fromText(iso){ if(!iso) return null; var d=new Date(iso+"T00:00:00+09:00"); return d>new Date()?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
+  function soon(iso){ if(!iso) return false; var d=new Date(iso+"T00:00:00+09:00"); var h=(d-new Date())/3600000; return h>0&&h<=30; }
   var cur=null;
   function info(msg,tel){ $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
-  function confirmWith(o){
+  function confirmWith(o,extra){
     cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
     $("formtitle").textContent=o.시설+" "+o.반+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=o.반; $("f-time").textContent=(o.시간||"").split("·")[0].trim()||"—";
-    show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. 맞아요?");
+    document.getElementById("confnote").textContent=extra||""; show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. "+(extra||"")+" 맞아요?");
   }
   var REGION=null;
   function showList(){
@@ -252,7 +254,7 @@ input.txt::placeholder{color:var(--mute)}
     if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
     $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(REGION?REGION+" · ":"")+items.length+"개 — 누르면 그걸로 신청할게요";
     $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(o.방식==="온라인"?"":"visit")+'">'+(o.방식==="온라인"?"인터넷":"직접 가요")+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+o.시간+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
-    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||""),o.전화); return; } var ft=fromText(o.시작); if(ft){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o); }); });
+    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||""),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
     show("s-list");
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
@@ -272,9 +274,9 @@ input.txt::placeholder{color:var(--mute)}
     if(!r.시설) r.시설="에코체육센터";
     var o=item(r);
     if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
-    var ft=fromText(o.시작); if(ft){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; }
+    var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; }
     if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 접수는 끝났어요. 다음 달에 다시 열리면 알려드릴게요.",o.전화); return; }
-    o.raw=r.raw; confirmWith(o);
+    o.raw=r.raw; confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":"");
   }
   // ── 음성 인식
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null, listening=false;
