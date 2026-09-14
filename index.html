@@ -122,16 +122,18 @@ button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16p
     else if(/완산/.test(t)) r.시설="완산수영장";
     else if(/도내기|도내기샘|서신/.test(t)) r.시설="도내기샘수영장";
     else if(/라온/.test(t)) r.시설="라온체육센터";
+    else if(/광교|수원/.test(t)) r.시설="광교웰빙국민체육센터";
     if(/아쿠아|아쿠아로빅|물에어로빅/.test(t)) r.종목="아쿠아로빅";
     else if(/수영|강습|수영장/.test(t)) r.종목="수영 강습";
     if(/집중|평영|접영/.test(t)) r.반="평영·접영 집중반 (월·수·금 10:50)";
     else if(/실버|기초|초급|신규|처음/.test(t)||r.종목==="수영 강습") r.반="신규 실버반 (화·목·금 오후 2시)";
     return r;
   }
-  function isFind(t){ t=(t||"").replace(/\s+/g,""); return /있어|있나|있냐|있을까|뭐있|어떤|찾아|알려|뭐가|뭐야|뭐뭐|어디/.test(t) && !/신청해줘|신청해|넣어줘/.test(t); }
+  function isFind(t){ t=(t||"").replace(/\s+/g,""); if(/신청해줘|신청해|넣어줘|신청할게|해줘/.test(t)) return false; return /있어|있나|있냐|있을까|뭐있|어떤|찾아|알려|뭐가|뭐야|뭐뭐|어디|은\?|는\?|은$|는$|어때|되나|돼\?|될까/.test(t) || /광교|수원|전주|성남|서울|부산|대구|인천|광주|대전|울산|용인|고양|화성|청주|천안/.test(t); }
   function question(r){
     if(!r.시설&&!r.종목) return null;
     if(r.종목==="아쿠아로빅") return {info:"아쿠아로빅은 인터넷으로 신청이 안 돼요.\n덕진수영장 안내실에 직접 가셔야 해요.\n평일 저녁 7시 전에요.\n전화 063-239-2650","tel":"0632392650"};
+    if(r.시설==="광교웰빙국민체육센터"){ var g=OPEN.filter(function(o){return o.지역==="수원"})[0]; if(g){ var st=new Date(g.시작+"T00:00:00+09:00"); if(st>new Date()) return {info:"광교웰빙 수영장 신규 접수는 "+(st.getMonth()+1)+"월 "+st.getDate()+"일부터예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.", tel:"0312283201"}; } }
     if(!r.시설) r.시설="에코체육센터";
     if(!r.종목) r.종목="수영 강습";
     if(!r.반) r.반="신규 실버반 (화·목·금 오후 2시)";
