@@ -155,7 +155,9 @@ button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16p
     speak(say);
   }
   function heard(text){
-    if(isFind(text)){ REGION=/광교|수원/.test(text)?"수원":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null); $("heardtext").textContent=text; showList(); return; }
+    if(isFind(text)){ REGION=/광교|수원/.test(text)?"수원":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null);
+      var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|성남|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|전주|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
+      if(other&&other!=="전주"&&!/수원|광교/.test(text)){ var msg=other+" 수영장은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."; $("infotext").textContent=msg; $("infocall").dataset.tel=""; show("s-info"); speak(msg); fetch(NT+REQ,{method:"POST",body:JSON.stringify({type:"찾기요청",지역:other,원문:text,시각:new Date().toISOString()}),headers:{"Content-Type":"text/plain"}}).catch(function(){}); return; } $("heardtext").textContent=text; showList(); return; }
     var r=parse(text),q=question(r);
     cur=r;
     if(!q){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
@@ -177,7 +179,7 @@ button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16p
   $("typedok").addEventListener("click",function(){var v=$("typed").value.trim(); if(v){$("typewrap").hidden=true; heard(v);} });
   $("no").addEventListener("click",function(){ show("s-idle"); $("miclabel").textContent="다시 말하기"; speak("네, 다시 말씀해 주세요."); });
   $("infook").addEventListener("click",function(){show("s-idle")});
-  $("infocall").addEventListener("click",function(){ location.href="tel:"+(this.dataset.tel||"0632392650"); });
+  $("infocall").addEventListener("click",function(){ if(this.dataset.tel) location.href="tel:"+this.dataset.tel; else show("s-idle"); });
   $("reset").addEventListener("click",function(){show("s-idle")});
   $("listback").addEventListener("click",function(){show("s-idle")});
   // ── 목소리
