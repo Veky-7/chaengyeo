@@ -151,11 +151,13 @@ button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16p
     $("list").innerHTML=items.map(function(o,i){ return '<button class="item '+(o.방식==="온라인"?"online":"")+'" type="button" data-i="'+i+'"><b>'+o.시설+' · '+o.반+'</b><span>'+o.시간+(o.대상?' · '+o.대상:'')+'</span><span class="due">'+(o.방식==="온라인"?"인터넷 접수 · ":"직접 가야 해요 · ")+dueText(o.마감)+'</span></button>'; }).join("");
     [].forEach.call($("list").querySelectorAll(".item"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; if(o.방식!=="온라인"){ var msg=o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+" 전화 "+(o.전화||"063-239-2650"); $("infotext").textContent=msg; $("infocall").dataset.tel=(o.전화||"0632392650").replace(/-/g,""); show("s-info"); speak(msg); return; } cur={raw:"목록에서 선택",사람:NAME,시설:o.시설,종목:o.종목||"수영 강습",반:o.반}; $("heardtext").textContent="목록에서 골랐어요"; $("asktext").textContent=o.시설+" 10월 "+o.반+" 신청할게요. 맞아요?"; show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. 맞아요?"); }); });
     show("s-list");
-    var say="지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반+", "+o.시간+", "+(o.방식==="온라인"?"인터넷 접수 ":"직접 가야 하고 ")+dueText(o.마감)}).join(". ")+". 누르시면 신청할게요.";
+    var say="지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.";
     speak(say);
   }
   function heard(text){
     if(isFind(text)){ REGION=/광교|수원/.test(text)?"수원":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null);
+      var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
+      if(sport){ var msg2=sport+"은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."; $("infotext").textContent=msg2; $("infocall").dataset.tel=""; show("s-info"); speak(msg2); fetch(NT+REQ,{method:"POST",body:JSON.stringify({type:"찾기요청",종목:sport,원문:text,시각:new Date().toISOString()}),headers:{"Content-Type":"text/plain"}}).catch(function(){}); return; }
       var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|성남|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|전주|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
       if(other&&other!=="전주"&&!/수원|광교/.test(text)){ var msg=other+" 수영장은 아직 안 읽어봤어요. 자녀에게 알려서 찾아 넣어드릴게요."; $("infotext").textContent=msg; $("infocall").dataset.tel=""; show("s-info"); speak(msg); fetch(NT+REQ,{method:"POST",body:JSON.stringify({type:"찾기요청",지역:other,원문:text,시각:new Date().toISOString()}),headers:{"Content-Type":"text/plain"}}).catch(function(){}); return; } $("heardtext").textContent=text; showList(); return; }
     var r=parse(text),q=question(r);
@@ -183,7 +185,14 @@ button.link{background:none;border:0;color:var(--sub);font:inherit;font-size:16p
   $("reset").addEventListener("click",function(){show("s-idle")});
   $("listback").addEventListener("click",function(){show("s-idle")});
   // ── 목소리
-  function speak(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
+  var stopBtn=document.createElement("button"); stopBtn.type="button"; stopBtn.className="big no"; stopBtn.id="stopsay"; stopBtn.textContent="그만 읽기"; stopBtn.hidden=true;
+  stopBtn.style.cssText="position:fixed;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;font-size:26px;min-height:72px";
+  document.body.appendChild(stopBtn);
+  function shutUp(){ try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true; }
+  stopBtn.addEventListener("click",shutUp);
+  function speak(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); speechSynthesis.speak(u); stopBtn.hidden=false; }catch(e){} }
+  // 「그만」 「됐어」 「알았어」 — 읽는 동안 말로도 멈춤 (되는 폰에서만)
+  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어|그만해/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ r2=null; }; r2.start(); }catch(x){ r2=null; } } var obs=new MutationObserver(function(){ if(!stopBtn.hidden) arm(); else if(r2){ try{r2.stop()}catch(x){} } }); obs.observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
   // ── 전화 화면
   var pendingMsg="";
   function ring(msg,sub){ pendingMsg=msg+" "+(sub||""); $("callmsg").textContent=msg; $("callsub").textContent=sub||""; $("call").hidden=false; try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){} speak("챙겨드림에서 알려드려요."); }
