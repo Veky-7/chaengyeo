@@ -54,6 +54,13 @@ def wait_for(role=None, name=None, contains=None, sec=15):
         time.sleep(1)
     raise RuntimeError(f"못 찾음: {role} {name or contains}")
 def click(ref): orca("click", "--element", ref); time.sleep(1.2)
+def press(role=None, name=None, contains=None, sec=15):
+    """찾아서 누른다. 화면이 다시 그려져 ref 가 죽으면 다시 찾아 3번까지."""
+    for i in range(3):
+        try: click(wait_for(role, name, contains, sec)); return
+        except RuntimeError as e:
+            if "locate" not in str(e) or i == 2: raise
+            time.sleep(1)
 def fill(ref, val): orca("fill", "--element", ref, "--value", val); time.sleep(1.0)
 def url():
     try: return orca("tab", "list")["tabs"]
@@ -68,6 +75,8 @@ def shot(path):
 # ── 폰 화면 ───────────────────────────────────────────────────
 def say(상태, 메모="", 결과="", 다음="", **extra):
     d = {"상태": 상태, "메모": 메모, "결과": 결과, "다음": 다음, "종류": "회원가입"}; d.update(extra)
+    who = load_state().get("사람")
+    if who: d.setdefault("받는사람", who)
     import requests
     requests.post(office.NT + office.T["RES"], data=json.dumps(d, ensure_ascii=False).encode("utf-8"), headers={"Content-Type": "text/plain"}, timeout=20)
     print(f"[폰] {상태} · {메모 or 결과}")
@@ -108,9 +117,9 @@ def suwon_to_captcha(p):
     click(wait_for("button", contains="문자(SMS) 인증"))
     chk = find("checkbox", contains="본인확인 이용 동의")
     if chk: orca("check", "--element", chk); time.sleep(0.8)
-    click(wait_for("button", name="다음"))
+    press("button", name="다음")
     # 이름 → 생년월일/성별 → 전화
-    fill(wait_for("textbox", name="이름"), p["이름"]); click(wait_for("button", name="다음"))
+    fill(wait_for("textbox", name="이름"), p["이름"]); press("button", name="다음")
     say("진행중", f"이름 {p['이름']} 넣었어요")
     yy = p["생년월일"][:2]; y2000 = yy <= "26"
     gd = ("3" if p.get("성별") == "남" else "4") if y2000 else ("1" if p.get("성별") == "남" else "2")
@@ -128,7 +137,12 @@ def suwon_after_captcha(code):
     time.sleep(1)
     b = find("button", name="다음") or find("button", contains="확인") or find("button", contains="인증번호")
     if b: click(b)
-    time.sleep(3)
+    time.sleep(2)
+    c = find("button", name="확인")   # 「입력정보 확인하기」 창
+    if c and find("heading", contains="입력정보 확인"): click(c); time.sleep(2)
+    return suwon_sms_wait()
+
+def suwon_sms_wait():
     # 인증번호 칸이 떴는지
     box = None
     for _ in range(10):
@@ -167,5 +181,7 @@ if __name__ == "__main__":
         path = suwon_to_captcha(p); print("보안문자 캡처:", path)
     elif a[0] == "보안문자":
         suwon_after_captcha(a[1])
+    elif a[0] == "문자대기":
+        suwon_sms_wait()
     elif a[0] == "상태":
         say(a[1], a[2] if len(a) > 2 else "", a[3] if len(a) > 3 else "")
