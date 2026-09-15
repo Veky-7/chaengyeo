@@ -166,6 +166,21 @@ input.txt::placeholder{color:var(--mute)}
     <button class="link" id="reset" type="button">처음으로</button>
   </section>
 
+  <!-- 말로 묻기: 가입에 필요한 것 · 서버가 물어보는 것 -->
+  <section class="screen" id="s-ask" hidden>
+    <h1 class="pen" id="asktitle">생년월일을<br>말해 주세요</h1>
+    <div class="lead" id="asklead">예를 들어 「천구백육십년 삼월 오일」</div>
+    <div class="micwrap" id="micwrap3">
+      <button class="mic" id="mic3" type="button" aria-label="말하기"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel3">말하기</span></button>
+    </div>
+    <div class="sheet" style="transform:rotate(.4deg)"><div class="dog"></div>
+      <div class="say pen" id="askheard" style="font-size:34px;text-align:center">…</div>
+      <div id="asktypewrap" hidden><input class="txt" id="asktyped" placeholder="여기에 적어도 돼요"></div>
+    </div>
+    <div class="btns"><button class="btn" id="askok" type="button" hidden>네, 맞아요</button><button class="btn ghost" id="askagain" type="button" hidden>아니요, 다시</button></div>
+    <button class="link" id="asktotype" type="button">말하기가 안 되면 글로 적기</button>
+  </section>
+
   <!-- 본인 확인: 문자로 온 숫자 말하기 (회원가입) -->
   <section class="screen" id="s-code" hidden>
     <h1 class="pen">문자로 온<br>숫자를 말해 주세요</h1>
@@ -226,8 +241,8 @@ input.txt::placeholder{color:var(--mute)}
   // ── 지금 열려 있는 것 (아이디어팀이 공단 공지를 읽어 넣음 · 2026-09-14 밤)
   var OPEN=[{"대상": "만 65세 이상", "마감": "2026-09-16", "반": "신규 실버반", "방식": "온라인", "비고": "추첨 9/17 10시 · 당첨되면 9/17~18 에코체육센터 직접 등록", "시간": "화·목·금 오후 2시~2시50분 · 10월 1일 시작", "시설": "에코체육센터", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "서신동 국민체육센터", "마감": "2026-09-17", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/18 10시 · 등록 9/18~19 직접", "시간": "월·수·금 오후 2시 (또는 오전 10시 · 화목금 10시50분) · 10월 시작", "시설": "도내기샘수영장", "시작": "2026-09-16", "종목": "수영 강습", "지역": "전주"}, {"대상": "", "마감": "2026-09-16", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/17 10시 · 등록 9/17~18 직접", "시간": "화·목·금 저녁 6시50분~7시40분 · 10월 1일 시작", "시설": "덕진수영장", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "부양벨트 필요", "마감": "2026-09-15", "반": "아쿠아로빅", "방식": "방문", "비고": "10월 회차는 공지 전", "시간": "월·수·금 오후 1시30분 · 지금 하는 회차 9/16~10/14", "시설": "덕진수영장", "시작": "2026-09-14", "안내": "평일 저녁 7시 전에 안내실로. 선착순이에요.", "전화": "063-239-2650", "종목": "아쿠아로빅", "지역": "전주"}, {"대상": "수원시 밖 사람도 돼요 · 선착순", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "온라인", "비고": "9/29~30 06:00~21:00 온라인 또는 방문 · 수원시민 우선은 9/28 방문만 · 10/1~11 수영장 휴장", "시간": "오전·저녁·아쿠아로빅 등 (반 목록은 9/29에 열림)", "시설": "광교웰빙국민체육센터", "시작": "2026-09-29", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원"}, {"시설": "탄천종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 한 달 단위 · 반 목록은 9/23에 열림", "대상": "기초~상급은 대기 접수", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "신규 매월 23일~말일 · 인터넷 09:00~24:00 · 선착순", "전화": "031-725-7120", "지역": "성남"}, {"시설": "성남종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/23 10시에 열림", "대상": "성남 시민 9/23부터 · 다른 지역은 9/27부터", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "선착순 · 인터넷 또는 방문", "전화": "031-754-3100", "지역": "성남"}, {"시설": "판교스포츠센터 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/24에 열림", "대상": "관내·관외 날짜 다름", "방식": "온라인", "시작": "2026-09-24", "마감": "2026-09-30", "비고": "선착순 · 신청 뒤 48시간 안에 결제", "전화": "031-724-4660", "지역": "성남"}];
   // ── 화면
-  var secs=["s-idle","s-list","s-confirm","s-progress","s-code","s-result","s-info"];
-  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
+  var secs=["s-idle","s-list","s-confirm","s-progress","s-ask","s-code","s-result","s-info"];
+  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-ask":"여쭤볼게요","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
   function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});$("crumb").textContent=crumbs[id]||"";window.scrollTo(0,0)}
   // ── 목소리
   var stopBtn=$("stopsay");
@@ -276,12 +291,46 @@ input.txt::placeholder{color:var(--mute)}
     show("s-list");
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
+  // ── 가입에 필요한 것 — 한 번 말해 두면 폰에 남는다 (주민번호 뒷자리·비밀번호는 안 받는다)
+  var PROFILE=(function(){try{return JSON.parse(localStorage.getItem("cbdr_profile")||"{}")}catch(e){return {}}})();
+  function saveProfile(){ try{localStorage.setItem("cbdr_profile",JSON.stringify(PROFILE))}catch(e){} }
+  var QS=[
+    {k:"생년월일",title:"생년월일을<br>말해 주세요",lead:"예를 들어 「천구백육십년 삼월 오일」",say:"생년월일을 말해 주세요. 예를 들어, 천구백육십년 삼월 오일.",parse:function(t){ var m=t.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일?/); if(m){ var y=m[1].length===4?m[1].slice(2):m[1]; return y+("0"+m[2]).slice(-2)+("0"+m[3]).slice(-2); } var d=toDigits(t); if(d.length===8) return d.slice(2); if(d.length===6) return d; return null; },show:function(v){ return (v.slice(0,2)<"30"?"20":"19")+v.slice(0,2)+"년 "+(+v.slice(2,4))+"월 "+(+v.slice(4,6))+"일"; }},
+    {k:"성별",title:"여자세요,<br>남자세요?",lead:"「여자」 또는 「남자」",say:"여자세요, 남자세요?",parse:function(t){ t=t.replace(/\s+/g,""); if(/여|녀/.test(t)) return "여"; if(/남/.test(t)) return "남"; return null; },show:function(v){return v==="여"?"여자":"남자"}},
+    {k:"통신사",title:"휴대폰 통신사가<br>어디예요?",lead:"SK · KT · LG 중에 말해 주세요. 알뜰폰이면 「알뜰폰」",say:"휴대폰 통신사가 어디예요? 에스케이, 케이티, 엘지 중에 말해 주세요.",parse:function(t){ t=t.replace(/\s+/g,"").toUpperCase(); var m=/알뜰/.test(t)?" 알뜰폰":""; if(/SK|에스케이|스케이|SKT|티월드/.test(t)) return "SKT"+m; if(/KT|케이티|올레/.test(t)) return "KT"+m; if(/LG|엘지|유플|U\+/.test(t)) return "LG U+"+m; if(m) return null; return null; },show:function(v){return v}},
+    {k:"전화번호",title:"휴대폰 번호를<br>말해 주세요",lead:"「공일공 …」 하고 숫자 열한 개",say:"휴대폰 번호를 말해 주세요.",parse:function(t){ var d=toDigits(t); return (d.length===11&&d.slice(0,3)==="010")?d:null; },show:function(v){return v.slice(0,3)+"-"+v.slice(3,7)+"-"+v.slice(7)}}
+  ];
+  var askQ=null, askVal=null, askDone=null;
+  function ask(q,done){ askQ=q; askVal=null; askDone=done; $("asktitle").innerHTML=q.title; $("asklead").textContent=q.lead||""; $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; $("asktypewrap").hidden=true; $("asktyped").value=""; show("s-ask"); speak(q.say||q.title.replace(/<br>/g," ")); }
+  function askGot(text){
+    var v=askQ.parse?askQ.parse(text):text.trim();
+    if(!v){ $("askheard").textContent="“"+text+"”"; $("askok").hidden=true; $("askagain").hidden=true; speak("잘 못 알아들었어요. 다시 말씀해 주세요."); return; }
+    askVal=v; var shown=askQ.show?askQ.show(v):v; $("askheard").textContent=shown; $("askok").hidden=false; $("askagain").hidden=false; speak(shown+", 맞아요?");
+  }
+  $("askok").addEventListener("click",function(){ shutUp(); var d=askDone; askDone=null; if(d) d(askVal); });
+  $("askagain").addEventListener("click",function(){ shutUp(); $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; speak(askQ.say||""); });
+  function askAll(qs,i,done){ if(i>=qs.length){ done(); return; } var q=qs[i]; if(PROFILE[q.k]){ askAll(qs,i+1,done); return; } ask(q,function(v){ PROFILE[q.k]=v; saveProfile(); askAll(qs,i+1,done); }); }
+  var rec3=null, listening3=false;
+  function initRec3(){ var S=window.SpeechRecognition||window.webkitSpeechRecognition; if(!S||rec3) return; rec3=new S(); rec3.lang="ko-KR"; rec3.interimResults=true; rec3.continuous=false;
+    rec3.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; $("askheard").textContent="“"+(s||"…")+"”"; if(e.results[e.results.length-1].isFinal){ stop3(); askGot(s); } };
+    rec3.onerror=function(e){ stop3(); if(e.error==="not-allowed"){ $("asklead").textContent="마이크를 못 열었어요. 아래에 적어 주세요"; $("asktotype").click(); } else { $("miclabel3").textContent="다시 눌러요"; } };
+    rec3.onend=function(){ if(listening3) stop3(); };
+  }
+  function start3(){ initRec3(); if(!rec3){ $("asktotype").click(); return; } shutUp(); try{ rec3.start(); listening3=true; $("micwrap3").classList.add("listening"); $("miclabel3").textContent="듣는 중"; }catch(e){} }
+  function stop3(){ listening3=false; $("micwrap3").classList.remove("listening"); $("miclabel3").textContent="말하기"; try{rec3&&rec3.stop()}catch(e){} }
+  $("mic3").addEventListener("click",function(){ if(listening3) stop3(); else start3(); });
+  $("asktotype").addEventListener("click",function(){ $("asktypewrap").hidden=false; $("asktyped").focus(); });
+  $("asktyped").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=$("asktyped").value.trim(); if(v) askGot(v); } });
   function joinConfirm(raw){
     var t=(raw||"").replace(/\s+/g,"");
     var org=/광교|수원|영통|이의동/.test(t)?"수원도시공사":(/성남|분당|탄천|판교|야탑/.test(t)?"성남도시개발공사":"전주시설공단");
     cur={type:"회원가입",raw:raw||"",사람:NAME,시설:org,종목:"",반:"회원가입",시간:""};
-    $("formtitle").textContent=org+" 회원가입"; $("f-name").textContent=NAME; $("f-class").textContent="회원가입 (본인 확인 한 번)"; $("f-time").textContent="문자로 온 숫자를 읽어 주시면 돼요";
-    $("confnote").textContent=""; show("s-confirm"); speak(org+" 회원가입 할게요. 중간에 문자로 숫자가 오면 읽어 주셔야 해요. 맞아요?");
+    var need=QS.filter(function(q){return !PROFILE[q.k]});
+    if(need.length) speak("네, "+org+" 회원가입 하려면 몇 가지 여쭤볼게요.");
+    askAll(QS,0,function(){
+      $("formtitle").textContent=org+" 회원가입"; $("f-name").textContent=NAME; $("f-class").textContent=QS[0].show(PROFILE.생년월일)+" · "+QS[1].show(PROFILE.성별)+" · "+PROFILE.통신사; $("f-time").textContent=QS[3].show(PROFILE.전화번호);
+      $("confnote").textContent="문자로 숫자가 오면 읽어 주셔야 해요"; show("s-confirm"); speak(org+" 회원가입 할게요. "+NAME+", "+QS[0].show(PROFILE.생년월일)+", "+PROFILE.통신사+", "+PROFILE.전화번호.split("").join(" ")+". 맞아요?");
+    });
   }
   function heard(text){
     shutUp();
@@ -319,7 +368,7 @@ input.txt::placeholder{color:var(--mute)}
   $("totype").addEventListener("click",toType);
   $("typedok").addEventListener("click",function(){ var v=$("typed").value.trim(); if(v){ $("ex1").hidden=false; $("ex1").textContent="“"+v+"”"; heard(v); } });
   $("typed").addEventListener("keydown",function(e){ if(e.key==="Enter") $("typedok").click(); });
-  $("no").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
+  $("no").addEventListener("click",function(){ shutUp(); if(cur&&cur.type==="회원가입"){ PROFILE={}; saveProfile(); joinConfirm(cur.raw); return; } resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
   $("infook").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
   $("infocall").addEventListener("click",function(){ if(this.dataset.tel) location.href="tel:"+this.dataset.tel; });
   $("reset").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
@@ -366,6 +415,23 @@ input.txt::placeholder{color:var(--mute)}
   // ── 사무실 연결 (ntfy 공개 중계 · 주소는 무작위 · 개인정보 최소)
   var REQ="cbdr-req-0e0b6b7df99c5db4", RES="cbdr-res-db09565ac6f83574", NT="https://ntfy.sh/";
   function post(o){ o.사람=NAME; o.시각=new Date().toISOString(); return fetch(NT+REQ,{method:"POST",body:JSON.stringify(o),headers:{"Content-Type":"text/plain"}}); }
+  // 서버가 묻는 것: 인증번호는 숫자 화면, 그 밖은 말하기 화면. 답은 {type:"답",항목,값}
+  function handleAsk(d){
+    if(!cur) cur={type:"회원가입",시설:d.시설||"",반:"회원가입"};
+    if(d.항목==="인증번호"){ renderSteps("인증번호",d.메모); showCode(d.결과); return; }
+    ask({k:d.항목,title:d.제목||(d.항목+"을<br>말해 주세요"),lead:d.메모||"",say:d.결과||""},function(v){ post({type:"답",항목:d.항목,값:v}).then(function(){ show("s-progress"); renderSteps(d.상태2||"진행중2",d.항목+" 보냈어요. 이어서 하고 있어요"); speak("보냈어요. 잠깐만요."); }); });
+  }
+  // 앱을 닫았다 열면: 최근 2시간 마지막 메시지로 화면 복구
+  function restore(){
+    fetch(NT+RES+"/json?poll=1&since=2h").then(function(r){return r.text()}).then(function(t){
+      var last=null; t.split("\n").forEach(function(l){ try{ var m=JSON.parse(l); if(m.event==="message"){ var d=JSON.parse(m.message); if(d.상태) last=d; } }catch(e){} });
+      if(!last||!last.상태||last.상태==="완료") return;
+      if(!cur) cur={type:(last.종류||"회원가입"),시설:last.시설||"",반:(last.종류==="신청"?"":"회원가입")};
+      $("proglead").textContent=(cur.시설||"")+" · "+(cur.반||""); $("watchsite").textContent=cur.시설||"";
+      show("s-progress"); renderSteps(last.상태,last.메모);
+      if(last.상태==="질문"&&last.항목) handleAsk(last);
+    }).catch(function(){});
+  }
   var es=null;
   function connect(){
     try{ es=new EventSource(NT+RES+"/sse"); }catch(e){ return; }
@@ -374,7 +440,8 @@ input.txt::placeholder{color:var(--mute)}
     es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message);
       if(d.type==="list"&&d.items){ OPEN=d.items; return; }
       if(d.type==="ring"&&d.결과){ ring(d.결과,d.메모); return; }
-      if($("s-progress").hidden&&$("s-code").hidden) return;
+      if(d.상태==="질문"&&d.항목){ handleAsk(d); return; }
+      if($("s-progress").hidden&&$("s-code").hidden&&$("s-ask").hidden) return;
       renderSteps(d.상태,d.메모);
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
@@ -390,7 +457,7 @@ input.txt::placeholder{color:var(--mute)}
       $("proglead").textContent=r.시설+" · 회원가입"; $("watchsite").textContent=r.시설+" 회원가입";
       show("s-progress"); renderSteps("요청","");
       speak("네, 가입하러 갈게요. 문자로 숫자가 오면 읽어 주세요.");
-      post({type:"회원가입",시설:r.시설,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      post({type:"회원가입",시설:r.시설,원문:r.raw,이름:NAME,생년월일:PROFILE.생년월일,성별:PROFILE.성별,통신사:PROFILE.통신사,전화번호:PROFILE.전화번호,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=(r.시설.indexOf("광교")>=0?"수원도시공사 예약결제":(/탄천|판교|성남/.test(r.시설)?"성남도시개발공사 체육시설":"전주시설공단 통합예약"));
@@ -398,7 +465,7 @@ input.txt::placeholder{color:var(--mute)}
     speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
     post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
   });
-  connect();
+  connect(); restore();
 })();
 </script>
 </body></html>
