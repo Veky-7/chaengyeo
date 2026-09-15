@@ -364,6 +364,15 @@ input.txt::placeholder{color:var(--mute)}
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
     if(/결과|당첨|추첨|떨어|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
+    if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
+      var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
+      if(!q.시설&&/광교|수원/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="수원"&&o.구조});
+      if(!q.시설&&/성남|분당/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="성남"&&o.구조});
+      if(!q.시설&&/전주/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="전주"&&o.구조});
+      var pick=cands.filter(function(o){return !q.종목||o.종목===q.종목})[0]||cands[0];
+      if(pick){ info(pick.시설+" "+(pick.종목||"")+" 안내예요. "+pick.구조, pick.전화); return; }
+      info("그 공지는 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"공지읽기",원문:text}); return;
+    }
     if(/가입|회원|아이디/.test(t0)){ joinConfirm(text); return; }
     if(isFind(text)){
       REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
