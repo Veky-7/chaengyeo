@@ -166,6 +166,21 @@ input.txt::placeholder{color:var(--mute)}
     <button class="link" id="reset" type="button">처음으로</button>
   </section>
 
+  <!-- 본인 확인: 문자로 온 숫자 말하기 (회원가입) -->
+  <section class="screen" id="s-code" hidden>
+    <h1 class="pen">문자로 온<br>숫자를 말해 주세요</h1>
+    <div class="lead" id="codelead">본인 확인 문자가 왔어요. 거기 있는 숫자 여섯 개예요</div>
+    <div class="micwrap" id="micwrap2">
+      <button class="mic" id="mic2" type="button" aria-label="숫자 말하기"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel2">말하기</span></button>
+    </div>
+    <div class="sheet" style="transform:rotate(.5deg)"><div class="dog"></div>
+      <div class="say pen" id="codeheard" style="font-size:46px;letter-spacing:.16em;text-align:center">— — — — — —</div>
+      <div id="codetypewrap" hidden><input class="txt" id="codetyped" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="숫자 여섯 개"></div>
+    </div>
+    <div class="btns"><button class="btn" id="codeok" type="button" hidden>이 숫자 보내기</button></div>
+    <button class="link" id="codetotype" type="button">말하기가 안 되면 숫자 적기</button>
+  </section>
+
   <!-- 4 결과 -->
   <section class="screen" id="s-result" hidden>
     <img class="env" src="assets/envelope_open.jpg" alt="">
@@ -208,8 +223,8 @@ input.txt::placeholder{color:var(--mute)}
   // ── 지금 열려 있는 것 (아이디어팀이 공단 공지를 읽어 넣음 · 2026-09-14 밤)
   var OPEN=[{"대상": "만 65세 이상", "마감": "2026-09-16", "반": "신규 실버반", "방식": "온라인", "비고": "추첨 9/17 10시 · 당첨되면 9/17~18 에코체육센터 직접 등록", "시간": "화·목·금 오후 2시~2시50분 · 10월 1일 시작", "시설": "에코체육센터", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "서신동 국민체육센터", "마감": "2026-09-17", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/18 10시 · 등록 9/18~19 직접", "시간": "월·수·금 오후 2시 (또는 오전 10시 · 화목금 10시50분) · 10월 시작", "시설": "도내기샘수영장", "시작": "2026-09-16", "종목": "수영 강습", "지역": "전주"}, {"대상": "", "마감": "2026-09-16", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/17 10시 · 등록 9/17~18 직접", "시간": "화·목·금 저녁 6시50분~7시40분 · 10월 1일 시작", "시설": "덕진수영장", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주"}, {"대상": "부양벨트 필요", "마감": "2026-09-15", "반": "아쿠아로빅", "방식": "방문", "비고": "10월 회차는 공지 전", "시간": "월·수·금 오후 1시30분 · 지금 하는 회차 9/16~10/14", "시설": "덕진수영장", "시작": "2026-09-14", "안내": "평일 저녁 7시 전에 안내실로. 선착순이에요.", "전화": "063-239-2650", "종목": "아쿠아로빅", "지역": "전주"}, {"대상": "수원시 밖 사람도 돼요 · 선착순", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "온라인", "비고": "9/29~30 06:00~21:00 온라인 또는 방문 · 수원시민 우선은 9/28 방문만 · 10/1~11 수영장 휴장", "시간": "오전·저녁·아쿠아로빅 등 (반 목록은 9/29에 열림)", "시설": "광교웰빙국민체육센터", "시작": "2026-09-29", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원"}, {"시설": "탄천종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 한 달 단위 · 반 목록은 9/23에 열림", "대상": "기초~상급은 대기 접수", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "신규 매월 23일~말일 · 인터넷 09:00~24:00 · 선착순", "전화": "031-725-7120", "지역": "성남"}, {"시설": "성남종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/23 10시에 열림", "대상": "성남 시민 9/23부터 · 다른 지역은 9/27부터", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "선착순 · 인터넷 또는 방문", "전화": "031-754-3100", "지역": "성남"}, {"시설": "판교스포츠센터 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/24에 열림", "대상": "관내·관외 날짜 다름", "방식": "온라인", "시작": "2026-09-24", "마감": "2026-09-30", "비고": "선착순 · 신청 뒤 48시간 안에 결제", "전화": "031-724-4660", "지역": "성남"}];
   // ── 화면
-  var secs=["s-idle","s-list","s-confirm","s-progress","s-result","s-info"];
-  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-result":"결과","s-info":"안내"};
+  var secs=["s-idle","s-list","s-confirm","s-progress","s-code","s-result","s-info"];
+  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
   function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});$("crumb").textContent=crumbs[id]||"";window.scrollTo(0,0)}
   // ── 목소리
   var stopBtn=$("stopsay");
@@ -258,8 +273,14 @@ input.txt::placeholder{color:var(--mute)}
     show("s-list");
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
+  function joinConfirm(raw){
+    cur={type:"회원가입",raw:raw||"",사람:NAME,시설:"전주시설공단",종목:"",반:"회원가입",시간:""};
+    $("formtitle").textContent="전주시설공단 회원가입"; $("f-name").textContent=NAME; $("f-class").textContent="회원가입 (본인 확인 한 번)"; $("f-time").textContent="문자로 온 숫자를 읽어 주시면 돼요";
+    $("confnote").textContent=""; show("s-confirm"); speak("전주시설공단 회원가입 할게요. 중간에 문자로 숫자가 오면 읽어 주셔야 해요. 맞아요?");
+  }
   function heard(text){
     shutUp();
+    if(/가입|회원|아이디/.test((text||"").replace(/\s+/g,""))){ joinConfirm(text); return; }
     if(isFind(text)){
       REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
       var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
@@ -306,12 +327,37 @@ input.txt::placeholder{color:var(--mute)}
   $("callclose").addEventListener("click",function(){ shutUp(); $("call").hidden=true; });
   // ── 진행 단계
   var STEPS=[["강좌를 찾았어요","진행중"],["신청서를 쓰고 있어요","진행중2"],["보내기 전에 자녀가 한 번 확인","제출"],["접수 완료","완료"]];
-  var ORDER=["요청","진행중","진행중2","제출","완료"];
+  var STEPS_JOIN=[["약관에 동의했어요","진행중"],["본인 확인 — 문자 숫자를 읽어 주세요","인증번호"],["아이디를 만들고 있어요","진행중2"],["가입 완료","완료"]];
+  var NOTES={"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"자녀가 확인하고 있어요","완료":"접수 내역을 확인했어요"};
+  var NOTES_JOIN={"요청":"회원가입 화면을 열고 있어요…","진행중":"약관을 읽고 동의했어요","인증번호":"문자로 온 숫자를 기다려요","진행중2":"아이디와 비밀번호를 만들고 있어요","완료":"회원이 됐어요"};
+  function isJoin(){ return !!(cur&&cur.type==="회원가입"); }
   function renderSteps(state,note){
-    var idx=ORDER.indexOf(state);
-    $("steps").innerHTML=STEPS.map(function(s){var k=ORDER.indexOf(s[1]);var cls=k<idx?"done":(k===idx?"now":"");if(state==="요청"&&k===1)cls="now";if(state==="완료")cls="done";return '<div class="step '+cls+'"><span class="box"></span><span>'+s[0]+'</span></div>'}).join("");
-    $("watchnote").textContent=note||({"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"자녀가 확인하고 있어요","완료":"접수 내역을 확인했어요"}[state]||"");
+    var steps=isJoin()?STEPS_JOIN:STEPS, notes=isJoin()?NOTES_JOIN:NOTES;
+    var order=["요청"].concat(steps.map(function(s){return s[1]}));
+    var idx=order.indexOf(state);
+    $("steps").innerHTML=steps.map(function(s){var k=order.indexOf(s[1]);var cls=k<idx?"done":(k===idx?"now":"");if(state==="요청"&&k===1)cls="now";if(state==="완료")cls="done";return '<div class="step '+cls+'"><span class="box"></span><span>'+s[0]+'</span></div>'}).join("");
+    $("watchnote").textContent=note||notes[state]||"";
   }
+  // ── 문자 인증번호 말하기 (회원가입 본인 확인)
+  function toDigits(s){ return (s||"").replace(/공|영/g,"0").replace(/일|하나/g,"1").replace(/이|둘/g,"2").replace(/삼|셋/g,"3").replace(/사|넷/g,"4").replace(/오|다섯/g,"5").replace(/육|륙|여섯/g,"6").replace(/칠|일곱/g,"7").replace(/팔|여덟/g,"8").replace(/구|아홉/g,"9").replace(/[^0-9]/g,""); }
+  function showCode(msg){ $("codeheard").textContent="— — — — — —"; $("codeok").hidden=true; $("codetyped").value=""; show("s-code"); speak(msg||"본인 확인 문자가 왔어요. 말하기를 누르고, 문자에 있는 숫자 여섯 개를 읽어 주세요."); }
+  function sendCode(code){
+    code=toDigits(code).slice(0,6); if(code.length<6){ speak("숫자가 여섯 개가 아니에요. 다시 읽어 주세요."); return; }
+    $("codeheard").textContent=code.split("").join(" ");
+    post({type:"인증번호",값:code}).then(function(x){ if(!x.ok) throw 0; show("s-progress"); renderSteps("인증번호","숫자 "+code.split("").join(" ")+" 보냈어요. 확인 중이에요"); speak(code.split("").join(", ")+". 보냈어요. 잠깐만요."); }).catch(function(){ speak("잠깐 연결이 안 됐어요. 다시 눌러 주세요."); });
+  }
+  var rec2=null, listening2=false;
+  if(SR){ rec2=new SR(); rec2.lang="ko-KR"; rec2.interimResults=true; rec2.continuous=false;
+    rec2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; var d=toDigits(s); $("codeheard").textContent=(d||"…").split("").join(" "); if(e.results[e.results.length-1].isFinal){ stop2(); if(d.length>=6) sendCode(d); else { $("codeok").hidden=true; speak("숫자 여섯 개가 다 안 들렸어요. 다시 눌러서 읽어 주세요."); } } };
+    rec2.onerror=function(e){ stop2(); if(e.error==="not-allowed"){ $("codelead").textContent="마이크를 못 열었어요. 아래에 숫자를 적어 주세요"; $("codetotype").click(); } else { $("miclabel2").textContent="다시 눌러요"; } };
+    rec2.onend=function(){ if(listening2) stop2(); };
+  }
+  function start2(){ if(!rec2){ $("codetotype").click(); return; } shutUp(); try{ rec2.start(); listening2=true; $("micwrap2").classList.add("listening"); $("miclabel2").textContent="듣는 중"; }catch(e){} }
+  function stop2(){ listening2=false; $("micwrap2").classList.remove("listening"); $("miclabel2").textContent="말하기"; try{rec2&&rec2.stop()}catch(e){} }
+  $("mic2").addEventListener("click",function(){ if(listening2) stop2(); else start2(); });
+  $("codetotype").addEventListener("click",function(){ $("codetypewrap").hidden=false; $("codeok").hidden=false; $("codetyped").focus(); });
+  $("codeok").addEventListener("click",function(){ sendCode($("codetyped").value); });
+  $("codetyped").addEventListener("keydown",function(e){ if(e.key==="Enter") $("codeok").click(); });
   // ── 사무실 연결 (ntfy 공개 중계 · 주소는 무작위 · 개인정보 최소)
   var REQ="cbdr-req-0e0b6b7df99c5db4", RES="cbdr-res-db09565ac6f83574", NT="https://ntfy.sh/";
   function post(o){ o.사람=NAME; o.시각=new Date().toISOString(); return fetch(NT+REQ,{method:"POST",body:JSON.stringify(o),headers:{"Content-Type":"text/plain"}}); }
@@ -323,14 +369,25 @@ input.txt::placeholder{color:var(--mute)}
     es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message);
       if(d.type==="list"&&d.items){ OPEN=d.items; return; }
       if(d.type==="ring"&&d.결과){ ring(d.결과,d.메모); return; }
-      if($("s-progress").hidden) return;
+      if($("s-progress").hidden&&$("s-code").hidden) return;
       renderSteps(d.상태,d.메모);
-      if(d.상태==="완료"&&d.결과){ $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; ring(d.결과,d.메모); show("s-result"); }
+      if(d.상태==="인증번호"){ showCode(d.결과); return; }
+      if(d.상태==="완료"&&d.결과){
+        if(isJoin()){ $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent="전주시설공단 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
+        else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }
+        ring(d.결과,d.메모); show("s-result"); }
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
     }catch(e){} };
   }
   $("yes").addEventListener("click",function(){
     var r=cur; if(!r) return; shutUp();
+    if(r.type==="회원가입"){
+      $("proglead").textContent="전주시설공단 · 회원가입"; $("watchsite").textContent="전주시설공단 회원가입";
+      show("s-progress"); renderSteps("요청","");
+      speak("네, 가입하러 갈게요. 문자로 숫자가 오면 읽어 주세요.");
+      post({type:"회원가입",시설:"전주시설공단",원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      return;
+    }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=(r.시설.indexOf("광교")>=0?"수원도시공사 예약결제":(/탄천|판교|성남/.test(r.시설)?"성남도시개발공사 체육시설":"전주시설공단 통합예약"));
     show("s-progress"); renderSteps("요청","");
     speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
