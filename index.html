@@ -274,9 +274,11 @@ input.txt::placeholder{color:var(--mute)}
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
   function joinConfirm(raw){
-    cur={type:"회원가입",raw:raw||"",사람:NAME,시설:"전주시설공단",종목:"",반:"회원가입",시간:""};
-    $("formtitle").textContent="전주시설공단 회원가입"; $("f-name").textContent=NAME; $("f-class").textContent="회원가입 (본인 확인 한 번)"; $("f-time").textContent="문자로 온 숫자를 읽어 주시면 돼요";
-    $("confnote").textContent=""; show("s-confirm"); speak("전주시설공단 회원가입 할게요. 중간에 문자로 숫자가 오면 읽어 주셔야 해요. 맞아요?");
+    var t=(raw||"").replace(/\s+/g,"");
+    var org=/광교|수원|영통|이의동/.test(t)?"수원도시공사":(/성남|분당|탄천|판교|야탑/.test(t)?"성남도시개발공사":"전주시설공단");
+    cur={type:"회원가입",raw:raw||"",사람:NAME,시설:org,종목:"",반:"회원가입",시간:""};
+    $("formtitle").textContent=org+" 회원가입"; $("f-name").textContent=NAME; $("f-class").textContent="회원가입 (본인 확인 한 번)"; $("f-time").textContent="문자로 온 숫자를 읽어 주시면 돼요";
+    $("confnote").textContent=""; show("s-confirm"); speak(org+" 회원가입 할게요. 중간에 문자로 숫자가 오면 읽어 주셔야 해요. 맞아요?");
   }
   function heard(text){
     shutUp();
@@ -373,7 +375,7 @@ input.txt::placeholder{color:var(--mute)}
       renderSteps(d.상태,d.메모);
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
-        if(isJoin()){ $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent="전주시설공단 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
+        if(isJoin()){ $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
         else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }
         ring(d.결과,d.메모); show("s-result"); }
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
@@ -382,10 +384,10 @@ input.txt::placeholder{color:var(--mute)}
   $("yes").addEventListener("click",function(){
     var r=cur; if(!r) return; shutUp();
     if(r.type==="회원가입"){
-      $("proglead").textContent="전주시설공단 · 회원가입"; $("watchsite").textContent="전주시설공단 회원가입";
+      $("proglead").textContent=r.시설+" · 회원가입"; $("watchsite").textContent=r.시설+" 회원가입";
       show("s-progress"); renderSteps("요청","");
       speak("네, 가입하러 갈게요. 문자로 숫자가 오면 읽어 주세요.");
-      post({type:"회원가입",시설:"전주시설공단",원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      post({type:"회원가입",시설:r.시설,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=(r.시설.indexOf("광교")>=0?"수원도시공사 예약결제":(/탄천|판교|성남/.test(r.시설)?"성남도시개발공사 체육시설":"전주시설공단 통합예약"));
