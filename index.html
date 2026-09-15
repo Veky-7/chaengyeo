@@ -346,9 +346,9 @@ input.txt::placeholder{color:var(--mute)}
     if(isFind(text)){
       REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
       var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
-      if(sport){ info(sport+"은 아직 안 찾아봤어요. 제가 찾아보고, 신청할 수 있는 게 있으면 전화로 알려드릴게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
+      if(sport){ info(sport+"은 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
       var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
-      if(other){ info(other+" 수영장은 아직 안 찾아봤어요. 제가 찾아보고, 신청할 수 있는 게 있으면 전화로 알려드릴게요."); post({type:"찾기요청",지역:other,원문:text}); return; }
+      if(other){ info(other+" 수영장은 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"찾기요청",지역:other,원문:text}); return; }
       showList(); return;
     }
     var r=parse(text);
