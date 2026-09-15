@@ -277,6 +277,7 @@ input.txt::placeholder{color:var(--mute)}
   var cur=null;
   function info(msg,tel){ $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
   function confirmWith(o,extra){
+    if(!isMember(o.시설)){ speak(o.시설+"은 "+orgOf(o.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((o.raw||"")+" "+o.시설+" 가입"); return; }
     cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
     $("formtitle").textContent=o.시설+" "+o.반+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=o.반; $("f-time").textContent=(o.시간||"").split(" · ")[0].trim()||"—";
     document.getElementById("confnote").textContent=extra||""; show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. "+(extra||"")+" 맞아요?");
@@ -287,12 +288,19 @@ input.txt::placeholder{color:var(--mute)}
     if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
     $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(REGION?REGION+" · ":"")+items.length+"개 — 누르면 그걸로 신청할게요";
     $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(o.방식==="온라인"?"":"visit")+'">'+(o.방식==="온라인"?"인터넷":"직접 가요")+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+o.시간+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
-    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+" 창구에서 회원인지 물어보니, 가입은 제가 미리 해 둘게요.",o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
+    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+visitLine(o.시설),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
     show("s-list");
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
   // ── 가입에 필요한 것 — 한 번 말해 두면 폰에 남는다 (주민번호 뒷자리·비밀번호는 안 받는다)
   var PROFILE=(function(){try{return JSON.parse(localStorage.getItem("cbdr_profile")||"{}")}catch(e){return {}}})();
+  // ── 누가 어느 공단 회원인지 (실측: 김현순 = 전주 8/28 · 정이서 = 수원 9/15). 가입이 끝나면 자동으로 늘어난다
+  var MEMBER0={"김현순":["전주시설공단"],"정이서":["수원도시공사"]};
+  var MEMBER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_member")||"[]")}catch(e){return []}})().concat(MEMBER0[NAME]||[]);
+  function orgOf(fac){ fac=fac||""; if(/광교|수원/.test(fac)) return "수원도시공사"; if(/탄천|성남|판교/.test(fac)) return "성남도시개발공사"; return "전주시설공단"; }
+  function isMember(fac){ return MEMBER.indexOf(orgOf(fac))>=0; }
+  function addMember(org){ if(MEMBER.indexOf(org)<0){ MEMBER.push(org); try{localStorage.setItem("cbdr_member",JSON.stringify(MEMBER))}catch(e){} } }
+  function visitLine(fac){ return isMember(fac)?" 회원가입은 이미 돼 있으니, 창구에서 신청만 하시면 돼요.":" 창구에서도 회원인지 물어봐요. 가입이 아직 안 돼 있으니, 「가입해 줘」 하시면 제가 먼저 해 둘게요."; }
   function saveProfile(){ try{localStorage.setItem("cbdr_profile",JSON.stringify(PROFILE))}catch(e){} }
   var QS=[
     {k:"생년월일",title:"생년월일을<br>말해 주세요",lead:"예를 들어 「천구백육십년 삼월 오일」",say:"생년월일을 말해 주세요. 예를 들어, 천구백육십년 삼월 오일.",parse:function(t){ var m=t.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일?/); if(m){ var y=m[1].length===4?m[1].slice(2):m[1]; return y+("0"+m[2]).slice(-2)+("0"+m[3]).slice(-2); } var d=toDigits(t); if(d.length===8) return d.slice(2); if(d.length===6) return d; return null; },show:function(v){ return (v.slice(0,2)<"30"?"20":"19")+v.slice(0,2)+"년 "+(+v.slice(2,4))+"월 "+(+v.slice(4,6))+"일"; }},
@@ -345,7 +353,7 @@ input.txt::placeholder{color:var(--mute)}
     }
     var r=parse(text);
     if(!r.시설&&!r.종목){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
-    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요.")+" 창구에서 회원인지 물어보니, 가입은 제가 미리 해 둘게요.", aq&&aq.전화||"063-239-2650"); return; }
+    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요.")+visitLine(aq?aq.시설:"덕진수영장"), aq&&aq.전화||"063-239-2650"); return; }
     if(!r.시설) r.시설="에코체육센터";
     var o=item(r);
     if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
@@ -447,7 +455,7 @@ input.txt::placeholder{color:var(--mute)}
       renderSteps(d.상태,d.메모);
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
-        if(isJoin()){ $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
+        if(isJoin()){ addMember(cur.시설); $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
         else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }
         ring(d.결과,d.메모); show("s-result"); }
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
