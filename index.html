@@ -424,7 +424,7 @@ input.txt::placeholder{color:var(--mute)}
   // 앱을 닫았다 열면: 최근 2시간 마지막 메시지로 화면 복구
   function restore(){
     fetch(NT+RES+"/json?poll=1&since=2h").then(function(r){return r.text()}).then(function(t){
-      var last=null, lastT=0; t.split("\n").forEach(function(l){ try{ var m=JSON.parse(l); if(m.event==="message"){ var d=JSON.parse(m.message); if(d.상태){ last=d; lastT=m.time; } } }catch(e){} });
+      var last=null, lastT=0; t.split("\n").forEach(function(l){ try{ var m=JSON.parse(l); if(m.event==="message"){ var d=JSON.parse(m.message); if(d.상태&&!(d.받는사람&&d.받는사람!==NAME)){ last=d; lastT=m.time; } } }catch(e){} });
       if(!last||!last.상태) return;
       if(["진행중","진행중2","제출","인증번호","질문"].indexOf(last.상태)<0) return;
       if(Date.now()/1000-lastT>20*60) return;
@@ -439,7 +439,7 @@ input.txt::placeholder{color:var(--mute)}
     try{ es=new EventSource(NT+RES+"/sse"); }catch(e){ return; }
     es.onopen=function(){ $("dot").classList.add("on"); };
     es.onerror=function(){ $("dot").classList.remove("on"); };
-    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message);
+    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message); if(d.받는사람&&d.받는사람!==NAME) return;
       if(d.type==="list"&&d.items){ OPEN=d.items; return; }
       if(d.type==="ring"&&d.결과){ ring(d.결과,d.메모); return; }
       if(d.상태==="질문"&&d.항목){ handleAsk(d); return; }
