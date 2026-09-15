@@ -287,7 +287,7 @@ input.txt::placeholder{color:var(--mute)}
     if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
     $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(REGION?REGION+" · ":"")+items.length+"개 — 누르면 그걸로 신청할게요";
     $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(o.방식==="온라인"?"":"visit")+'">'+(o.방식==="온라인"?"인터넷":"직접 가요")+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+o.시간+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
-    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||""),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
+    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info(o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+" 창구에서 회원인지 물어보니, 가입은 제가 미리 해 둘게요.",o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
     show("s-list");
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 신청할게요.");
   }
@@ -345,7 +345,7 @@ input.txt::placeholder{color:var(--mute)}
     }
     var r=parse(text);
     if(!r.시설&&!r.종목){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
-    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요."), aq&&aq.전화||"063-239-2650"); return; }
+    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요.")+" 창구에서 회원인지 물어보니, 가입은 제가 미리 해 둘게요.", aq&&aq.전화||"063-239-2650"); return; }
     if(!r.시설) r.시설="에코체육센터";
     var o=item(r);
     if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
