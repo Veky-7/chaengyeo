@@ -214,7 +214,7 @@ input.txt::placeholder{color:var(--mute)}
     <h1 class="pen">이건 이렇게<br>하셔야 해요</h1>
     <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
     <div class="sheet" style="transform:rotate(-.4deg)"><div class="dog"></div><div class="say pen" id="infotext" style="font-size:27px;line-height:1.35"></div></div>
-    <div class="btns"><button class="btn" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
+    <div class="btns"><button class="btn" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infoagain" type="button">다시 듣기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
   </section>
 </div>
 
@@ -248,7 +248,11 @@ input.txt::placeholder{color:var(--mute)}
   var stopBtn=$("stopsay");
   function shutUp(){try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true;}
   stopBtn.addEventListener("click",shutUp);
-  function speak(t){ try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); speechSynthesis.speak(u); stopBtn.hidden=false; }catch(e){} }
+  var LAST_SAID="";
+  function speak(t){ LAST_SAID=t; try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); setTimeout(function(){ try{ speechSynthesis.speak(u); }catch(e){} },80); stopBtn.hidden=false; }catch(e){} }
+  // 아이폰: 손가락 동작 안에서 한 번 말해 둬야 그 뒤 화면이 알아서 말할 수 있다 — 마이크·버튼 누를 때마다 연다
+  function unlockVoice(){ try{ if(speechSynthesis.speaking) return; var u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
+  document.addEventListener("click",function(ev){ if(ev.target.closest("button")) unlockVoice(); },true);
   (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ r2=null; }; r2.start(); }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) arm(); else if(r2){ try{r2.stop()}catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
   // ── 말 → 뜻
   function parse(t){
@@ -392,6 +396,7 @@ input.txt::placeholder{color:var(--mute)}
   $("typed").addEventListener("keydown",function(e){ if(e.key==="Enter") $("typedok").click(); });
   $("no").addEventListener("click",function(){ shutUp(); if(cur&&cur.type==="회원가입"){ PROFILE={}; saveProfile(); joinConfirm(cur.raw); return; } resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
   $("infook").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  $("infoagain").addEventListener("click",function(){ var t=$("infotext").textContent||LAST_SAID; try{ speechSynthesis.cancel(); }catch(e){} var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; LAST_SAID=t; u.onend=function(){stopBtn.hidden=true}; speechSynthesis.speak(u); stopBtn.hidden=false; });
   $("infocall").addEventListener("click",function(){ if(this.dataset.tel) location.href="tel:"+this.dataset.tel; });
   $("reset").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
   $("listback").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
