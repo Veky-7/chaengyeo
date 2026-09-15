@@ -424,8 +424,10 @@ input.txt::placeholder{color:var(--mute)}
   // 앱을 닫았다 열면: 최근 2시간 마지막 메시지로 화면 복구
   function restore(){
     fetch(NT+RES+"/json?poll=1&since=2h").then(function(r){return r.text()}).then(function(t){
-      var last=null; t.split("\n").forEach(function(l){ try{ var m=JSON.parse(l); if(m.event==="message"){ var d=JSON.parse(m.message); if(d.상태) last=d; } }catch(e){} });
-      if(!last||!last.상태||last.상태==="완료") return;
+      var last=null, lastT=0; t.split("\n").forEach(function(l){ try{ var m=JSON.parse(l); if(m.event==="message"){ var d=JSON.parse(m.message); if(d.상태){ last=d; lastT=m.time; } } }catch(e){} });
+      if(!last||!last.상태) return;
+      if(["진행중","진행중2","제출","인증번호","질문"].indexOf(last.상태)<0) return;
+      if(Date.now()/1000-lastT>20*60) return;
       if(!cur) cur={type:(last.종류||"회원가입"),시설:last.시설||"",반:(last.종류==="신청"?"":"회원가입")};
       $("proglead").textContent=(cur.시설||"")+" · "+(cur.반||""); $("watchsite").textContent=cur.시설||"";
       show("s-progress"); renderSteps(last.상태,last.메모);
