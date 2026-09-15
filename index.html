@@ -4,6 +4,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="theme-color" content="#EDE8DD">
+<meta name="cbdr-version" content="202609152210">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -496,6 +497,11 @@ input.txt::placeholder{color:var(--mute)}
     post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
   });
   connect(); restore();
+  // ── 새 판 확인: 서버의 판 번호가 다르면 새로 그린다 (홈 화면 앱이 옛 판을 물고 있는 문제 · 9/15)
+  var MYVER=(document.querySelector('meta[name="cbdr-version"]')||{}).content||"";
+  function checkVer(){ fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){ var m=h.match(/cbdr-version" content="(\d+)"/); if(m&&m[1]!==MYVER&&$("s-idle").hidden===false){ location.reload(); } }).catch(function(){}); }
+  setTimeout(checkVer,3000); setInterval(checkVer,60000);
+  document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible") checkVer(); });
 })();
 </script>
 </body></html>
