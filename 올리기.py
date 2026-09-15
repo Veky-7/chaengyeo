@@ -8,7 +8,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__)); os.chdir(HERE)
 msg = sys.argv[1] if len(sys.argv) > 1 else "앱 갱신"
 p = "index.html"; s = open(p, encoding="utf-8").read()
-ver = time.strftime("%Y%m%d%H%M")
+ver = time.strftime("%Y%m%d%H%M%S")
 s2, n = re.subn(r'(<meta name="cbdr-version" content=")\d+(">)', r'\g<1>' + ver + r'\g<2>', s)
 if n != 1: print("판 번호 태그가 없다 — index.html <head> 에 <meta name=\"cbdr-version\" content=\"0\"> 필요"); sys.exit(1)
 open(p, "w", encoding="utf-8").write(s2)
