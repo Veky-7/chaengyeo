@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="theme-color" content="#EDE8DD">
-<meta name="cbdr-version" content="202609152210">
+<meta name="cbdr-version" content="202609152212">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -360,7 +360,7 @@ input.txt::placeholder{color:var(--mute)}
   function heard(text){
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
-    if(/결과|당첨|추첨|떨어졌|붙었|됐어\?|됐나/.test(t0)&&!/신청해/.test(t0)){ answerResult(); return; }
+    if(/결과|당첨|추첨|떨어|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/가입|회원|아이디/.test(t0)){ joinConfirm(text); return; }
     if(isFind(text)){
       REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
