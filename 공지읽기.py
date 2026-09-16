@@ -186,9 +186,10 @@ def offer():
         who = PEOPLE.get(o.get("지역"), [])
         msg = f"{o['시설']} {o.get('반') or o.get('종목','')} 접수가 {when} 열려요. 넣어드릴까요? 「넣어 줘」 하시면 제가 바로 넣을게요."
         for name in who:
-            office.벨(msg, (o.get("구조") or "")[:120], 받는사람=name)
-            import requests as _r
+            import requests as _r   # 제안(카드)을 먼저 보내 폰이 기억하게 한 뒤 → 벨
             _r.post(office.NT + office.T["RES"], data=json.dumps({"type": "제안", "받는사람": name, "카드": o, "결과": msg}, ensure_ascii=False).encode("utf-8"), headers={"Content-Type": "text/plain"}, timeout=20)
+            time.sleep(0.5)
+            office.벨(msg, (o.get("구조") or "")[:120], 받는사람=name)
             print(f"[먼저 알림 → {name}] {msg}")
         done[key] = {"시각": dt.datetime.now().isoformat(timespec="seconds"), "받는사람": who}; n += 1
     json.dump(done, open(OFFERED, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
