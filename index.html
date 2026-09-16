@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="theme-color" content="#EDE8DD">
-<meta name="cbdr-version" content="20260915231301">
+<meta name="cbdr-version" content="20260916090123">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -388,8 +388,8 @@ input.txt::placeholder{color:var(--mute)}
     if(!r.시설) r.시설="에코체육센터";
     var o=item(r);
     if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
-    var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info(o.시설+" 신규 접수는 "+ft+"예요. 인터넷으로 돼요. 그날 제가 먼저 알려드릴게요.",o.전화); return; }
-    if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 접수는 끝났어요. 다음 달에 다시 열리면 알려드릴게요.",o.전화); return; }
+    var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+"그러니까 "+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드리고, 「넣어 줘」 하시면 바로 넣을게요.",o.전화); return; }
+    if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 이번 접수는 끝났어요. "+(o.구조?o.구조+" ":"")+"다음 달에 다시 열리면 제가 먼저 알려드릴게요.",o.전화); return; }
     o.raw=r.raw; confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":"");
   }
   // ── 음성 인식
