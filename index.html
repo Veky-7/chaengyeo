@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="theme-color" content="#EDE8DD">
-<meta name="cbdr-version" content="20260916090123">
+<meta name="cbdr-version" content="20260916152108">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -360,9 +360,13 @@ input.txt::placeholder{color:var(--mute)}
       if(done) return; done=true; clearTimeout(t); info(RESULT||NO_RESULT);
     }).catch(function(){ if(!done){ done=true; clearTimeout(t); info(NO_RESULT); } });
   }
+  var OFFER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_offer")||"null")}catch(e){return null}})();
   function heard(text){
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
+    // 서버가 먼저 「접수 열렸어요, 넣어드릴까요?」 한 뒤의 대답 — 「넣어 줘·응·네·그래·해줘」
+    if(OFFER&&/^(넣어|응|네|그래|해줘|좋아|알았|오케이|넣자)/.test(t0)&&t0.length<12){ var c=OFFER; OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} c.raw=text; confirmWith(c,""); return; }
+    if(OFFER&&/^(아니|싫|됐어|안해|나중)/.test(t0)){ OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} info("네, 안 넣을게요. 다음에 또 열리면 알려드릴게요."); return; }
     if(/결과|당첨|추첨|떨어|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
       var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
@@ -482,6 +486,7 @@ input.txt::placeholder{color:var(--mute)}
     es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message); if(d.받는사람&&d.받는사람!==NAME) return;
       if(d.type==="list"&&d.items){ OPEN=d.items; return; }
       if(d.type==="결과"){ keepResult(d); return; }
+      if(d.type==="제안"&&d.카드){ OFFER=d.카드; try{localStorage.setItem("cbdr_offer",JSON.stringify(d.카드))}catch(e){} return; }
       if(d.type==="ring"&&d.결과){ ring(d.결과,d.메모); return; }
       if(d.상태==="질문"&&d.항목){ handleAsk(d); return; }
       if($("s-progress").hidden&&$("s-code").hidden&&$("s-ask").hidden) return;
