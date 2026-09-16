@@ -179,7 +179,7 @@ def offer():
         if o.get("방식") not in ("온라인", "둘다") or not o.get("시작"): continue
         try: d0 = dt.date.fromisoformat(o["시작"]); d1 = dt.date.fromisoformat(o.get("마감") or o["시작"])
         except Exception: continue
-        if not (d0 - dt.timedelta(days=1) <= today <= d1): continue      # 내일 시작 ~ 마감 사이만
+        if d0 not in (today, today + dt.timedelta(days=1)): continue     # 오늘·내일 「새로 열리는」 것만 (이미 열려 있던 건 안 알림)
         key = f"{o['시설']}|{o.get('종목')}|{o['시작']}"
         if key in done: continue
         when = "내일" if d0 > today else ("오늘" if d0 == today else "지금")
