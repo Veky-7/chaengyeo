@@ -9,7 +9,11 @@
 AI = OpenAI(2_match.py 가 쓰던 키) · 공지 하나에 몇 원. 결과는 _공지_캐시.json 에 남긴다(원문 해시·AI 출력).
 """
 import sys, os, re, json, time, hashlib, zipfile, io, subprocess, datetime as dt
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if sys.stdout is None or sys.stderr is None:   # pythonw(창 없음)로 돌 때 — 로그 파일에 쓴다
+    _lf = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "_공지읽기_로그.txt"), "a", encoding="utf-8")
+    sys.stdout = sys.stderr = _lf
+else:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import requests
 HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(HERE, "_공지_캐시.json"); LIST = os.path.join(HERE, "목록.json")
@@ -164,9 +168,36 @@ def run(force=False):
     else: print("바뀐 공지 없음")
     return changed
 
+# ── 찾아드림: 오늘·내일 열리는 인터넷 접수를 그 지역 어르신 폰에 먼저 알린다 (기능 ① · 9/16 대표: "찾아서 알려주는 게 먼저다")
+PEOPLE = {"전주": ["김현순"], "수원": ["정이서"]}          # 지역 → 폰 이름 (본선: 프로필 DB)
+OFFERED = os.path.join(HERE, "_알림_기록.json")
+def offer():
+    cur = json.load(open(LIST, encoding="utf-8")) if os.path.exists(LIST) else []
+    done = json.load(open(OFFERED, encoding="utf-8")) if os.path.exists(OFFERED) else {}
+    today = dt.date.today(); n = 0
+    for o in cur:
+        if o.get("방식") not in ("온라인", "둘다") or not o.get("시작"): continue
+        try: d0 = dt.date.fromisoformat(o["시작"]); d1 = dt.date.fromisoformat(o.get("마감") or o["시작"])
+        except Exception: continue
+        if not (d0 - dt.timedelta(days=1) <= today <= d1): continue      # 내일 시작 ~ 마감 사이만
+        key = f"{o['시설']}|{o.get('종목')}|{o['시작']}"
+        if key in done: continue
+        when = "내일" if d0 > today else ("오늘" if d0 == today else "지금")
+        who = PEOPLE.get(o.get("지역"), [])
+        msg = f"{o['시설']} {o.get('반') or o.get('종목','')} 접수가 {when} 열려요. 넣어드릴까요? 「넣어 줘」 하시면 제가 바로 넣을게요."
+        for name in who:
+            office.벨(msg, (o.get("구조") or "")[:120], 받는사람=name)
+            import requests as _r
+            _r.post(office.NT + office.T["RES"], data=json.dumps({"type": "제안", "받는사람": name, "카드": o, "결과": msg}, ensure_ascii=False).encode("utf-8"), headers={"Content-Type": "text/plain"}, timeout=20)
+            print(f"[먼저 알림 → {name}] {msg}")
+        done[key] = {"시각": dt.datetime.now().isoformat(timespec="seconds"), "받는사람": who}; n += 1
+    json.dump(done, open(OFFERED, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    if not n: print("먼저 알릴 새 접수 없음")
+
 if __name__ == "__main__":
     a = sys.argv[1:]; cmd = a[0] if a else "한번"
-    if cmd in ("한번", "강제"): run(force=(cmd == "강제"))
+    if cmd in ("한번", "강제"): run(force=(cmd == "강제")); offer()
+    elif cmd == "알림": offer()
     elif cmd == "감시":
         last = 0
         while True:

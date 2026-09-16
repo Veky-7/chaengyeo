@@ -8,13 +8,21 @@
 계정 = _계정.json (계정저장.py 로 대표가 직접 넣음 · 깃 제외). 결과는 _결과.json 에도 남긴다.
 """
 import sys, os, json, time, re, datetime as dt
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if sys.stdout is not None: sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 HERE = os.path.dirname(os.path.abspath(__file__))
 # 작업 스케줄러로 돌 때도 기록이 남게 — 화면 출력을 파일에도 쓴다
 class _Tee:
-    def __init__(self, path): self.f = open(path, "a", encoding="utf-8"); self.o = sys.stdout
-    def write(self, x): self.o.write(x); self.f.write(x); self.f.flush()
-    def flush(self): self.o.flush(); self.f.flush()
+    def __init__(self, path): self.f = open(path, "a", encoding="utf-8"); self.o = sys.stdout   # pythonw 면 None
+    def write(self, x):
+        if self.o is not None:
+            try: self.o.write(x)
+            except Exception: pass
+        self.f.write(x); self.f.flush()
+    def flush(self):
+        if self.o is not None:
+            try: self.o.flush()
+            except Exception: pass
+        self.f.flush()
     def reconfigure(self, **k): pass   # _사무실.py 가 sys.stdout.reconfigure 를 부른다
 sys.stdout = _Tee(os.path.join(HERE, "_결과알림_로그.txt")); sys.stderr = sys.stdout
 print("=== " + __import__("datetime").datetime.now().isoformat(timespec="seconds") + " 시작 " + " ".join(sys.argv[1:]))
