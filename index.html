@@ -427,6 +427,44 @@ input.txt::placeholder{color:var(--mute)}
   // ── 목소리
   var stopBtn=$("stopsay");
 
+  // 🔴🔴 아이디·비밀번호는 **잠가서** 보낸다 — 2026-09-25
+  //     이 서비스의 핵심은 「어르신이 영어를 못 쳐서 못 하는 가입·로그인을 대신하는 것」이다.
+  //     그러려면 아이디·비밀번호가 폰에서 서버로 가야 하는데, 그 길이 ntfy 공개 중계다.
+  //     평문으로 보내면 어르신 계정이 그대로 샌다.
+  //     → 아래 공개키로 잠가서 보낸다. **서버만** 개인키로 연다(열쇠.py).
+  //     공개키는 여기 박혀 공개돼도 된다 — 잠그기만 되고 열지는 못한다.
+  var 공개키글 = "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAwrwaqsnzQzHf3FJVSr/PESm7b+khqk32oJbJ3/oblX/k39uSYEWQCRf9DGLBeEROwno8FTHimCjm4bLPu6thofCE0DuHWNWih8NCHBeBscFyj61DZi+xqLEqb9ZliogInMpxKo8m75jYjKEOzBe4JXFIACUhzkpYvzAxgarJOQDYeg6V+G+kfxCL4/v/Pw1QflI/HoHQwXYTuQ0aT1BjswZ7BhfW6M+AiCvLkxLLkxEeNleJ/vMKYxZaA6D8vGYDZbdFJOQ+DSCgL//KSwlgcP0NdGK591dNqD7pHkfKXLLfLQN5uHQjSEoZnfH19dwpOk/DbdoOvv3e6LJ7FHt/s4GGvKUx6Y5A5MCq7+gTX96FwCWdUATGN3zPtM9e8Ab/Gy2gmIyLlJLOFxgyeMt4FqwFVE1GYUzpOwc0cg2jrDRlvmyMhUoE0dYKRAF1K1x3Nvfiw0946OgdQry5Am/lVe1N+wWWt68Zue3WNyZzEuT5X8G3qx3G9BsvyNrf9ondAgMBAAE=";
+  var _공개키 = null;
+  function 열쇠준비(){
+    if(_공개키) return Promise.resolve(_공개키);
+    try{
+      var b = atob(공개키글), u = new Uint8Array(b.length);
+      for(var i=0;i<b.length;i++) u[i] = b.charCodeAt(i);
+      return crypto.subtle.importKey("spki", u.buffer,
+        {name:"RSA-OAEP", hash:"SHA-256"}, false, ["encrypt"])
+        .then(function(k){ _공개키 = k; return k; });
+    }catch(e){ return Promise.reject(e); }
+  }
+  // 값(객체)을 잠근 글자로. 실패하면 **보내지 않는다** — 평문으로 새게 두느니 안 보낸다.
+  function 잠그기(값){
+    return 열쇠준비().then(function(k){
+      var 바이트 = new TextEncoder().encode(JSON.stringify(값));
+      return crypto.subtle.encrypt({name:"RSA-OAEP"}, k, 바이트);
+    }).then(function(buf){
+      var u = new Uint8Array(buf), s2 = "";
+      for(var i=0;i<u.length;i++) s2 += String.fromCharCode(u[i]);
+      return btoa(s2);
+    });
+  }
+  // 비밀이 든 것은 이걸로만 보낸다
+  function 비밀보내기(종류, 값){
+    return 잠그기(값).then(function(c){
+      return fetch(NT+REQ,{method:"POST",
+        body:JSON.stringify({type:종류, 사람:NAME, 잠김:c, 시각:new Date().toISOString()}),
+        headers:{"Content-Type":"text/plain"}});
+    });
+  }
+
   // 🔴🔴 마이크는 브라우저가 **한 번에 하나만** 허용한다. 이 앱엔 인식기가 넷 있다
   //     (rec 질문 · rec2 인증번호 · rec3 되묻기 · r2 「그만」 듣기).
   //     2026-09-17 예선날 대표 폰에서 시연을 못 한 원인이 바로 이것이었다 —
@@ -937,7 +975,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   setTimeout(켤때, 1200);   // 수첩(목록.json)을 받은 뒤에 판단한다
 
-  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
+  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
 
 </script>
