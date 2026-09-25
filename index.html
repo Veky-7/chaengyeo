@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260916154952">
+<meta name="cbdr-version" content="20260925200310">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -66,6 +66,9 @@ h1{margin:0;font-size:clamp(48px,15vw,66px);line-height:1.05;font-weight:400;col
 .cap{position:absolute;right:-6px;bottom:-4px;width:112px;transform:rotate(6deg);mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%);mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%)}
 .foot{font-size:16px;line-height:1.45;color:var(--mute);text-align:center;margin-top:4px}
 /* 버튼 */
+.picks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+.pick{border:2px solid var(--terra);border-radius:12px;background:#fff;color:#2b2b2b;min-height:64px;padding:8px 10px;font-family:'Gowun Dodum',sans-serif;font-size:23px;font-weight:700;text-align:left;cursor:pointer}
+.pick b{color:var(--terra);margin-right:6px}
 .btn{display:flex;align-items:center;justify-content:center;width:100%;border:0;border-radius:14px;min-height:76px;padding:14px 16px;font-family:'Gowun Dodum',sans-serif;font-size:25px;font-weight:700;cursor:pointer;color:#fff;background:var(--terra);box-shadow:0 6px 0 var(--terra2),0 12px 18px rgba(0,0,0,.12);transform:rotate(-.6deg)}
 .btn:active{transform:rotate(-.6deg) translateY(4px);box-shadow:0 2px 0 var(--terra2)}
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:2px solid var(--ink);min-height:62px;font-size:21px;transform:none}
@@ -246,6 +249,7 @@ input.txt::placeholder{color:var(--mute)}
     <h1 class="pen">이건 이렇게<br>하셔야 해요</h1>
     <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
     <div class="sheet" style="transform:rotate(-.4deg)"><div class="dog"></div><div class="say pen" id="infotext" style="font-size:27px;line-height:1.35"></div></div>
+    <div class="picks" id="infopick" hidden></div>
     <div class="btns"><button class="btn" id="infomore" type="button" hidden>더 들려주세요</button><button class="btn" id="infosay" type="button">또 말할게요</button><button class="btn ghost" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infoagain" type="button">다시 듣기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
   </section>
 </div>
@@ -323,7 +327,7 @@ input.txt::placeholder{color:var(--mute)}
     var t=x&&x.다툼; if(!t) return "";
     var 칸=[]; for(var k in t){ if(t.hasOwnProperty(k)) 칸.push(k); }
     if(!칸.length) return "";
-    return " (" + 칸.join("·") + "은 안내문마다 달라요. 신청할 때 한 번 더 확인해 드릴게요)";
+    return " (" + 은는(칸.join("·")) + " 안내문마다 달라요. 신청할 때 한 번 더 확인해 드릴게요)";
   }
   function 강좌말(x){
     // 🔴 빈 칸은 「건너뛴다」. undefined·null 을 어르신 귀에 넣지 않는다.
@@ -344,6 +348,105 @@ input.txt::placeholder{color:var(--mute)}
       for(var k=0;k<별.length;k++) if(별[k]&&t.indexOf(별[k])>=0) return 시설[i].지역||내지역; }
     var 딴곳=t.match(/전주|성남|분당|용인|안양|화성|성남|고양|대구|서울|부산|인천|광주|대전|울산|세종|제주/);
     return 딴곳 ? 딴곳[0] : 내지역;
+  }
+  // 🔴🔴 2026-09-25 방향 전환 — 「어르신 거」 = 어르신맞춤 11건이 아니다. 어린이 것만 빼면 어르신이 다 신청할 수 있다.
+  //    대표: "1 배드민턴 2 수영 3 노래강습 … 이런식으로 먼저 읽어주고 번호를 고르라고 한다음 2번 이러면 수영은 이러고 저러고"
+  //    → 종목 갈래로 묶어 번호를 읽어드리고, 번호(또는 갈래 이름)를 말하면 그 갈래를 어르신반 먼저 읽는다.
+  //    갈래는 과목 이름으로만 정한다(위에서부터 먼저 걸리는 것). 안 걸리면 「배움」.
+  var 갈래표=[
+    {이름:"배드민턴", 말:/배드민턴/, 글:/배드민턴/},
+    {이름:"수영",     말:/수영|아쿠아|물운동|물에어로빅/, 글:/아쿠아|수영/},
+    {이름:"외국어",   말:/외국어|영어|일본|중국|태국어/, 글:/영어|일본어|일본|중국어|태국어|English|Writing|Speaking|CanDoIt|Talking|회화|원어민/},
+    {이름:"노래·가곡", 짧:"노래", 말:/노래|가곡|민요|팝송/, 글:/노래|가곡|민요|경기소리|팝송/},
+    {이름:"악기",     말:/악기|기타|피아노|바이올린|우쿨렐레|하모니카|오카리나|드럼|가야금|플루트|첼로/, 글:/기타|우쿨렐레|피아노|바이올린|첼로|플루트|오카리나|하모니카|드럼|가야금/},
+    {이름:"춤",       말:/춤|댄스|줌바|훌라/, 글:/댄스|줌바|훌라|재즈/},
+    {이름:"체조·요가", 짧:"체조", 말:/체조|요가|필라테스|스트레칭|자세|검도|운동|건강|마사지|경락/, 글:/요가|필라테스|바른자세|타바타|검도|경락|마사지/},   // 「건강」은 1건뿐이라 따로 번호를 주지 않는다
+    {이름:"컴퓨터·폰", 짧:"컴퓨터", 말:/컴퓨터|스마트폰|핸드폰|휴대폰|폰|엑셀|유튜브/, 글:/컴퓨터|스마트폰|엑셀|파워포인트|한글문서|캡컷|영상편집|AI/},
+    {이름:"그림·글씨", 짧:"그림", 말:/그림|미술|글씨|서예|캘리|수채화|유화|민화|사군자/, 글:/그림|화$|화\(|화[A-Z]|수채화|유화|민화|사군자|한국화|서양화|드로잉|스케치|데생|파스텔|캘리그라피|서예|아트|젠탱글|캐리커처|문인화|수묵|손글씨|추상화|인물화|아크릴/},
+    {이름:"요리",     말:/요리|음식|빵|떡|반찬|커피|제과|제빵/, 글:/떡|한과|빵|반찬|밥상|브런치|디저트|베이킹|케이크|바리스타|조리/},
+    {이름:"만들기",   말:/만들기|공예|바느질|재봉|옷|한복|미용|머리/, 글:/공예|매듭|소잉|재봉|의상|의류|옷|수선|한복|여성복|헤어|미용|컷|페브릭/}
+  ];
+  var 배움 = {이름:"배움", 말:/배움|자격증|공부|한글|한자|역사|교양/};
+  function 갈래(x){ var n=String((x&&x.과목)||"").replace(/\s+/g,"");
+    if(/수영/.test(String((x&&x.종목)||""))) return "수영";     // 수영 강습은 과목이 「고급」「마스터」뿐이라 종목으로 본다
+    for(var i=0;i<갈래표.length;i++) if(갈래표[i].글.test(n)) return 갈래표[i].이름;
+    return 배움.이름; }
+  // 어르신맞춤을 앞에, 그다음은 쉬운 반부터(입문·기초 → 초급 → 중급 → 고급·상급 → 마스터). 같은 급은 원래 순서.
+  //    수영 46개를 「상급 06시」부터 읽어드리면 안 된다.
+  function 쉬운정도(x){ var n=String((x&&x.과목)||"");
+    if(/임신부/.test(n)) return 9;
+    if(/마스터/.test(n)) return 5;
+    if(/고급|상급|연주자|실전/.test(n)) return 4;
+    if(/중급|중고급|계속/.test(n)) return 3;
+    if(/초급|초중급/.test(n)) return 2;
+    if(/입문|기초|왕초보|첫걸음|처음|시작|아쿠아/.test(n)) return 1;
+    return 2.5; }
+  function 어르신먼저(L){
+    var 붙임=L.map(function(x,i){ return {x:x, i:i, 어:(x.딱지==="어르신맞춤"?0:1), 급:쉬운정도(x)}; });
+    붙임.sort(function(a,b){ return (a.어-b.어) || (a.급-b.급) || (a.i-b.i); });
+    return 붙임.map(function(o){ return o.x; }); }
+  // 목록 → [{이름, 목록}] · 많은 순. 「배움」은 이것저것 섞여 있어 맨 뒤.
+  function 갈래나누기(L){
+    var 칸={}, 순=[];
+    L.forEach(function(x){ var g=갈래(x); if(!칸[g]){ 칸[g]=[]; 순.push(g); } 칸[g].push(x); });
+    var 짧은={}; 갈래표.forEach(function(e){ 짧은[e.이름]=e.짧||e.이름; });
+    var out=순.map(function(g){ return {이름:g, 짧:짧은[g]||g, 목록:어르신먼저(칸[g])}; });
+    out.sort(function(a,b){ if(a.이름===배움.이름) return 1; if(b.이름===배움.이름) return -1; return b.목록.length-a.목록.length; });
+    return out;
+  }
+  var 메뉴=null, 메뉴머리="";      // 마지막으로 읽어드린 갈래 번호표 [{이름, 목록}]
+  var 지금갈래=null;  // 갈래 하나를 읽는 중이면 {이름, 목록} — 이때 「2번」은 갈래가 아니라 **그 안의 2번 강좌**다(코덱스 H3 치명)
+  // 「2번」「이번」「두 번째」「둘」「2」 → 2. 번호로 안 읽히면 0.
+  function 번호(t){
+    // 🔴 조사를 떼기 전에 본다 — 「이」「십이」의 끝 「이」를 조사로 알고 지워 버렸다(코덱스 H3)
+    var 맨=String(t||"").replace(/\s+/g,"").replace(/[.?!]$/,"");
+    var 맨말={"일":1,"이":2,"삼":3,"사":4,"오":5,"육":6,"칠":7,"팔":8,"구":9,"십":10,"십일":11,"십이":12,"십삼":13,"일본":1};   // 「일번」을 「일본」으로 받아 적는다
+    if(맨말.hasOwnProperty(맨)) return 맨말[맨];
+    t=String(t||"").replace(/\s+/g,"").replace(/(이요|요|이에요|예요|이오|으로|로|할게|할래|들을래|들을게|주세요|줘|을|를|이|가)$/,"");
+    var m=t.match(/^([0-9]{1,2})(번|번째|째)?(거|것|꺼)?$/); if(m) return +m[1];
+    var 말={"일":1,"하나":1,"한":1,"첫":1,"이":2,"둘":2,"두":2,"삼":3,"셋":3,"세":3,"사":4,"넷":4,"네":4,"오":5,"다섯":5,"육":6,"여섯":6,"칠":7,"일곱":7,"팔":8,"여덟":8,"구":9,"아홉":9,"십":10,"열":10,"십일":11,"열하나":11,"열한":11,"십이":12,"열둘":12,"열두":12,"십삼":13,"열셋":13,"열세":13};
+    m=t.match(/^(열하나|열한|열둘|열두|열셋|열세|십일|십이|십삼|다섯|여섯|일곱|여덟|아홉|하나|둘|두|셋|세|넷|네|한|첫|일|이|삼|사|오|육|칠|팔|구|십|열)(번째|번|째)(거|것|꺼)?$/);
+    if(m) return 말[m[1]]||0;
+    m=t.match(/^(하나|둘|셋|넷|다섯|여섯|일곱|여덟|아홉|열|열하나|열둘|열셋)$/);   // 「둘」만 말해도
+    if(m) return 말[m[1]]||0;
+    return 0;
+  }
+  function 메뉴읽기(L, 머리){
+    메뉴=갈래나누기(L); 이어듣기=null; 지금갈래=null; 메뉴머리=머리;
+    var 말=(머리||"어르신 강좌 있어요.")+" ";
+    메뉴.forEach(function(g,i){ 말 += (i+1)+"번 "+g.짧+(i<메뉴.length-1?", ":". "); });   // 귀로는 짧게, 버튼에는 다 적는다
+    말 += "몇 번 들으실래요?";
+    info(말, "", "몇 번<br>들으실래요?");
+    var box=$("infopick"); box.innerHTML="";
+    메뉴.forEach(function(g,i){ var b=document.createElement("button"); b.type="button"; b.className="pick";
+      b.innerHTML="<b>"+(i+1)+"</b>"; b.appendChild(document.createTextNode(g.이름+" "+g.목록.length));
+      b.addEventListener("click",function(){ shutUp(); 갈래읽기(g); }); box.appendChild(b); });
+    box.hidden=false;
+  }
+  function 갈래읽기(g){
+    지금갈래=g;
+    var L=g.목록, n=Math.min(L.length,3), 어=L.filter(function(x){return x.딱지==="어르신맞춤";}).length;
+    var 말=은는(g.이름)+" "+L.length+"개 있어요. ";
+    if(어 && 어<L.length) 말 += "어르신반 "+어+"개부터 읽어드릴게요. ";
+    for(var i=0;i<n;i++) 말 += (i+1)+"번, "+강좌말(L[i])+". ";
+    if(L.length>n) 말 += "더 있어요. 아래 「더 들려주세요」를 눌러 주세요.";
+    if(메뉴) 말 += " 다른 걸 들으시려면 「다른 거」라고 말씀해 주세요.";
+    이어듣기 = (L.length>n) ? {목록:L, 다음:n, 말머리:g.이름} : null;
+    info(말, "", "이런 게<br>있어요");
+    $("infomore").hidden = !이어듣기;
+  }
+  // 갈래 안에서 번호를 고르면 그 강좌 하나를 자세히
+  function 강좌하나(x, 몇){
+    var 글=function(v){ return String(v==null?"":v).trim(); };
+    var p=[몇+"번, "+글(x.과목)];
+    var 곳=(글(x.시설)+" "+글(x.장소)).trim(); if(곳) p.push(곳);
+    var 때=(글(x.요일)+" "+글(x.시간)).trim(); if(때) p.push(때);
+    var d=돈(x); if(d){ p.push(d); if(d.indexOf("확인해")>=0) 금액숙제(x); }
+    if(글(x.정원)) p.push("정원 "+글(x.정원)+"명");
+    if(글(x.강사)) p.push(글(x.강사)+" 선생님");
+    var 말=p.join(". ")+"."+다툼말(x)+" 다른 번호를 말씀하셔도 돼요.";
+    info(말, "", "이 강좌예요");
+    $("infomore").hidden = !(이어듣기 && 이어듣기.다음<이어듣기.목록.length);
   }
   function 강좌찾기(t){
     var 지=물음지역(t);
@@ -376,13 +479,13 @@ input.txt::placeholder{color:var(--mute)}
       }
     }
     // ② 줄여 말한 경우 — 「떡과 한과 디저트」를 「떡과 한과」로 묻는다
-    var 후보=[], 최장=0;
+    var 후보=[], 최장=0, 조각말="";
     이름들.forEach(function(n){
       for(var L=n.length; L>=3; L--){                 // 세 글자 이상 겹치면 인정
         for(var st=0; st+L<=n.length; st++){
           var 조각=n.slice(st, st+L);
           if(t.indexOf(조각)>=0){
-            if(L>최장){ 최장=L; 후보=[n]; } else if(L===최장 && 후보.indexOf(n)<0){ 후보.push(n); }
+            if(L>최장){ 최장=L; 후보=[n]; 조각말=조각; } else if(L===최장 && 후보.indexOf(n)<0){ 후보.push(n); }
             return;
           }
         }
@@ -390,7 +493,8 @@ input.txt::placeholder{color:var(--mute)}
     });
     if(후보.length){
       var m2=r.filter(function(x){ return 후보.indexOf(밀(x.과목))>=0; });
-      if(m2.length) return {목록:m2, 말머리:은는(m2[0].과목)};
+      // 이름이 여럿이면 첫 강좌 이름 말고 **겹친 낱말**로 부른다(「원어민 일본어 (고급)는 9개」 → 「일본어는 9개」)
+      if(m2.length) return {목록:m2, 말머리:은는(후보.length>1 ? 조각말 : m2[0].과목)};
     }
     // 이름으로 못 찾으면 큰 분류(종목·대상)로 넓힌다
     // 수첩에 없는 종목을 물으면 「없다」고 말해야 한다 — 엉뚱한 걸 쏟아내면 안 된다
@@ -403,11 +507,17 @@ input.txt::placeholder{color:var(--mute)}
         if(!있나.length) return {목록:[], 말머리:없는것[i], 없음:없는것[i]};
       }
     }
-    if(/어르신|노인|실버|육십|칠십|65|나이|시니어/.test(t)){
-      var 어=r.filter(function(x){return x.딱지==="어르신맞춤";});
-      if(어.length) return {목록:어, 말머리:"어르신께 맞는 걸로"};
+    // 갈래 이름을 말하면(「악기 뭐 있어」「그림 배우고 싶어」) 그 갈래를 어르신반 먼저
+    var 어린이뺌=r.filter(function(x){return x.딱지!=="어린이";});
+    var 표=갈래표.concat([배움]);
+    for(var i=0;i<표.length;i++){
+      if(!표[i].말.test(t)) continue;
+      var 그갈래=어린이뺌.filter(function(x){return 갈래(x)===표[i].이름;});
+      if(그갈래.length) return {목록:어르신먼저(그갈래), 말머리:표[i].이름, 갈래:표[i].이름};
     }
-    {
+    // 🔴 「어르신 거」 = 어린이 것만 뺀 전부. 어르신맞춤 11건만 말하면 97%를 숨긴다(9/25 대표 지적).
+    if(/어르신|노인|실버|육십|칠십|65|나이|시니어/.test(t)){
+      if(어린이뺌.length) return {목록:어린이뺌, 말머리:"어르신 강좌", 메뉴:true};
     }
     var 분류=["수영","아쿠아","배드민턴","검도","댄스","요가","필라테스"];
     for(var i=0;i<분류.length;i++){
@@ -416,7 +526,7 @@ input.txt::placeholder{color:var(--mute)}
       if(m2.length) return {목록:m2, 말머리:은는(분류[i])};
       return {목록:[], 말머리:분류[i], 없음:분류[i]};
     }
-    return {목록:r.filter(function(x){return x.딱지!=="어린이";}), 말머리:"지금 신청할 수 있는 걸로"};
+    return {목록:어린이뺌, 말머리:"지금 신청할 수 있는 걸로", 메뉴:true};
   }
 
 
@@ -570,7 +680,7 @@ input.txt::placeholder{color:var(--mute)}
     info(말, "", "이어서<br>알려드려요");
     $("infomore").hidden = (끝>=L.length);
   }
-  function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
+  function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; $("infopick").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
   function confirmWith(o,extra){
     if(!isMember(o.시설)){ speak(o.시설+"은 "+orgOf(o.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((o.raw||"")+" "+o.시설+" 가입"); return; }
     cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
@@ -732,6 +842,16 @@ input.txt::placeholder{color:var(--mute)}
   function heard(text){
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
+    // 🔴 번호표를 읽어드린 뒤 「2번」「이번」「두 번째」 — 다른 분기가 먹기 전에 먼저 받는다
+    //    갈래 안을 읽는 중이면 번호는 **그 안의 강좌**다. 갈래로 돌아가려면 「다른 거」.
+    if(메뉴 && /^(다른거|다른것|딴거|다른갈래|번호다시|처음|처음부터|목록|메뉴|다시번호)/.test(t0) && t0.length<10){
+      var 전=[]; 메뉴.forEach(function(g){ 전=전.concat(g.목록); }); 메뉴읽기(전, 메뉴머리); return; }
+    if(지금갈래){ var 몇g=번호(t0);
+      if(몇g>=1 && 몇g<=지금갈래.목록.length){ 강좌하나(지금갈래.목록[몇g-1], 몇g); return; }
+      if(몇g>지금갈래.목록.length){ info(은는(지금갈래.이름)+" "+지금갈래.목록.length+"번까지 있어요. 다른 걸 들으시려면 「다른 거」라고 말씀해 주세요.", "", "몇 번<br>들으실래요?"); return; } }
+    else if(메뉴){ var 몇=번호(t0); if(몇>=1 && 몇<=메뉴.length){ 갈래읽기(메뉴[몇-1]); return; }
+      if(몇>메뉴.length){ info(메뉴.length+"번까지 있어요. 몇 번 들으실래요?", "", "몇 번<br>들으실래요?"); $("infopick").hidden=false; return; } }
+    지금갈래=null;   // 번호가 아닌 새 물음이면 읽던 갈래는 놓는다(아래에서 갈래를 또 읽으면 다시 잡힌다)
     // 🔴 「더」·「다음」·「또 들려줘」 — 어디까지 읽었는지 기억해 이어서 읽는다
     if(이어듣기 && /^(더|다음|또|계속|더들려|더알려|더말해|그다음)/.test(t0) && t0.length<12){ 더읽기(); return; }
     // 2층 강좌 — 「말에 강좌 이름이 들어 있는가」로 판정한다(「있어/얼마/자리」처럼 말끝이 제각각이라)
@@ -762,6 +882,8 @@ input.txt::placeholder{color:var(--mute)}
       var 물음 = /뭐있|뭐가|어떤|있어|있나|있냐|있을까|알려|찾아|얼마|비싸|가격|수강료|자리|정원|몇명|남았|요일|며칠|시간/.test(t0);
       if(구체적 || (물음 && L.length)){
         if(g.없음){ 숙제올리기(text); info(은는(g.없음)+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return; }
+        if(g.메뉴){ 메뉴읽기(L, g.말머리.indexOf("어르신")>=0 ? "어르신 강좌 있어요." : "지금 신청할 수 있는 강좌 있어요."); return; }
+        if(g.갈래){ 갈래읽기({이름:g.갈래, 목록:L}); return; }
         var n=Math.min(L.length,3), 말=g.말머리+" "+L.length+"개 있어요. ";
         if(L.length>6){
           var 종=[]; L.forEach(function(x){ if(종.indexOf(x.과목)<0) 종.push(x.과목); });
@@ -770,6 +892,7 @@ input.txt::placeholder{color:var(--mute)}
         for(var i2=0;i2<n;i2++) 말 += (i2+1)+"번, "+강좌말(L[i2])+". ";
         if(L.length>n) 말 += "더 있어요. 아래 「더 들려주세요」를 눌러 주세요.";
         이어듣기 = (L.length>n) ? {목록:L, 다음:n, 말머리:g.말머리} : null;
+        지금갈래 = {이름:"찾은 강좌", 목록:L};   // 이 목록을 읽은 뒤 「2번」은 이 목록의 2번이다
         info(말, "", "이런 게<br>있어요");
         $("infomore").hidden = !이어듣기;
         return;
@@ -841,7 +964,7 @@ input.txt::placeholder{color:var(--mute)}
   $("typedok").addEventListener("click",function(){ var v=$("typed").value.trim(); if(v){ $("ex1").hidden=false; $("ex1").textContent="“"+v+"”"; heard(v); } });
   $("typed").addEventListener("keydown",function(e){ if(e.key==="Enter") $("typedok").click(); });
   $("no").addEventListener("click",function(){ shutUp(); if(cur&&cur.type==="회원가입"){ PROFILE={}; saveProfile(); joinConfirm(cur.raw); return; } resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
-  $("infook").addEventListener("click",function(){ shutUp(); 이어듣기=null; resetIdle(); show("s-idle"); });
+  $("infook").addEventListener("click",function(){ shutUp(); 이어듣기=null; 메뉴=null; 지금갈래=null; resetIdle(); show("s-idle"); });
   $("infomore").addEventListener("click",function(){ shutUp(); 더읽기(); });
   // 🔴 「또 말할게요」 — 전에는 「알겠어요」로 나가서 마이크를 다시 찾아야 했다. 한 번 누르면 바로 듣는다.
   $("infosay").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); setTimeout(start, 250); });
@@ -975,7 +1098,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   setTimeout(켤때, 1200);   // 수첩(목록.json)을 받은 뒤에 판단한다
 
-  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
+  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 갈래:갈래, 번호:번호, 메뉴:function(){return 메뉴}, 지금갈래:function(){return 지금갈래}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
 
 </script>
