@@ -144,7 +144,7 @@ input.txt::placeholder{color:var(--mute)}
     <h1 class="pen">이 정보로<br>신청할게요</h1>
     <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
     <div class="sheet" style="transform:rotate(-.5deg)"><div class="dog"></div>
-      <div class="t pen" id="formtitle">에코체육센터 실버반 신청서</div>
+      <div class="t pen" id="formtitle">신청서</div>
       <div class="row"><b>이름</b><span id="f-name">—</span></div>
       <div class="row"><b>반</b><span id="f-class">—</span></div>
       <div class="row"><b>시간</b><span id="f-time">—</span></div>
@@ -240,15 +240,197 @@ input.txt::placeholder{color:var(--mute)}
   $("who").style.cursor="pointer";
   $("who").addEventListener("click",function(){ var v=window.prompt("누구 이름으로 쓸까요?",NAME); if(v&&v.trim()){ try{localStorage.setItem("cbdr_name",v.trim())}catch(e){} location.href=location.pathname+"?n="+encodeURIComponent(v.trim()); } });
   // ── 지금 열려 있는 것 (아이디어팀이 공단 공지를 읽어 넣음 · 2026-09-14 밤)
-  var OPEN=[{"대상": "만 65세 이상", "마감": "2026-09-16", "반": "신규 실버반", "방식": "온라인", "비고": "추첨 9/17 10시 · 당첨되면 9/17~18 에코체육센터 직접 등록", "시간": "화·목·금 오후 2시~2시50분 · 10월 1일 시작", "시설": "에코체육센터", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주", "구조": "에코는 전달 15일하고 16일, 이틀만 인터넷으로 받아요. 선착순이 아니라 17일 아침 10시에 뽑기(추첨)예요. 뽑히면 문자가 오고, 그날 오후 2시부터 다음 날 저녁 7시까지 직접 가서 등록해야 해요. 안 뽑히면 문자가 안 와요 — 그건 제가 확인해서 알려드려요."}, {"대상": "서신동 국민체육센터", "마감": "2026-09-17", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/18 10시 · 등록 9/18~19 직접", "시간": "월·수·금 오후 2시 (또는 오전 10시 · 화목금 10시50분) · 10월 시작", "시설": "도내기샘수영장", "시작": "2026-09-16", "종목": "수영 강습", "지역": "전주", "구조": "도내기샘은 전달 16일하고 17일 이틀 인터넷으로 받고, 18일 아침 10시에 뽑기예요. 뽑히면 18일·19일 직접 가서 등록해요. 에코하고 같은 공단이라 두 군데 같이는 못 넣어요."}, {"대상": "", "마감": "2026-09-16", "반": "신규 초급반", "방식": "온라인", "비고": "추첨 9/17 10시 · 등록 9/17~18 직접", "시간": "화·목·금 저녁 6시50분~7시40분 · 10월 1일 시작", "시설": "덕진수영장", "시작": "2026-09-15", "종목": "수영 강습", "지역": "전주", "구조": "덕진 수영 강습은 인터넷 뽑기이고, 아쿠아로빅은 인터넷이 안 되고 안내실에 직접 가서 선착순이에요. 창구에서도 회원인지 물어보니까 회원가입은 미리 돼 있어야 해요."}, {"대상": "부양벨트 필요", "마감": "2026-09-15", "반": "아쿠아로빅", "방식": "방문", "비고": "10월 회차는 공지 전", "시간": "월·수·금 오후 1시30분 · 지금 하는 회차 9/16~10/14", "시설": "덕진수영장", "시작": "2026-09-14", "안내": "평일 저녁 7시 전에 안내실로. 선착순이에요.", "전화": "063-239-2650", "종목": "아쿠아로빅", "지역": "전주", "구조": "덕진 수영 강습은 인터넷 뽑기이고, 아쿠아로빅은 인터넷이 안 되고 안내실에 직접 가서 선착순이에요. 창구에서도 회원인지 물어보니까 회원가입은 미리 돼 있어야 해요."}, {"대상": "처음 배우면 입문반 · 수원시 밖 사람도 돼요", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "온라인", "비고": "9/30(수) 06:00 온라인 선착순 · 수원시민 우선은 9/28~29 방문만 · 10/1~11 수영장 정비 휴장", "시간": "입문반 월·수·금 아침 6시 또는 저녁 7시 · 초급 화·목 아침 9시 · 10월 12일부터", "시설": "광교웰빙국민체육센터", "시작": "2026-09-30", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원", "구조": "광교는 세 갈래예요. 원래 다니던 분들이 9월 17일부터 23일까지 먼저 다시 등록하고요. 처음 오는 분은, 수원 사시면 9월 28일·29일에 직접 가서 접수하고, 인터넷으로는 9월 30일 새벽 6시부터 선착순이에요. 그리고 10월 1일부터 11일까지는 수영장을 고쳐서, 수업은 12일부터예요. 인터넷 접수는 그날 새벽에 제가 넣을게요."}, {"시설": "탄천종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 한 달 단위 · 반 목록은 9/23에 열림", "대상": "기초~상급은 대기 접수", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "신규 매월 23일~말일 · 인터넷 09:00~24:00 · 선착순", "전화": "031-725-7120", "지역": "성남", "구조": "탄천은 매달 23일부터 말일까지 인터넷 선착순이고, 기초부터 상급까지는 대기 접수예요."}, {"시설": "성남종합운동장 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/23 10시에 열림", "대상": "성남 시민 9/23부터 · 다른 지역은 9/27부터", "방식": "온라인", "시작": "2026-09-23", "마감": "2026-09-30", "비고": "선착순 · 인터넷 또는 방문", "전화": "031-754-3100", "지역": "성남", "구조": "성남종합은 매달 23일부터 인터넷이나 방문 선착순인데, 성남 시민이 먼저고 다른 지역은 27일부터예요."}, {"시설": "판교스포츠센터 수영장", "반": "10월 수영 강좌 (신규)", "종목": "수영 강습", "시간": "매달 1일~말일 · 반 목록은 9/24에 열림", "대상": "관내·관외 날짜 다름", "방식": "온라인", "시작": "2026-09-24", "마감": "2026-09-30", "비고": "선착순 · 신청 뒤 48시간 안에 결제", "전화": "031-724-4660", "지역": "성남", "구조": "판교는 매달 24일부터 인터넷 선착순이고, 신청하고 이틀 안에 결제해야 해요."}];
+  var OPEN=[{"대상": "성인/청소년", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "둘다", "비고": "성인 종합반은 6개월 진도반입니다. 기초반 모집은 매월 변동되며 모집 요강 확인 후 신청 바랍니다.", "시간": "입문반 오전 6시, 오후 7시; 초급 오후 8시", "시설": "광교웰빙국민체육센터", "시작": "2026-09-30", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원", "구조": "원래 다니던 분은 9월 17일부터 23일까지예요. 처음 오는 분은 수원 사시면 9월 28일과 29일에 먼저 받아요. 그날은 직접 가야 해요. 9월 30일은 방문이나 인터넷 돼요. 먼저 온 순서로 받아요. 수원 시민은 신분증과 등본을 챙겨요. 수영장은 10월 1일부터 11일까지 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "출처": "2026년 10월 생활체육강좌 회원모집 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64324&bbsId=Notice_suwonsc3", "별칭": ["광교", "광교웰빙", "웰빙", "광교호수"]}, {"시설": "장안구민회관", "종목": "수영 강습", "반": "기초L1·초급L1", "방식": "둘다", "시작": "2026-09-22", "마감": "2026-09-30", "시간": "월수금 16:00~16:50 초급L1, 화목 16:00~16:50 기초L1, 월수금·화목 20:00~20:50 초급L1", "대상": "성인, 처음 배우면 기초L1 권장", "비고": "운영기간 2026-10-01~2026-10-31. 강습 정원 20명(상급 30명). 둘째·넷째 일요일 휴관. 70세 이상 수강동의서 작성(1층 안내데스크). 온라인·현장결제 가능.", "전화": "031-228-3028", "구조": "장안구민회관 수영이에요. 원래 회원은 9월 15일부터 19일까지예요. 현장에서만 결제돼요. 처음 오는 분은 9월 22일부터 30일까지예요. 인터넷이나 방문으로 신청해요. 수영은 10월 1일부터 31일까지예요. 둘째와 넷째 일요일은 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 스포츠시설 운영(회원모집) 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64325&bbsId=Notice_jacc", "별칭": ["장안", "장안구민", "구민회관"]}, {"시설": "장안구민회관", "종목": "아쿠아로빅", "반": "아쿠아로빅", "방식": "둘다", "시작": "2026-09-22", "마감": "2026-09-30", "시간": "월수금 13:00~13:50 아쿠아로빅3, 화목 13:00~13:50 아쿠아로빅4, 월수금 14:00~14:50 아쿠아로빅5, 화목 14:00~14:50 아쿠아로빅6, 월수금 18:00~18:50 아쿠아로빅7", "대상": "성인", "비고": "운영기간 2026-10-01~2026-12-31. 아쿠아로빅 정원 45명. 둘째·넷째 일요일 휴관. 70세 이상 수강동의서 작성(1층 안내데스크). 온라인·현장결제 가능.", "전화": "031-228-3028", "구조": "장안구민회관 아쿠아로빅이에요. 원래 회원은 9월 15일부터 19일까지예요. 현장에서만 결제돼요. 처음 오는 분은 9월 22일부터 30일까지예요. 인터넷이나 방문으로 신청해요. 아쿠아로빅은 10월부터 12월까지예요. 칠십세 이상은 동의서가 있어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 스포츠시설 운영(회원모집) 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64325&bbsId=Notice_jacc", "별칭": ["장안", "장안구민", "구민회관"]}, {"시설": "광교웰빙국민체육센터", "종목": "아쿠아로빅", "반": "", "방식": "둘다", "시작": "2026-09-30", "마감": "2026-09-30", "시간": "오전 11시, 오후 1시", "대상": "성인/청소년", "비고": "신청 기간 내 먼저 온 순서. 온라인: 광교웰빙국민체육센터 인터넷 수강 신청 https://rsv.suwonudc.co.kr/suwonudc/uat/uia/LoginUsr.do. 수영장 휴장 10월 1일~10월 11일.", "전화": "031-228-3201", "구조": "원래 다니던 분은 9월 17일부터 23일까지예요. 처음 오는 분은 수원 사시면 9월 28일과 29일에 먼저 받아요. 그날은 직접 가야 해요. 9월 30일은 방문이나 인터넷 돼요. 먼저 온 순서로 받아요. 수원 시민은 신분증과 등본을 챙겨요. 수영장은 10월 1일부터 11일까지 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 생활체육강좌 회원모집 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64324&bbsId=Notice_suwonsc3", "별칭": ["광교", "광교웰빙", "웰빙", "광교호수"]}];
   // ── 서버가 공지를 읽어 쓴 목록(목록.json · 공지읽기.py 가 갱신)을 열 때마다 받아온다. 못 받으면 위 내장 목록 그대로
-  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length) OPEN=j; }).catch(function(){}); }catch(e){} })();
+  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; } if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
+
+  // ── 2층: 강좌 목록(목록.json 의 "강좌") — 가격·정원·딱지가 여기 있다
+  var LESSON=[], LESSON_월="", 수첩깨짐=false;
+  // 🔴 이름이 없거나 요일·시간이 둘 다 없는 것은 강좌가 아니다. 공단이 양식을 갈아엎으면 여기서 걸린다.
+  //    절반 넘게 버려야 하면 수첩째로 안 쓴다 — 어르신께 「언디파인드」를 읽어드리느니 「못 봤어요」가 낫다.
+  function 수첩넣기(a, 월){
+    LESSON_월 = 월;
+    if(!(a&&a.length)){ LESSON=[]; 수첩깨짐=true; return; }
+    var ok=[];
+    for(var i=0;i<a.length;i++){ var x=a[i]; if(!x) continue;
+      // 🔴 글자만 받는다. 숫자 123 을 강좌 이름이라고 읽어드리는 것도 undefined 와 같은 종류다.
+      if(typeof x.과목!=="string" || !/[^\s0-9,.\-]/.test(x.과목)) continue;   // 🔴 객체·배열은 강좌가 아니다. 통과시키면 나중에 .replace() 에서 죽는다
+      x.과목=String(x.과목); if(x.요일!=null) x.요일=String(x.요일); if(x.시간!=null) x.시간=String(x.시간);
+      var 이름=x.과목.trim();
+      var 때  =String(x.요일==null?"":x.요일).trim()+String(x.시간==null?"":x.시간).trim();
+      if(이름 && 때) ok.push(x);
+    }
+    if(ok.length && ok.length >= a.length*0.5){ LESSON=ok; 수첩깨짐=false; }
+    else { LESSON=[]; 수첩깨짐=true; }
+  }
+  function 돈(x){ var v=String((x&&x.수강료)||"").replace(/[^\d,]/g,"");
+    if(v) return v+"원";
+    if(x && x.무료===true) return "무료";
+    return "금액은 확인해 드릴게요"; }   // 🔴 모르는 걸 「무료」라고 하지 않는다
+  function 은는(w){ var c=w.charCodeAt(w.length-1); var 받침=(c>=0xAC00&&c<=0xD7A3)&&((c-0xAC00)%28)!==0; return w+(받침?"은":"는"); }
+  // 「확인해서 알려드릴게요」는 약속이다 — 못 답한 물음을 서버에 올려 둔다
+  function 숙제올리기(물음){
+    try{
+      fetch(NT+REQ,{method:"POST",body:JSON.stringify({
+        type:"숙제", 받는사람:NAME, 물음:물음,
+        때:new Date().toISOString().slice(0,16)
+      })}).catch(function(){});
+    }catch(e){}
+  }
+  // 🔴 「확인해 드릴게요」라고 말만 하고 끝내지 않는다 — 말하는 그 자리에서 숙제로 올린다.
+  //    대표: "확인해서 알려드릴께요 하고는 니네 맨날 가만히 있잖아....."
+  var 물어본것=(function(){try{return JSON.parse(localStorage.getItem("cbdr_금액숙제")||"{}")}catch(e){return {}}})();
+  function 금액숙제(x){
+    var 키=(x.시설||"")+"/"+(x.과목||"")+"/"+(x.요일||"")+(x.시간||"");
+    if(물어본것[키]) return; 물어본것[키]=1;
+    try{ localStorage.setItem("cbdr_금액숙제", JSON.stringify(물어본것)); }catch(e){}   // 🔴 새로고침해도 다시 안 올린다
+    숙제올리기("[금액] "+(x.시설||"")+" "+(x.과목||"")+" "+(x.요일||"")+" "+(x.시간||"")+" 수강료가 얼마인지");
+  }
+  // 🔴 안내문마다 값이 다른 칸(다툼)이 있으면 숫자만 던지지 않는다.
+  //    대표: "문서가 서로 다른 이런 상황이 제일 무서운 거야" — 숨기지 않고 말한다.
+  function 다툼말(x){
+    var t=x&&x.다툼; if(!t) return "";
+    var 칸=[]; for(var k in t){ if(t.hasOwnProperty(k)) 칸.push(k); }
+    if(!칸.length) return "";
+    return " (" + 칸.join("·") + "은 안내문마다 달라요. 신청할 때 한 번 더 확인해 드릴게요)";
+  }
+  function 강좌말(x){
+    // 🔴 빈 칸은 「건너뛴다」. undefined·null 을 어르신 귀에 넣지 않는다.
+    var 글=function(v){ return String(v==null?"":v).trim(); };
+    var p=[], 이름=글(x.과목); if(이름) p.push(이름);
+    var 대상=글(x.대상); if(대상) p.push(대상);
+    var 때=(글(x.요일)+" "+글(x.시간)).trim(); if(때) p.push(때);
+    var d=돈(x); if(d){ p.push(d); if(d.indexOf("확인해")>=0) 금액숙제(x); }
+    var 정원=글(x.정원); if(정원) p.push("정원 "+정원+"명");
+    return p.join(", ") + 다툼말(x);
+  }
+  // 🔴 말에 도시가 있으면 그 도시. 없으면 내 동네. 수첩에 그 도시 강좌가 없으면 딴 도시 시간표를 읽어주지 않는다.
+  // 말에 내 지자체가 아닌 도시가 있으면 그 이름을 돌려준다 → 「그 도시는 아직 못 봤어요」로 정직하게 답한다
+  function 물음지역(t){
+    if(t.indexOf(내지역)>=0) return 내지역;
+    var 시설 = OPEN.concat(LESSON||[]);
+    for(var i=0;i<시설.length;i++){ var 별=시설[i].별칭||[];
+      for(var k=0;k<별.length;k++) if(별[k]&&t.indexOf(별[k])>=0) return 시설[i].지역||내지역; }
+    var 딴곳=t.match(/전주|성남|분당|용인|안양|화성|성남|고양|대구|서울|부산|인천|광주|대전|울산|세종|제주/);
+    return 딴곳 ? 딴곳[0] : 내지역;
+  }
+  function 강좌찾기(t){
+    var 지=물음지역(t);
+    var r=LESSON.filter(function(x){return (x.상태||"모집")==="모집" && (x.지역||"")===지;});
+    var 밀 = function(v){ return (v||"").replace(/\s+/g,""); };
+    // 수첩에 실제로 있는 과목 이름을 그대로 쓴다 — 손으로 낱말을 적지 않는다
+    var 이름들=[]; r.forEach(function(x){ var n=밀(x.과목); if(n && 이름들.indexOf(n)<0) 이름들.push(n); });
+    이름들.sort(function(a,b){return b.length-a.length;});          // 긴 이름부터
+    // ① 이름을 통째로 말한 경우
+    for(var i=0;i<이름들.length;i++){
+      if(t.indexOf(이름들[i])>=0){
+        // 🔴 「노래교실」은 「김기희 노래교실」도 노래교실이다. 다만 넓히는 데 조건을 둔다 —
+        //    ⓐ 세 글자 이상일 것(「고급」 두 글자로 26건이 딸려왔다)
+        //    ⓑ 긴 이름 안에서 「띄어쓰기 뒤」에 올 것
+        //       (「입문반 I」→「입문반 II」·「필라테스」→「요가&필라테스」·「가죽공예」→「가죽공예 (Buena…) B반」을 막는다)
+        var 꼭=r.filter(function(x){return 밀(x.과목)===이름들[i];});
+        var m=꼭;
+        if(이름들[i].length>=3){
+          var 더=r.filter(function(x){
+            if(밀(x.과목)===이름들[i]) return false;
+            var 토막=String(x.과목||"").split(/\s+/);
+            for(var k=1;k<토막.length;k++){        // k=1 부터 = 맨 앞은 제외(띄어쓰기 뒤만)
+              if(밀(토막.slice(k).join("")).indexOf(이름들[i])===0) return true;
+            }
+            return false;
+          });
+          if(더.length) m=꼭.concat(더);
+        }
+        if(m.length) return {목록:m, 말머리:은는((꼭[0]||m[0]).과목)};
+      }
+    }
+    // ② 줄여 말한 경우 — 「떡과 한과 디저트」를 「떡과 한과」로 묻는다
+    var 후보=[], 최장=0;
+    이름들.forEach(function(n){
+      for(var L=n.length; L>=3; L--){                 // 세 글자 이상 겹치면 인정
+        for(var st=0; st+L<=n.length; st++){
+          var 조각=n.slice(st, st+L);
+          if(t.indexOf(조각)>=0){
+            if(L>최장){ 최장=L; 후보=[n]; } else if(L===최장 && 후보.indexOf(n)<0){ 후보.push(n); }
+            return;
+          }
+        }
+      }
+    });
+    if(후보.length){
+      var m2=r.filter(function(x){ return 후보.indexOf(밀(x.과목))>=0; });
+      if(m2.length) return {목록:m2, 말머리:은는(m2[0].과목)};
+    }
+    // 이름으로 못 찾으면 큰 분류(종목·대상)로 넓힌다
+    // 수첩에 없는 종목을 물으면 「없다」고 말해야 한다 — 엉뚱한 걸 쏟아내면 안 된다
+    // 🔴 어르신 분류보다 「그 종목이 아예 없다」를 먼저 본다 —
+    //    전에는 「어르신 탁구 알려줘」가 탁구 없음 대신 어르신 11건을 뱉었다(코덱스 F4-1).
+    var 없는것=["탁구","골프","테니스","농구","축구","볼링","스쿼시","헬스","런닝","족구","야구","배구","태권도","복싱","클라이밍"];
+    for(var i=0;i<없는것.length;i++){
+      if(t.indexOf(없는것[i])>=0){
+        var 있나=r.filter(function(x){return (밀(x.과목)+밀(x.종목)).indexOf(없는것[i])>=0;});
+        if(!있나.length) return {목록:[], 말머리:없는것[i], 없음:없는것[i]};
+      }
+    }
+    if(/어르신|노인|실버|육십|칠십|65|나이|시니어/.test(t)){
+      var 어=r.filter(function(x){return x.딱지==="어르신맞춤";});
+      if(어.length) return {목록:어, 말머리:"어르신께 맞는 걸로"};
+    }
+    {
+    }
+    var 분류=["수영","아쿠아","배드민턴","검도","댄스","요가","필라테스"];
+    for(var i=0;i<분류.length;i++){
+      if(t.indexOf(분류[i])<0) continue;
+      var m2=r.filter(function(x){ return (밀(x.과목)+밀(x.종목)+밀(x.대상)).indexOf(분류[i])>=0; });
+      if(m2.length) return {목록:m2, 말머리:은는(분류[i])};
+      return {목록:[], 말머리:분류[i], 없음:분류[i]};
+    }
+    return {목록:r.filter(function(x){return x.딱지!=="어린이";}), 말머리:"지금 신청할 수 있는 걸로"};
+  }
+
+
   // ── 화면
   var secs=["s-idle","s-list","s-confirm","s-progress","s-ask","s-code","s-result","s-info"];
   var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-ask":"여쭤볼게요","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
   function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});$("crumb").textContent=crumbs[id]||"";window.scrollTo(0,0)}
   // ── 목소리
   var stopBtn=$("stopsay");
+
+  // 🔴🔴 마이크는 브라우저가 **한 번에 하나만** 허용한다. 이 앱엔 인식기가 넷 있다
+  //     (rec 질문 · rec2 인증번호 · rec3 되묻기 · r2 「그만」 듣기).
+  //     2026-09-17 예선날 대표 폰에서 시연을 못 한 원인이 바로 이것이었다 —
+  //     앱이 말하는 동안 r2 가 마이크를 쥐고 있는데, 마이크를 누르면 r2.stop() 이 **아직 안 끝난 채로**
+  //     rec.start() 를 불러 에러가 나고, 그걸 catch(e){} 가 삼켜서 화면만 「듣는 중」이라고 거짓말했다.
+  //     → 주인을 한 곳에서 넘겨주고, **정말 켜졌을 때만**(onstart) 「듣는 중」이라고 쓴다.
+  var 마이크주인=null;
+  function 마이크놓기(끝나면){
+    var r=마이크주인;
+    if(!r){ 끝나면(); return; }
+    var 끝=false;
+    var 원래=r.onend;
+    r.onend=function(e){ r.onend=원래; if(원래){ try{원래(e)}catch(x){} }
+      if(!끝){ 끝=true; 마이크주인=null; setTimeout(끝나면,70); } };
+    try{ if(r.abort) r.abort(); else r.stop(); }catch(x){}
+    setTimeout(function(){ if(!끝){ 끝=true; 마이크주인=null; 끝나면(); } }, 600);   // 응답이 없어도 넘어간다
+  }
+  // 성공하면 켜짐(), 끝내 못 켜면 실패() — 🔴 조용히 삼키지 않는다
+  function 마이크잡기(r, 켜짐, 실패){
+    if(!r){ 실패 && 실패("없음"); return; }
+    마이크놓기(function(){
+      var 열렸다=false, 시도=0;
+      var 원래=r.onstart;
+      r.onstart=function(e){ 열렸다=true; 마이크주인=r; if(원래){ try{원래(e)}catch(x){} } 켜짐 && 켜짐(); };
+      (function 켜보기(){
+        시도++;
+        try{ r.start(); }
+        catch(e){
+          if(시도<3){ setTimeout(켜보기, 260); return; }    // 아직 앞 인식기가 안 놓았다 → 조금 기다렸다 다시
+          실패 && 실패(String(e && e.name || e)); return;
+        }
+        setTimeout(function(){ if(!열렸다){ if(시도<3){ try{r.abort&&r.abort()}catch(x){}; 켜보기(); } else 실패 && 실패("안 켜짐"); } }, 1100);
+      })();
+    });
+  }
   function shutUp(){try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true;}
   stopBtn.addEventListener("click",shutUp);
   var LAST_SAID="";
@@ -256,20 +438,38 @@ input.txt::placeholder{color:var(--mute)}
   // 아이폰: 손가락 동작 안에서 한 번 말해 둬야 그 뒤 화면이 알아서 말할 수 있다 — 마이크·버튼 누를 때마다 연다
   function unlockVoice(){ try{ if(speechSynthesis.speaking) return; var u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
   document.addEventListener("click",function(ev){ if(ev.target.closest("button")) unlockVoice(); },true);
-  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ r2=null; }; r2.start(); }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) arm(); else if(r2){ try{r2.stop()}catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
+  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ if(마이크주인===r2) 마이크주인=null; r2=null; }; r2.start(); 마이크주인=r2; }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) setTimeout(arm,120); else if(r2){ try{ r2.abort?r2.abort():r2.stop() }catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
   // ── 말 → 뜻
+  // 🔴 시설을 못 알아들었을 때 「아무거나 맨 앞」을 집지 않는다. 내 동네 → 지금 받는 곳 → 그 다음 순.
+  //    전에 여기에 "에코체육센터"(전주)가 못박혀 있어서 수원 사는 분께 전주를 읽어드렸다.
+  function 내동네시설(종목){
+    var 고르기=function(f){ return OPEN.filter(f); };
+    var 같은동네=function(o){ return (o.지역||"")===내지역; };
+    var 같은종목=function(o){ return !종목 || o.종목===종목; };
+    var c=고르기(function(o){ return 같은동네(o)&&같은종목(o)&&dueText(o.마감)!=="접수 끝남"; });
+    if(!c.length) c=고르기(function(o){ return 같은동네(o)&&같은종목(o); });
+    if(!c.length) c=고르기(function(o){ return 같은동네(o); });
+    if(!c.length) c=고르기(function(o){ return 같은종목(o)&&dueText(o.마감)!=="접수 끝남"; });
+    return c.length ? c[0] : null;
+  }
+  // 🔴 방식은 "온라인"·"방문"·"둘다" 세 가지다. 전에는 "온라인"만 인터넷으로 보고
+  //    "둘다" 를 「인터넷으로 안 돼요」라고 거짓 안내했다 — 수원 공지 4건 전부가 걸렸다.
+  function 인터넷되나(o){ var v=String((o&&o.방식)||""); return v.indexOf("온라인")>=0 || v.indexOf("둘다")>=0 || v.indexOf("인터넷")>=0; }
+  function 방식말(o){ var v=String((o&&o.방식)||""); 
+    if(v.indexOf("둘다")>=0) return "인터넷·방문"; 
+    if(인터넷되나(o)) return "인터넷"; 
+    return v ? "직접 가요" : "확인 중"; }
   function parse(t){
     t=(t||"").replace(/\s+/g,"");
     var r={raw:t,시설:null,종목:null,반:null,사람:NAME};
-    if(/에코/.test(t)) r.시설="에코체육센터";
-    else if(/덕진/.test(t)) r.시설="덕진수영장";
-    else if(/완산/.test(t)) r.시설="완산수영장";
-    else if(/도내기|서신/.test(t)) r.시설="도내기샘수영장";
-    else if(/라온/.test(t)) r.시설="라온체육센터";
-    else if(/광교|수원/.test(t)) r.시설="광교웰빙국민체육센터";
-    else if(/탄천|야탑/.test(t)) r.시설="탄천종합운동장 수영장";
-    else if(/판교/.test(t)) r.시설="판교스포츠센터 수영장";
-    else if(/성남|분당/.test(t)) r.시설="탄천종합운동장 수영장";
+    // 🔴 시설 이름을 코드에 박지 않는다. 수첩(목록.json)의 "별칭" 으로 맞춘다 — 지자체를 갈면 수첩만 갈면 된다.
+    var 후보=[];
+    for(var ci=0; ci<OPEN.length; ci++){ var o=OPEN[ci], 맞=false;
+      if(o.시설 && t.indexOf(String(o.시설).replace(/\s/g,""))>=0) 맞=true;
+      var 별=o.별칭||[]; for(var bi=0;bi<별.length;bi++) if(별[bi]&&t.indexOf(별[bi])>=0) 맞=true;
+      if(맞 && 후보.indexOf(o.시설)<0) 후보.push(o.시설); }
+    if(후보.length===1) r.시설=후보[0];
+    else if(후보.length>1) r.후보=후보;
     if(/아쿠아|물에어로빅/.test(t)) r.종목="아쿠아로빅";
     else if(/수영|강습/.test(t)) r.종목="수영 강습";
     if(/집중|평영|접영/.test(t)) r.반="평영·접영 집중반";
@@ -278,24 +478,37 @@ input.txt::placeholder{color:var(--mute)}
   }
   function isFind(t){ t=(t||"").replace(/\s+/g,""); if(/신청해줘|신청해|넣어줘|신청할게|해줘/.test(t)) return false; return /있어|있나|있냐|있을까|뭐있|어떤|찾아|알려|뭐가|뭐야|어디|은\?|는\?|은$|는$|어때|되나|돼\?|될까/.test(t) || /광교|수원|전주|성남|분당|서울|부산|대구|인천|광주|대전|울산|용인|고양|화성|청주|천안/.test(t); }
   function item(r){ return OPEN.filter(function(o){return o.시설===r.시설 && (!r.종목||o.종목===r.종목||(r.종목==="수영 강습"&&o.종목==="수영 강습"))})[0] || OPEN.filter(function(o){return o.시설===r.시설})[0]; }
-  function dueText(iso){ if(!iso) return ""; var d=new Date(iso+"T23:59:59+09:00"), now=new Date(); var days=Math.floor((d-now)/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; if(days===2) return "모레까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
-  function fromText(iso){ if(!iso) return null; var d=new Date(iso+"T00:00:00+09:00"); return d>new Date()?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
-  function soon(iso){ if(!iso) return false; var d=new Date(iso+"T00:00:00+09:00"); var h=(d-new Date())/3600000; return h>0&&h<=30; }
+  // 🔴 「2026.09.30」·「미정」 같은 값이 오면 전에는 「NaN월 NaN일까지」를 찍고 읽어드렸다.
+  //    날짜로 안 읽히면 「마감 확인 중」이라고 한다. 빈 마감도 「끝나지 않음」이 아니라 「확인 중」이다.
+  function 날짜(iso){ var t=String(iso||"").trim().replace(/[.\/]/g,"-").replace(/-+$/,"");
+    if(!/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/.test(t)) return null;
+    var q=t.split("-"), d=new Date(+q[0], +q[1]-1, +q[2], 23, 59, 59);
+    return isNaN(d.getTime()) ? null : d; }
+  function dueText(iso){ var d=날짜(iso); if(!d) return iso?"마감 확인 중":""; var days=Math.floor((d-new Date())/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; if(days===2) return "모레까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
+  function fromText(iso){ var d=날짜(iso); return (d&&d>new Date())?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
+  function soon(iso){ var d=날짜(iso); if(!d) return false; var h=(d-new Date())/3600000; return h>0&&h<=30; }
   var cur=null;
-  function info(msg,tel){ $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
+  function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
   function confirmWith(o,extra){
     if(!isMember(o.시설)){ speak(o.시설+"은 "+orgOf(o.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((o.raw||"")+" "+o.시설+" 가입"); return; }
     cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
     $("formtitle").textContent=o.시설+" "+o.반+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=o.반; $("f-time").textContent=(o.시간||"").split(" · ")[0].trim()||"—";
     document.getElementById("confnote").textContent=extra||""; show("s-confirm"); speak(o.시설+" "+o.반+" 신청할게요. "+(extra||"")+" 맞아요?");
   }
-  var REGION=null;
+  // 🔴 내 동네를 기억한다. 이게 없으면 목록 「맨 앞 카드」를 집어서 엉뚱한 도시를 읽어드린다(전주 에코 사고).
+  // 🔴 우리는 「한 지자체」만 본다. 그 이름을 코드에 박지 않고 수첩(목록.json 의 "지역")이 정한다.
+  //    폴더를 갈아끼우면 다른 지자체가 된다 — 전주(어머님) 자료는 _보관_전주_어머님/ 에 따로 있다.
+  var 내지역=(OPEN[0]&&OPEN[0].지역)||"수원";
+  var 공단="수원도시공사", 예약사이트="수원도시공사 예약결제";   // 수첩(목록.json)이 덮어쓴다
+  var REGION=내지역;
   function showList(){
     var items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남" && (!REGION||(o.지역||"")===REGION)});
+    var 넓힘=false;
+    if(!items.length && REGION){ items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남"}); 넓힘=true; }
     if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
-    $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(REGION?REGION+" · ":"")+items.length+"개 — 누르면 그걸로 신청할게요";
-    $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(o.방식==="온라인"?"":"visit")+'">'+(o.방식==="온라인"?"인터넷":"직접 가요")+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+o.시간+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
-    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(o.방식!=="온라인"){ info((o.구조?o.구조+" ":"")+o.시설+" "+o.반+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+visitLine(o.시설),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
+    $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(넓힘?은는(REGION)+" 지금 받는 데가 없어요 · "+내지역+" "  :(REGION?REGION+" · ":""))+items.length+"개 — 누르면 그걸로 신청할게요";
+    $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(인터넷되나(o)?"":"visit")+'">'+방식말(o)+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+(o.시간||'')+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
+    [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(!인터넷되나(o)){ info((o.구조?o.구조+" ":"")+o.시설+" "+(o.반||"")+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+visitLine(o.시설),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
     show("s-list");
     if(items.length===1){ var one=items[0]; speak(one.시설+" "+one.반+", 하나 있어요. "+(one.구조||"")+" 화면에서 누르시면 제가 넣을게요."); return; }
     speak("지금 신청할 수 있는 게 "+items.length+"개 있어요. "+items.slice(0,3).map(function(o,i){return (i+1)+"번, "+o.시설+" "+o.반}).join(". ")+(items.length>3?". 그리고 "+(items.length-3)+"개 더 있어요":"")+". 화면에서 누르시면 그 자리 접수 방식을 읽어드리고 신청할게요.");
@@ -303,9 +516,9 @@ input.txt::placeholder{color:var(--mute)}
   // ── 가입에 필요한 것 — 한 번 말해 두면 폰에 남는다 (주민번호 뒷자리·비밀번호는 안 받는다)
   var PROFILE=(function(){try{return JSON.parse(localStorage.getItem("cbdr_profile")||"{}")}catch(e){return {}}})();
   // ── 누가 어느 공단 회원인지 (실측: 김현순 = 전주 8/28 · 정이서 = 수원 9/15). 가입이 끝나면 자동으로 늘어난다
-  var MEMBER0={"김현순":["전주시설공단"],"정이서":["수원도시공사"]};
+  var MEMBER0={"정이서":["수원도시공사"]};   // 이 폴더는 수원 전용. 전주(김현순)는 _보관_전주_어머님/ 에 있다
   var MEMBER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_member")||"[]")}catch(e){return []}})().concat(MEMBER0[NAME]||[]);
-  function orgOf(fac){ fac=fac||""; if(/광교|수원/.test(fac)) return "수원도시공사"; if(/탄천|성남|판교/.test(fac)) return "성남도시개발공사"; return "전주시설공단"; }
+  function orgOf(fac){ return 공단; }   // 한 지자체만 보므로 시설이 무엇이든 그 공단이다
   function isMember(fac){ return MEMBER.indexOf(orgOf(fac))>=0; }
   function addMember(org){ if(MEMBER.indexOf(org)<0){ MEMBER.push(org); try{localStorage.setItem("cbdr_member",JSON.stringify(MEMBER))}catch(e){} } }
   function visitLine(fac){ return isMember(fac)?" 회원가입은 이미 돼 있으니, 창구에서 신청만 하시면 돼요.":" 창구에서도 회원인지 물어봐요. 가입이 아직 안 돼 있으니, 「가입해 줘」 하시면 제가 먼저 해 둘게요."; }
@@ -332,14 +545,22 @@ input.txt::placeholder{color:var(--mute)}
     rec3.onerror=function(e){ stop3(); if(e.error==="not-allowed"){ $("asklead").textContent="마이크를 못 열었어요. 아래에 적어 주세요"; $("asktotype").click(); } else { $("miclabel3").textContent="다시 눌러요"; } };
     rec3.onend=function(){ if(listening3) stop3(); };
   }
-  function start3(){ initRec3(); if(!rec3){ $("asktotype").click(); return; } shutUp(); try{ rec3.start(); listening3=true; $("micwrap3").classList.add("listening"); $("miclabel3").textContent="듣는 중"; }catch(e){} }
-  function stop3(){ listening3=false; $("micwrap3").classList.remove("listening"); $("miclabel3").textContent="말하기"; try{rec3&&rec3.stop()}catch(e){} }
+  function start3(){
+    initRec3();
+    if(!rec3){ $("asktotype").click(); return; }
+    shutUp(); $("miclabel3").textContent="켜는 중…";
+    마이크잡기(rec3,
+      function(){ listening3=true; $("micwrap3").classList.add("listening"); $("miclabel3").textContent="듣는 중"; },
+      function(){ listening3=false; $("micwrap3").classList.remove("listening"); $("miclabel3").textContent="말하기";
+                  $("asklead").textContent="마이크가 안 열렸어요. 아래에 적어 주세요"; $("asktotype").click(); });
+  }
+  function stop3(){ listening3=false; if(마이크주인===rec3) 마이크주인=null; $("micwrap3").classList.remove("listening"); $("miclabel3").textContent="말하기"; try{rec3&&rec3.stop()}catch(e){} }
   $("mic3").addEventListener("click",function(){ if(listening3) stop3(); else start3(); });
   $("asktotype").addEventListener("click",function(){ $("asktypewrap").hidden=false; $("asktyped").focus(); });
   $("asktyped").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=$("asktyped").value.trim(); if(v) askGot(v); } });
   function joinConfirm(raw){
     var t=(raw||"").replace(/\s+/g,"");
-    var org=/광교|수원|영통|이의동/.test(t)?"수원도시공사":(/성남|분당|탄천|판교|야탑/.test(t)?"성남도시개발공사":"전주시설공단");
+    var org=공단;
     cur={type:"회원가입",raw:raw||"",사람:NAME,시설:org,종목:"",반:"회원가입",시간:""};
     var need=QS.filter(function(q){return !PROFILE[q.k]});
     if(need.length) speak("네, "+org+" 회원가입 하려면 몇 가지 여쭤볼게요.");
@@ -364,12 +585,52 @@ input.txt::placeholder{color:var(--mute)}
   function heard(text){
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
+    // 2층 강좌 — 「말에 강좌 이름이 들어 있는가」로 판정한다(「있어/얼마/자리」처럼 말끝이 제각각이라)
+    // 🔴 수첩이 지난달 것이면 새 달 것인 양 말하지 않는다 — 틀린 걸 말하느니 모른다고 한다
+    if(수첩깨짐 && /뭐있|뭐가|어떤|있어|있나|얼마|가격|수강료|자리|정원|요일|시간|강좌|강습|배우/.test(t0)
+        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
+      숙제올리기(text); info("아직 이번 달 강좌를 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return;
+    }
+    if(LESSON.length && LESSON_월){
+      var 이달=new Date(); var 이달문=이달.getFullYear()+"-"+("0"+(이달.getMonth()+1)).slice(-2);
+      if(LESSON_월 < 이달문){
+        if(/뭐있|뭐가|어떤|있어|있나|얼마|가격|수강료|자리|정원|요일|시간/.test(t0)){
+          숙제올리기(text); info("아직 이번 달 강좌를 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return;
+        }
+      }
+    }
+    var 있는지역 = LESSON.some(function(x){ return (x.지역||"")===물음지역(t0); });
+    // 🔴 그 도시 강좌를 아직 안 갖고 있으면 딴 도시 시간표를 읽어주거나 신청 목록으로 떠넘기지 않는다
+    if(LESSON.length && !있는지역
+        && /뭐있|뭐가|어떤|있어|있나|얼마|가격|수강료|자리|정원|요일|시간|강좌|강습|배우/.test(t0)
+        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|공지|안내문|읽어/.test(t0)){
+      숙제올리기(text);
+      info("저는 "+내지역+" 것만 봐요. "+은는(물음지역(t0))+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return;
+    }
+    if(LESSON.length && 있는지역 && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
+      var g=강좌찾기(t0), L=g.목록;
+      var 구체적 = !!(g.없음) || (L.length && g.말머리.indexOf("지금 신청") < 0);
+      var 물음 = /뭐있|뭐가|어떤|있어|있나|있냐|있을까|알려|찾아|얼마|비싸|가격|수강료|자리|정원|몇명|남았|요일|며칠|시간/.test(t0);
+      if(구체적 || (물음 && L.length)){
+        if(g.없음){ 숙제올리기(text); info(은는(g.없음)+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return; }
+        var n=Math.min(L.length,3), 말=g.말머리+" "+L.length+"개 있어요. ";
+        if(L.length>6){
+          var 종=[]; L.forEach(function(x){ if(종.indexOf(x.과목)<0) 종.push(x.과목); });
+          if(종.length>1) 말 += "반은 "+종.slice(0,5).join(", ")+(종.length>5?" 등":"")+"이 있어요. ";
+        }
+        for(var i2=0;i2<n;i2++) 말 += (i2+1)+"번, "+강좌말(L[i2])+". ";
+        if(L.length>n) 말 += "더 있어요. 더 들으시려면 다시 말씀해 주세요.";
+        info(말, "", "이런 게<br>있어요"); return;
+      }
+    }
     // 서버가 먼저 「접수 열렸어요, 넣어드릴까요?」 한 뒤의 대답 — 「넣어 줘·응·네·그래·해줘」
     if(OFFER&&/^(넣어|응|네|그래|해줘|좋아|알았|오케이|넣자)/.test(t0)&&t0.length<12){ var c=OFFER; OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} c.raw=text; confirmWith(c,""); return; }
     if(OFFER&&/^(아니|싫|됐어|안해|나중)/.test(t0)){ OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} info("네, 안 넣을게요. 다음에 또 열리면 알려드릴게요."); return; }
     if(/결과|당첨|추첨|떨어|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
       var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
+      // 내 동네에 아무것도 없으면 빈손으로 두지 않고 전국에서 찾는다
+      if(!cands.length && !q.시설) cands=OPEN.filter(function(o){return o.구조});
       if(!q.시설&&/광교|수원/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="수원"&&o.구조});
       if(!q.시설&&/성남|분당/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="성남"&&o.구조});
       if(!q.시설&&/전주/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="전주"&&o.구조});
@@ -379,7 +640,7 @@ input.txt::placeholder{color:var(--mute)}
     }
     if(/가입|회원|아이디/.test(t0)){ joinConfirm(text); return; }
     if(isFind(text)){
-      REGION=/광교|수원/.test(text)?"수원":(/성남|분당|야탑|판교|탄천/.test(text)?"성남":(/전주|에코|덕진|완산|도내기/.test(text)?"전주":null));
+      REGION=물음지역((text||"").replace(/\s+/g,""));
       var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
       if(sport){ info(sport+"은 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
       var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
@@ -388,8 +649,14 @@ input.txt::placeholder{color:var(--mute)}
     }
     var r=parse(text);
     if(!r.시설&&!r.종목){ speak("잘 못 알아들었어요. 다시 한 번 말씀해 주세요."); $("miclabel").textContent="다시 말하기"; return; }
-    if(r.종목==="아쿠아로빅"){ var aq=OPEN.filter(function(o){return o.종목==="아쿠아로빅"})[0]; info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+(aq?aq.시설:"덕진수영장")+" 안내실에 직접 가셔야 해요. "+(aq&&aq.안내||"평일 저녁 7시 전에요.")+visitLine(aq?aq.시설:"덕진수영장"), aq&&aq.전화||"063-239-2650"); return; }
-    if(!r.시설) r.시설="에코체육센터";
+    if(r.종목==="아쿠아로빅" && !r.시설){ var aq=내동네시설("아쿠아로빅");
+      if(!aq){ info("아쿠아로빅은 지금 받는 곳을 못 찾았어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); 숙제올리기(text); return; }
+      // 🔴 방식을 보고 말한다. 전에는 조건 없이 「인터넷 안 됨」이라 했다(전주 시절 코드) — 장안은 인터넷도 된다.
+      if(!인터넷되나(aq)){ info("아쿠아로빅은 인터넷으로 신청이 안 돼요. "+aq.시설+" 안내실에 직접 가셔야 해요. "+(aq.안내||"")+visitLine(aq.시설), aq.전화||""); return; }
+      r.시설=aq.시설; }
+    if(!r.시설){ var 기본=내동네시설(r.종목);
+      if(!기본){ info("어느 곳인지 못 알아들었어요. 「광교 수영 신청해 줘」처럼 장소를 같이 말씀해 주세요."); return; }
+      r.시설=기본.시설; }
     var o=item(r);
     if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
     var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+"그러니까 "+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드리고, 「넣어 줘」 하시면 바로 넣을게요.",o.전화); return; }
@@ -403,8 +670,18 @@ input.txt::placeholder{color:var(--mute)}
     rec.onerror=function(e){stop(); if(e.error==="not-allowed"){ $("lead1").textContent="마이크를 못 열었어요. 아래에 적어 주세요"; toType(); } else { $("miclabel").textContent="다시 눌러요"; } };
     rec.onend=function(){ if(listening) stop(); };
   }
-  function start(){ if(!rec){toType();return} shutUp(); try{ rec.start(); listening=true; $("micwrap").classList.add("listening"); $("miclabel").textContent="듣는 중"; $("title1").innerHTML="듣고<br>있어요"; $("ex1").textContent="“…”"; $("ex2").hidden=true; }catch(e){} }
-  function stop(){ listening=false; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="말씀만<br>하세요"; try{rec&&rec.stop()}catch(e){} }
+  function start(){
+    if(!rec){toType();return}
+    shutUp();
+    $("miclabel").textContent="켜는 중…";
+    마이크잡기(rec,
+      function(){ listening=true; $("micwrap").classList.add("listening"); $("miclabel").textContent="듣는 중";
+                  $("title1").innerHTML="듣고<br>있어요"; $("ex1").textContent="“…”"; $("ex2").hidden=true; },
+      function(왜){ listening=false; $("micwrap").classList.remove("listening");
+                  $("miclabel").textContent="말하기";
+                  $("lead1").textContent="마이크가 안 열렸어요. 아래에 적어 주세요"; toType(); });
+  }
+  function stop(){ listening=false; if(마이크주인===rec) 마이크주인=null; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="말씀만<br>하세요"; try{rec&&rec.stop()}catch(e){} }
   function resetIdle(){ $("ex1").textContent="“수영장 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("lead1").textContent="편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요"; }
   function toType(){ $("ex1").hidden=true; $("ex2").hidden=true; $("typewrap").hidden=false; $("typebtns").hidden=false; $("typed").focus(); }
   $("mic").addEventListener("click",function(){ if(listening) stop(); else start(); });
@@ -452,8 +729,15 @@ input.txt::placeholder{color:var(--mute)}
     rec2.onerror=function(e){ stop2(); if(e.error==="not-allowed"){ $("codelead").textContent="마이크를 못 열었어요. 아래에 숫자를 적어 주세요"; $("codetotype").click(); } else { $("miclabel2").textContent="다시 눌러요"; } };
     rec2.onend=function(){ if(listening2) stop2(); };
   }
-  function start2(){ if(!rec2){ $("codetotype").click(); return; } shutUp(); try{ rec2.start(); listening2=true; $("micwrap2").classList.add("listening"); $("miclabel2").textContent="듣는 중"; }catch(e){} }
-  function stop2(){ listening2=false; $("micwrap2").classList.remove("listening"); $("miclabel2").textContent="말하기"; try{rec2&&rec2.stop()}catch(e){} }
+  function start2(){
+    if(!rec2){ $("codetotype").click(); return; }
+    shutUp(); $("miclabel2").textContent="켜는 중…";
+    마이크잡기(rec2,
+      function(){ listening2=true; $("micwrap2").classList.add("listening"); $("miclabel2").textContent="듣는 중"; },
+      function(){ listening2=false; $("micwrap2").classList.remove("listening"); $("miclabel2").textContent="말하기";
+                  $("codelead").textContent="마이크가 안 열렸어요. 아래에 숫자를 적어 주세요"; $("codetotype").click(); });
+  }
+  function stop2(){ listening2=false; if(마이크주인===rec2) 마이크주인=null; $("micwrap2").classList.remove("listening"); $("miclabel2").textContent="말하기"; try{rec2&&rec2.stop()}catch(e){} }
   $("mic2").addEventListener("click",function(){ if(listening2) stop2(); else start2(); });
   $("codetotype").addEventListener("click",function(){ $("codetypewrap").hidden=false; $("codeok").hidden=false; $("codetyped").focus(); });
   $("codeok").addEventListener("click",function(){ sendCode($("codetyped").value); });
@@ -510,7 +794,7 @@ input.txt::placeholder{color:var(--mute)}
       post({type:"회원가입",시설:r.시설,원문:r.raw,이름:NAME,생년월일:PROFILE.생년월일,성별:PROFILE.성별,통신사:PROFILE.통신사,전화번호:PROFILE.전화번호,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
-    $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=(r.시설.indexOf("광교")>=0?"수원도시공사 예약결제":(/탄천|판교|성남/.test(r.시설)?"성남도시개발공사 체육시설":"전주시설공단 통합예약"));
+    $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
     show("s-progress"); renderSteps("요청","");
     speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
     post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
@@ -521,6 +805,9 @@ input.txt::placeholder{color:var(--mute)}
   function checkVer(){ fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){ var m=h.match(/cbdr-version" content="(\d+)"/); if(m&&m[1]!==MYVER&&$("s-idle").hidden===false){ location.reload(); } }).catch(function(){}); }
   setTimeout(checkVer,3000); setInterval(checkVer,60000);
   document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible") checkVer(); });
+  // 시험용 창구 — 자동 점검에서만 쓴다(사용자 동작에 영향 없음)
+  try{ window.__cbdr = { heard: heard, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
+
 </script>
 </body></html>
