@@ -1,0 +1,17 @@
+{
+  "name": "챙겨드림",
+  "short_name": "챙겨드림",
+  "description": "수원도시공사 강좌를 대신 찾아보고 신청해 드려요",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDE8DD",
+  "theme_color": "#CF5F2A",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
