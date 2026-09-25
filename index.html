@@ -110,6 +110,24 @@ input.txt::placeholder{color:var(--mute)}
   <div class="rule"></div>
 
   <!-- 1 말하기 -->
+  <!-- 🔴 첫 관문: 앱을 처음 켜면 여기부터. 공단 회원이 아니면 신청 자체가 안 된다.
+       접수 당일 새벽에 가입을 시작하면 늦는다 — 그래서 맨 앞으로 옮겼다. (2026-09-25 대표 지시) -->
+  <section class="screen" id="s-start" hidden>
+    <h1 class="pen">안녕하세요</h1>
+    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="lead" id="startlead">강좌를 대신 찾아보고, 신청도 대신 해 드려요</div>
+    <div class="sheet" style="transform:rotate(-.5deg)"><div class="dog"></div>
+      <div class="say pen" id="startwhere" style="font-size:30px">수원도시공사</div>
+      <div class="say" id="startwhat" style="font-size:22px;line-height:1.7">
+        먼저 두 가지만 여쭤볼게요.<br>성함하고, 회원가입이 돼 있는지요.<br>
+        <b>회원이 아니면 신청을 못 해요.</b>
+      </div>
+      <img class="cap" src="assets/envelope_open.jpg" alt="">
+    </div>
+    <div class="btns"><button class="btn" id="startgo" type="button">네, 시작할게요</button></div>
+    <button class="link" id="startskip" type="button">먼저 둘러만 볼래요</button>
+  </section>
+
   <section class="screen" id="s-idle">
     <h1 class="pen" id="title1">말씀만<br>하세요</h1>
     <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
@@ -120,8 +138,8 @@ input.txt::placeholder{color:var(--mute)}
       <button class="mic" id="mic" type="button" aria-label="말하기"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel">말하기</span></button>
     </div>
     <div class="sheet" id="sheet1" style="transform:rotate(.6deg)"><div class="dog"></div>
-      <div class="say pen" id="ex1">“수영장 신청할 수 있는 거 있어?”</div>
-      <div class="say pen" id="ex2">“에코수영장 실버반 신청해줘”</div>
+      <div class="say pen" id="ex1">“수영 신청할 수 있는 거 있어?”</div>
+      <div class="say pen" id="ex2">“어르신 강좌 뭐 있어?”</div>
       <div id="typewrap" hidden><input class="txt" id="typed" placeholder="여기에 적어도 돼요"></div>
       <img class="cap" src="assets/swim_cap.jpg" alt="">
     </div>
@@ -178,6 +196,7 @@ input.txt::placeholder{color:var(--mute)}
       <div class="say pen" id="askheard" style="font-size:34px;text-align:center">…</div>
       <div id="asktypewrap" hidden><input class="txt" id="asktyped" placeholder="여기에 적어도 돼요"></div>
     </div>
+    <div class="btns" id="askyn" hidden><button class="btn" id="askyes" type="button">네</button><button class="btn ghost" id="askno" type="button">아니요</button><button class="btn ghost" id="askdunno" type="button">모르겠어요</button></div>
     <div class="btns"><button class="btn" id="askok" type="button" hidden>네, 맞아요</button><button class="btn ghost" id="askagain" type="button" hidden>아니요, 다시</button></div>
     <button class="link" id="asktotype" type="button">말하기가 안 되면 글로 적기</button>
   </section>
@@ -390,8 +409,8 @@ input.txt::placeholder{color:var(--mute)}
 
 
   // ── 화면
-  var secs=["s-idle","s-list","s-confirm","s-progress","s-ask","s-code","s-result","s-info"];
-  var crumbs={"s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-ask":"여쭤볼게요","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
+  var secs=["s-start","s-idle","s-list","s-confirm","s-progress","s-ask","s-code","s-result","s-info"];
+  var crumbs={"s-start":"처음 준비","s-idle":"말하기","s-list":"찾아드림","s-confirm":"보내기 전 확인","s-progress":"대신 진행 중","s-ask":"여쭤볼게요","s-code":"본인 확인","s-result":"결과","s-info":"안내"};
   function show(id){secs.forEach(function(s){$(s).hidden=(s!==id)});$("crumb").textContent=crumbs[id]||"";window.scrollTo(0,0)}
   // ── 목소리
   var stopBtn=$("stopsay");
@@ -530,13 +549,23 @@ input.txt::placeholder{color:var(--mute)}
     {k:"전화번호",title:"휴대폰 번호를<br>말해 주세요",lead:"「공일공 …」 하고 숫자 열한 개",say:"휴대폰 번호를 말해 주세요.",parse:function(t){ var d=toDigits(t); return (d.length===11&&d.slice(0,3)==="010")?d:null; },show:function(v){return v.slice(0,3)+"-"+v.slice(3,7)+"-"+v.slice(7)}}
   ];
   var askQ=null, askVal=null, askDone=null;
-  function ask(q,done){ askQ=q; askVal=null; askDone=done; $("asktitle").innerHTML=q.title; $("asklead").textContent=q.lead||""; $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; $("asktypewrap").hidden=true; $("asktyped").value=""; show("s-ask"); speak(q.say||q.title.replace(/<br>/g," ")); }
+  function ask(q,done){ askQ=q; askVal=null; askDone=done; $("asktitle").innerHTML=q.title; $("asklead").textContent=q.lead||"";
+    $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; $("asktypewrap").hidden=true; $("asktyped").value="";
+    // 🔴 예/아니오는 어르신께 버튼이 훨씬 쉽다. 말로도 되지만 버튼을 같이 둔다.
+    $("askyn").hidden = !q.예아니오;
+    $("askdunno").hidden = !(q.예아니오 && q.모름);
+    $("micwrap3").hidden = !!q.버튼만;
+    show("s-ask"); speak(q.say||q.title.replace(/<br>/g," ")); }
   function askGot(text){
     var v=askQ.parse?askQ.parse(text):text.trim();
     if(!v){ $("askheard").textContent="“"+text+"”"; $("askok").hidden=true; $("askagain").hidden=true; speak("잘 못 알아들었어요. 다시 말씀해 주세요."); return; }
     askVal=v; var shown=askQ.show?askQ.show(v):v; $("askheard").textContent=shown; $("askok").hidden=false; $("askagain").hidden=false; speak(shown+", 맞아요?");
   }
   $("askok").addEventListener("click",function(){ shutUp(); var d=askDone; askDone=null; if(d) d(askVal); });
+  function 예아니오답(v){ shutUp(); var d=askDone; askQ=null; askDone=null; $("askyn").hidden=true; $("micwrap3").hidden=false; if(d) d(v); }
+  $("askyes").addEventListener("click",function(){ 예아니오답("예"); });
+  $("askno").addEventListener("click",function(){ 예아니오답("아니요"); });
+  $("askdunno").addEventListener("click",function(){ 예아니오답("모름"); });
   $("askagain").addEventListener("click",function(){ shutUp(); $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; speak(askQ.say||""); });
   function askAll(qs,i,done){ if(i>=qs.length){ done(); return; } var q=qs[i]; if(PROFILE[q.k]){ askAll(qs,i+1,done); return; } ask(q,function(v){ PROFILE[q.k]=v; saveProfile(); askAll(qs,i+1,done); }); }
   var rec3=null, listening3=false;
@@ -558,6 +587,61 @@ input.txt::placeholder{color:var(--mute)}
   $("mic3").addEventListener("click",function(){ if(listening3) stop3(); else start3(); });
   $("asktotype").addEventListener("click",function(){ $("asktypewrap").hidden=false; $("asktyped").focus(); });
   $("asktyped").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=$("asktyped").value.trim(); if(v) askGot(v); } });
+  // ── 🔴 첫 관문 ───────────────────────────────────────────────────
+  //    앱을 처음 켠 어르신은 **공단 회원이 아니면 아무것도 신청 못 한다.**
+  //    전에는 접수 화면까지 가서야 「회원이어야 해요」가 나왔다 —
+  //    9/30 새벽 6시 선착순에 그 자리에서 가입을 시작하면 늦는다. 그래서 맨 앞으로 옮겼다.
+  var 준비됨 = (function(){ try{
+      if(localStorage.getItem("cbdr_준비")==="1") return true;
+      // 🔴 이미 쓰시던 분(이름도 있고 회원이기도 함)께 관문을 다시 묻지 않는다
+      if(NAME && NAME!=="어르신" && MEMBER.length) return true;
+      return false; }catch(e){ return false; } })();
+  function 준비끝(){ 준비됨=true; try{ localStorage.setItem("cbdr_준비","1"); }catch(e){} }
+
+  var 이름질문 = {k:"이름", title:"성함이<br>어떻게 되세요?", lead:"「정이서」처럼 이름만 말씀하시면 돼요",
+    say:"성함이 어떻게 되세요?",
+    parse:function(t){ var v=String(t||"").replace(/[^가-힣a-zA-Z\s]/g,"")
+        .replace(/저는|제가|이름은|이에요|예요|입니다|이라고|라고|합니다|해요/g,"").replace(/\s+/g,"").trim();
+      return (v.length>=2 && v.length<=6) ? v : null; },
+    show:function(v){ return v; }};
+
+  function 회원질문(){ return {k:"회원", 예아니오:true, 모름:true, 버튼만:false,
+    title:공단+"에<br>회원가입 돼 있으세요?",
+    lead:"모르시면 「모르겠어요」를 눌러 주세요. 제가 대신 해 드려요",
+    say:공단+"에 회원가입이 돼 있으세요? 모르시면 모르겠어요를 눌러 주세요.",
+    parse:function(t){ t=String(t||"").replace(/\s+/g,"");
+      if(/모르|몰라|글쎄/.test(t)) return "모름";
+      if(/^(네|예|응|맞|있어|했어|돼|되어|가입했)/.test(t)) return "예";
+      if(/^(아니|안|없어|안했|못했)/.test(t)) return "아니요";
+      return null; },
+    show:function(v){ return v; }}; }
+
+  function 첫관문(){
+    $("startwhere").textContent = 공단;
+    $("startlead").textContent = 내지역 + " 강좌를 대신 찾아보고, 신청도 대신 해 드려요";
+    show("s-start");
+    speak("안녕하세요. 저는 " + 공단 + " 강좌를 대신 찾아보고 신청해 드려요. 시작할까요?");
+  }
+  function 관문진행(){
+    ask(이름질문, function(이름){
+      NAME = 이름; try{ localStorage.setItem("cbdr_name", 이름); }catch(e){}
+      ask(회원질문(), function(답){
+        if(답 === "예"){
+          addMember(공단); 준비끝();
+          info(NAME + "님, 준비 다 됐어요. 이제 「무슨 강좌 있어?」 하고 물어보시면 돼요.", "", "다 됐어요");
+          return;
+        }
+        // 아니요 · 모름 → 가입부터. 모르면 해 보고 이미 있으면 서버가 알려준다.
+        준비끝();
+        speak(공단 + " 회원가입부터 해 드릴게요.");
+        joinConfirm(공단 + " 가입");
+      });
+    });
+  }
+  $("startgo").addEventListener("click", function(){ shutUp(); 관문진행(); });
+  $("startskip").addEventListener("click", function(){ shutUp(); 준비끝(); resetIdle(); show("s-idle");
+    speak("네, 둘러보세요. 신청하시려면 회원가입이 필요한데, 그때 제가 도와드릴게요."); });
+
   function joinConfirm(raw){
     var t=(raw||"").replace(/\s+/g,"");
     var org=공단;
@@ -682,7 +766,7 @@ input.txt::placeholder{color:var(--mute)}
                   $("lead1").textContent="마이크가 안 열렸어요. 아래에 적어 주세요"; toType(); });
   }
   function stop(){ listening=false; if(마이크주인===rec) 마이크주인=null; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="말씀만<br>하세요"; try{rec&&rec.stop()}catch(e){} }
-  function resetIdle(){ $("ex1").textContent="“수영장 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("lead1").textContent="편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요"; }
+  function resetIdle(){ $("ex1").textContent="“수영 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("lead1").textContent="편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요"; }
   function toType(){ $("ex1").hidden=true; $("ex2").hidden=true; $("typewrap").hidden=false; $("typebtns").hidden=false; $("typed").focus(); }
   $("mic").addEventListener("click",function(){ if(listening) stop(); else start(); });
   $("totype").addEventListener("click",toType);
@@ -806,7 +890,21 @@ input.txt::placeholder{color:var(--mute)}
   setTimeout(checkVer,3000); setInterval(checkVer,60000);
   document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible") checkVer(); });
   // 시험용 창구 — 자동 점검에서만 쓴다(사용자 동작에 영향 없음)
-  try{ window.__cbdr = { heard: heard, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
+  // 🔴 앱을 켤 때 — 처음이면 관문으로, 이미 준비됐는데 접수가 코앞인데 회원이 아니면 미리 알린다
+  function 켤때(){
+    if(!준비됨){ setTimeout(첫관문, 400); return; }
+    if(MEMBER.indexOf(공단) >= 0) return;
+    var 임박 = OPEN.filter(function(o){ return soon(o.시작) || (fromText(o.시작) && dueText(o.마감)!=="접수 끝남"); });
+    if(!임박.length) return;
+    setTimeout(function(){
+      info("곧 접수가 열리는데 아직 " + 공단 + " 회원가입이 안 돼 있어요. "
+         + "회원이 아니면 신청을 못 해요. 지금 「가입해 줘」 하시면 제가 해 드릴게요.",
+         "", "먼저<br>가입하셔야 해요");
+    }, 900);
+  }
+  setTimeout(켤때, 1200);   // 수첩(목록.json)을 받은 뒤에 판단한다
+
+  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
 
 </script>
