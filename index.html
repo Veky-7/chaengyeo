@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260925200310">
+<meta name="cbdr-version" content="20260926211038">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -354,7 +354,7 @@ input.txt::placeholder{color:var(--mute)}
   //    → 종목 갈래로 묶어 번호를 읽어드리고, 번호(또는 갈래 이름)를 말하면 그 갈래를 어르신반 먼저 읽는다.
   //    갈래는 과목 이름으로만 정한다(위에서부터 먼저 걸리는 것). 안 걸리면 「배움」.
   var 갈래표=[
-    {이름:"배드민턴", 말:/배드민턴/, 글:/배드민턴/},
+    {이름:"배드민턴·탁구", 짧:"배드민턴 탁구", 말:/배드민턴|탁구|스쿼시|라켓/, 글:/배드민턴|탁구|스쿼시/},   // 9/26 서수원칠보 탁구·장안 스쿼시가 들어와 넓힘
     {이름:"수영",     말:/수영|아쿠아|물운동|물에어로빅/, 글:/아쿠아|수영/},
     {이름:"외국어",   말:/외국어|영어|일본|중국|태국어/, 글:/영어|일본어|일본|중국어|태국어|English|Writing|Speaking|CanDoIt|Talking|회화|원어민/},
     {이름:"노래·가곡", 짧:"노래", 말:/노래|가곡|민요|팝송/, 글:/노래|가곡|민요|경기소리|팝송/},
@@ -513,6 +513,14 @@ input.txt::placeholder{color:var(--mute)}
     for(var i=0;i<표.length;i++){
       if(!표[i].말.test(t)) continue;
       var 그갈래=어린이뺌.filter(function(x){return 갈래(x)===표[i].이름;});
+      // 「탁구 뭐 있어」 — 갈래(배드민턴·탁구) 안에서 말한 종목만 먼저 추린다
+      //    🔴 종목 이름일 때만 좁힌다 — 「노래」로 좁히면 가곡·민요가 빠진다(갈래 이름 자체는 좁히지 않는다)
+      var 종목낱말=["탁구","스쿼시","배드민턴","아쿠아","검도","줌바","라인댄스","훌라","우쿨렐레","피아노","바이올린","하모니카","오카리나","드럼","가야금","플루트","첼로","영어","일본어","중국어","태국어","필라테스"];
+      var 낱말=종목낱말.filter(function(w){ return t.indexOf(w)>=0; });
+      for(var w=0; w<낱말.length; w++){
+        var 좁힘=그갈래.filter(function(x){ return 밀(x.과목).indexOf(낱말[w])>=0; });
+        if(좁힘.length && 좁힘.length<그갈래.length) return {목록:어르신먼저(좁힘), 말머리:낱말[w], 갈래:낱말[w]};
+      }
       if(그갈래.length) return {목록:어르신먼저(그갈래), 말머리:표[i].이름, 갈래:표[i].이름};
     }
     // 🔴 「어르신 거」 = 어린이 것만 뺀 전부. 어르신맞춤 11건만 말하면 97%를 숨긴다(9/25 대표 지적).
