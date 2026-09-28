@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260928135323">
+<meta name="cbdr-version" content="20260928141943">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -432,7 +432,7 @@ input.txt::placeholder{color:var(--mute)}
     info(말, "", "몇 번<br>들으실래요?");
     var box=$("infopick"); box.innerHTML="";
     메뉴.forEach(function(g,i){ var b=document.createElement("button"); b.type="button"; b.className="pick";
-      b.innerHTML="<b>"+(i+1)+"</b>"; b.appendChild(document.createTextNode(g.이름+" "+g.목록.length));
+      b.innerHTML="<b>"+(i+1)+"</b>"; b.appendChild(document.createTextNode(g.이름+" · "+g.목록.length+"개"));   // 9/28: 숫자만 붙이면 시각·번호로 읽힌다
       b.addEventListener("click",function(){ shutUp(); 갈래읽기(g); }); box.appendChild(b); });
     box.hidden=false;
   }
@@ -472,7 +472,7 @@ input.txt::placeholder{color:var(--mute)}
         info(말, "", "골라<br>주세요");
         var box=$("infopick"); box.innerHTML="";
         z.보기.forEach(function(b,i){ var e=document.createElement("button"); e.type="button"; e.className="pick";
-          e.innerHTML="<b>"+(i+1)+"</b>"; e.appendChild(document.createTextNode(b.짧+" "+b.목록.length));
+          e.innerHTML="<b>"+(i+1)+"</b>"; e.appendChild(document.createTextNode(b.짧+" · "+b.목록.length+"개"));   // 🔴 9/28 대표 「저녁 12시가 뭐야?」 — 개수를 시각으로 읽었다
           e.addEventListener("click",function(){ shutUp(); 좁힘고름(b); }); box.appendChild(e); });
         box.hidden=false;
         return;
