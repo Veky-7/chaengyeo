@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260928210607">
+<meta name="cbdr-version" content="20260928215255">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1006,6 +1006,15 @@ input.txt::placeholder{color:var(--mute)}
       if(done) return; done=true; clearTimeout(t); info(RESULT||NO_RESULT);
     }).catch(function(){ if(!done){ done=true; clearTimeout(t); info(NO_RESULT); } });
   }
+  function 파크골프말(d){
+    var 요=d.getDay(), 월=d.getMonth()+1, 주말=(요===0||요===6), 겨울=(월>=11||월<=2);
+    var 여는=주말?9:8, 닫는=겨울?17:18;
+    var 오늘 = 요===1 ? "오늘은 월요일이라 쉬어요. 내일 아침 8시부터 해요. "
+             : (d.getHours()>=닫는 ? (요===0 ? "오늘은 끝났어요. 내일은 월요일이라 쉬고, 화요일 아침 8시부터 해요. " : "오늘은 끝났어요. 내일 아침 "+((요===5||요===6)?9:8)+"시부터 해요. ")
+             : "오늘은 아침 "+여는+"시부터 저녁 "+(닫는-12)+"시까지 해요. ");
+    return "수원 파크골프장은 예약 없이 무료예요. 가서 순서대로 치시면 돼요. 칠보체육관 옆 칠보 파크골프장과 고색동 중보들공원 두 곳이에요. "
+         + 오늘 + "비 오거나 잔디 손볼 땐 문을 닫아요. 아침 일찍 사람이 많아요.";
+  }
   var OFFER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_offer")||"null")}catch(e){return null}})();
   function heard(text){
     shutUp();
@@ -1025,6 +1034,9 @@ input.txt::placeholder{color:var(--mute)}
           좁히기다음(); return; } }
       좁히기=null;   // 다른 물음이면 좁히기는 놓는다
     }
+    // 🔴 9/28 예선 심사위원 「우리 아버지도 파크골프장 예약」 → 수원 파크골프장은 예약제가 아니다(통합예약 「파크골프」 0건 · 공사 공식 「9홀 무료개방 · 월요일 휴장 · 우천·잔디관리 임시휴장」 · 과제S)
+    //    → 「예약해 드릴게요」는 거짓말. 오늘 여는지 · 몇 시까지 · 어디인지를 정확히 말한다
+    if(/파크골프|파크꼴프|팍골프/.test(t0)){ info(파크골프말(new Date()), "", "파크골프는<br>예약 없어요"); return; }
     // 🔴 9/28 「이걸로 신청해 줘」「3번 신청해 줘」 — 읽어드린 강좌 하나를 예약번호까지 담아 신청한다
     if(/신청|넣어|접수|등록/.test(t0) && !/어떻게|방법|언제|되나|돼\?|할수있|있어|있나|뭐|가입|회원|아이디/.test(t0)){
       var 앞s=t0.replace(/(으로|로)?(신청|넣어|접수).*$/,"");
@@ -1333,7 +1345,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   setTimeout(켤때, 1200);   // 수첩(목록.json)을 받은 뒤에 판단한다
 
-  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 갈래:갈래, 번호:번호, 메뉴:function(){return 메뉴}, 지금갈래:function(){return 지금갈래}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
+  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 갈래:갈래, 번호:번호, 파크골프말:파크골프말, 메뉴:function(){return 메뉴}, 지금갈래:function(){return 지금갈래}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
 
 </script>
