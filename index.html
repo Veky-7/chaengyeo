@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260927203102">
+<meta name="cbdr-version" content="20260928130803">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -349,7 +349,7 @@ input.txt::placeholder{color:var(--mute)}
     var 때=(글(x.요일)+" "+글(x.시간)).trim(); if(때) p.push(때);
     var d=돈(x); if(d){ p.push(d); if(d.indexOf("확인해")>=0) 금액숙제(x); else { var 할=할인말(x); if(할) p.push(할); } }
     var 정원=글(x.정원); if(정원) p.push("정원 "+정원+"명");
-    return p.join(", ") + 다툼말(x);
+    return p.join(", ");   // 🔴 9/28 대표 캡처: 줄마다 「안내문마다 달라요…」가 붙어 104개 목록이 끝이 없었다 → 다툼말은 강좌하나()에서만
   }
   // 🔴 말에 도시가 있으면 그 도시. 없으면 내 동네. 수첩에 그 도시 강좌가 없으면 딴 도시 시간표를 읽어주지 않는다.
   // 말에 내 지자체가 아닌 도시가 있으면 그 이름을 돌려준다 → 「그 도시는 아직 못 봤어요」로 정직하게 답한다
@@ -407,6 +407,7 @@ input.txt::placeholder{color:var(--mute)}
     return out;
   }
   var 메뉴=null, 메뉴머리="";      // 마지막으로 읽어드린 갈래 번호표 [{이름, 목록}]
+  var 들은강좌=null, 들은때=0;  // 🔴 9/28: 마지막으로 자세히 읽어드린 강좌 — 「이걸로 신청해 줘」의 「이것」 · 코덱스 N: 오래 남으면 한참 뒤 「그거」가 옛 강좌로 간다 → 10분·다른 물음이면 놓는다
   var 지금갈래=null;  // 갈래 하나를 읽는 중이면 {이름, 목록} — 이때 「2번」은 갈래가 아니라 **그 안의 2번 강좌**다(코덱스 H3 치명)
   // 「2번」「이번」「두 번째」「둘」「2」 → 2. 번호로 안 읽히면 0.
   function 번호(t){
@@ -436,6 +437,7 @@ input.txt::placeholder{color:var(--mute)}
     box.hidden=false;
   }
   function 갈래읽기(g){
+    if(g.목록.length>6){ var 메뉴있음=!!메뉴; 좁히기시작(g.목록, 은는(g.이름), false); return; }   // 🔴 9/28: 많으면 좁힌다
     지금갈래=g;
     var L=g.목록, n=Math.min(L.length,3), 어=L.filter(function(x){return x.딱지==="어르신맞춤";}).length;
     var 말=은는(g.이름)+" "+L.length+"개 있어요. ";
@@ -447,6 +449,50 @@ input.txt::placeholder{color:var(--mute)}
     info(말, "", "이런 게<br>있어요");
     $("infomore").hidden = !이어듣기;
   }
+  // 🔴 9/28 대표 「강좌가 너무 많아 ㅠㅠ」(수영 104개를 3개씩 읽었다) → 6개가 넘으면 읽지 않고 물어서 좁힌다: 곳 → 오전·오후·저녁 → 요일
+  var 좁히기=null;   // {목록, 머리, 신청(이 말이 신청이었나), 단계, 보기:[{값, 목록}]}
+  var 좁힘단계=[
+    {물음:"어느 곳이 좋으세요?", 값:function(x){ return x.시설||"그 밖"; }, 짧:function(v){ return (시설별칭&&시설별칭[v]&&시설별칭[v][0])||v.replace(/국민체육센터|체육관|회관|구민/g,""); }},
+    {물음:"언제가 좋으세요?", 값:function(x){ var m=String(x.시간||"").match(/(\d{1,2})\s*:/); if(!m) return "시간 자유"; var h=+m[1]; return h<12?"오전":(h<18?"오후":"저녁"); }, 짧:function(v){ return v; }, 순서:["오전","오후","저녁","시간 자유"]},
+    {물음:"무슨 요일이 좋으세요?", 값:function(x){ var d=(String(x.요일||"").match(/[월화수목금토일]/g)||[]); d=d.filter(function(c,i){return d.indexOf(c)===i;}).join(""); return d||"요일 자유"; }, 짧:function(v){ return v; }}
+  ];
+  function 좁히기시작(L, 머리, 신청){ 이어듣기=null; 지금갈래=null; 좁히기={목록:L, 머리:머리||"", 신청:!!신청, 단계:0, 보기:null}; 좁히기다음(); }
+  function 좁히기다음(){
+    var z=좁히기;
+    while(z.단계<좁힘단계.length && z.목록.length>5){
+      var st=좁힘단계[z.단계], 칸={}, 순=[];
+      z.목록.forEach(function(x){ var v=st.값(x); if(!칸[v]){ 칸[v]=[]; 순.push(v); } 칸[v].push(x); });
+      if(순.length>1){
+        if(st.순서) 순.sort(function(a,b){ return st.순서.indexOf(a)-st.순서.indexOf(b); }); else 순.sort(function(a,b){ return 칸[b].length-칸[a].length; });
+        z.보기=순.map(function(v){ return {값:v, 짧:st.짧(v), 목록:칸[v]}; });
+        var 말=(z.단계===0||!z.처음말? (z.머리?z.머리+" ":"")+z.목록.length+"개 있어요. 너무 많아서 좁혀 볼게요. " : "")+st.물음+" ";
+        z.처음말=1;
+        z.보기.forEach(function(b,i){ 말+=(i+1)+"번 "+b.짧+(i<z.보기.length-1?", ":". "); });
+        말+="번호로 말씀해 주세요. 상관없으면 「상관없어」라고 하세요.";
+        info(말, "", "골라<br>주세요");
+        var box=$("infopick"); box.innerHTML="";
+        z.보기.forEach(function(b,i){ var e=document.createElement("button"); e.type="button"; e.className="pick";
+          e.innerHTML="<b>"+(i+1)+"</b>"; e.appendChild(document.createTextNode(b.짧+" "+b.목록.length));
+          e.addEventListener("click",function(){ shutUp(); 좁힘고름(b); }); box.appendChild(e); });
+        box.hidden=false;
+        return;
+      }
+      z.단계++;
+    }
+    좁히기=null; 목록끝(z.목록, z.머리, z.신청);
+  }
+  function 좁힘고름(b){ if(!좁히기) return; 좁히기.목록=b.목록; 좁히기.단계++; 좁히기.보기=null; 좁히기다음(); }
+  function 목록끝(L, 머리, 신청){
+    if(L.length===1 && 신청){ 강좌신청확인(L[0], ""); return; }
+    지금갈래={이름:머리||"찾은 강좌", 목록:L, 신청:!!신청};
+    var n=Math.min(L.length,5), 말=L.length+"개예요. ";
+    for(var i=0;i<n;i++) 말+=(i+1)+"번, "+강좌말(L[i])+". ";
+    if(L.length>n) 말+="더 있어요. 「더 들려주세요」를 눌러 주세요. ";
+    말+= 신청 ? "몇 번으로 신청할까요?" : "번호를 말씀하시면 자세히 알려드려요. 「2번 신청해 줘」 하시면 바로 신청해 드려요.";
+    이어듣기=(L.length>n)?{목록:L, 다음:n, 말머리:머리}:null;
+    info(말, "", 신청?"몇 번으로<br>할까요?":"이런 게<br>있어요");
+    $("infomore").hidden=!이어듣기;
+  }
   // 갈래 안에서 번호를 고르면 그 강좌 하나를 자세히
   function 강좌하나(x, 몇){
     var 글=function(v){ return String(v==null?"":v).trim(); };
@@ -456,7 +502,8 @@ input.txt::placeholder{color:var(--mute)}
     var d=돈(x); if(d){ p.push(d); if(d.indexOf("확인해")>=0) 금액숙제(x); }
     if(글(x.정원)) p.push("정원 "+글(x.정원)+"명");
     if(글(x.강사)) p.push(글(x.강사)+" 선생님");
-    var 말=p.join(". ")+"."+다툼말(x)+" 다른 번호를 말씀하셔도 돼요.";
+    들은강좌=x; 들은때=Date.now();
+    var 말=p.join(". ")+"."+다툼말(x)+(x.예약번호?" 이걸로 하시려면 「이걸로 신청해 줘」라고 말씀해 주세요.":"")+" 다른 번호를 말씀하셔도 돼요.";
     info(말, "", "이 강좌예요");
     $("infomore").hidden = !(이어듣기 && 이어듣기.다음<이어듣기.목록.length);
   }
@@ -713,6 +760,16 @@ input.txt::placeholder{color:var(--mute)}
     $("infomore").hidden = (끝>=L.length);
   }
   function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; $("infopick").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
+  function 강좌신청확인(x, raw){
+    var 말=(x.시설+" "+(x.과목||"")+" "+(x.요일||"")+" "+(x.시간||"")).replace(/\s+/g," ").trim();
+    if(!x.예약번호){ 숙제올리기(raw||말); info(말+"은 예약 사이트 번호를 아직 못 찾았어요. 확인해서 알려드릴게요.", "", "잠깐만요"); return; }
+    if(x.시설==="장안구민회관"){ info("장안구민회관은 예약 방식이 달라서 제가 아직 못 넣어요. 031-228-3028 로 전화하시면 돼요.", "031-228-3028", "아직<br>못 넣어요"); return; }
+    if(!isMember(x.시설)){ speak(x.시설+"은 "+orgOf(x.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((raw||"")+" "+x.시설+" 가입"); return; }
+    cur={type:"강좌신청",raw:raw||"",사람:NAME,시설:x.시설,종목:x.종목||"",반:(x.과목||""),시간:((x.요일||"")+" "+(x.시간||"")).trim(),예약번호:String(x.예약번호),과목:x.과목||"",요일:x.요일||"",해당월:x.해당월||""};
+    $("formtitle").textContent=x.시설+" "+(x.과목||"")+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=x.과목||"—"; $("f-time").textContent=cur.시간||"—";
+    var d=돈(x), extra=(d?d+". ":"")+"접수하면 결제는 직접 하셔야 해요.";
+    document.getElementById("confnote").textContent=extra; show("s-confirm"); speak(말+" 신청할게요. "+extra+" 맞아요?");
+  }
   function confirmWith(o,extra){
     if(!isMember(o.시설)){ speak(o.시설+"은 "+orgOf(o.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((o.raw||"")+" "+o.시설+" 가입"); return; }
     cur={raw:o.raw||"",사람:NAME,시설:o.시설,종목:o.종목,반:o.반,시간:o.시간||""};
@@ -874,16 +931,43 @@ input.txt::placeholder{color:var(--mute)}
   function heard(text){
     shutUp();
     var t0=(text||"").replace(/\s+/g,"");
+    // 🔴 9/28 좁히는 중의 대답 — 번호 · 「광교」「저녁」「월수금」처럼 말로 · 「상관없어」
+    if(좁히기 && 좁히기.보기){
+      var nz=번호(t0), bz=null;
+      if(nz>=1 && nz<=좁히기.보기.length) bz=좁히기.보기[nz-1];
+      if(!bz){ var 곳z=말한시설(t0); 좁히기.보기.forEach(function(b){ if(!bz && (b.값===곳z || t0.indexOf(String(b.짧).replace(/\s+/g,""))>=0 || t0.indexOf(String(b.값).replace(/\s+/g,""))>=0)) bz=b; }); }
+      if(bz){ 좁힘고름(bz); return; }
+      if(/^(상관없|아무거나|아무때|다괜찮|전부|다좋아)/.test(t0)){ 좁히기.단계++; 좁히기.보기=null; 좁히기다음(); return; }
+      좁히기=null;   // 다른 물음이면 좁히기는 놓는다
+    }
+    // 🔴 9/28 「이걸로 신청해 줘」「3번 신청해 줘」 — 읽어드린 강좌 하나를 예약번호까지 담아 신청한다
+    if(/신청|넣어|접수/.test(t0) && !/어떻게|방법|언제|되나|돼\?|할수있|있어|있나|뭐/.test(t0)){
+      var 앞s=t0.replace(/(으로|로)?(신청|넣어|접수).*$/,"");
+      if(지금갈래 && !/^(한번|이번|한번만|이번에)$/.test(앞s)){ var 몇s=번호(앞s);
+        if(몇s>=1 && 몇s<=지금갈래.목록.length){ 강좌신청확인(지금갈래.목록[몇s-1], text); return; } }
+      if(들은강좌 && Date.now()-들은때<10*60*1000 && /(이걸|이거|그걸|그거|요걸|요거|이강좌|그강좌|이반|그반)/.test(t0)){ 강좌신청확인(들은강좌, text); return; }
+      // 🔴 9/28 대표 「타로 배우기 초급반 신청해 줘」가 안 먹었다 — 강좌 이름을 대며 신청하면 수첩에서 찾는다(하나면 바로 확인, 여럿이면 좁혀서)
+      if(LESSON.length && !/(이걸|이거|그걸|그거|요걸|요거)/.test(t0)){
+        var 앞말s=t0.replace(/(을|를)?(신청|넣어|접수).*$/,"");   // 「배우기」는 떼지 않는다 — 과목 이름에 들어 있다(가족여성 「타로 배우기 (초급…)」)
+        if(앞말s.length>=2){ var gs=강좌찾기(앞말s);
+          if(gs && !gs.없음 && !gs.메뉴 && gs.목록 && gs.목록.length){
+            var 급=["초급","중급","고급","상급","기초","입문","심화","왕초보"].filter(function(w){ return 앞말s.indexOf(w)>=0; });   // 후보가 여럿이면 말에 든 수준으로 한 번 더 · 🔴 정규식 한 번은 「배우기초급반」에서 「기초」를 먼저 잡았다
+            if(gs.목록.length>1 && 급.length){ var 거른=gs.목록.filter(function(x){ return 급.some(function(w){ return String(x.과목||"").indexOf(w)>=0; }); }); if(거른.length) gs={목록:거른, 말머리:gs.말머리}; }
+            if(gs.목록.length===1){ 강좌신청확인(gs.목록[0], text); return; }
+            좁히기시작(gs.목록, gs.말머리||"", true); return; } }
+      }
+    }
     // 🔴 번호표를 읽어드린 뒤 「2번」「이번」「두 번째」 — 다른 분기가 먹기 전에 먼저 받는다
     //    갈래 안을 읽는 중이면 번호는 **그 안의 강좌**다. 갈래로 돌아가려면 「다른 거」.
     if(메뉴 && /^(다른거|다른것|딴거|다른갈래|번호다시|처음|처음부터|목록|메뉴|다시번호)/.test(t0) && t0.length<10){
       var 전=[]; 메뉴.forEach(function(g){ 전=전.concat(g.목록); }); 메뉴읽기(전, 메뉴머리); return; }
     if(지금갈래){ var 몇g=번호(t0);
-      if(몇g>=1 && 몇g<=지금갈래.목록.length){ 강좌하나(지금갈래.목록[몇g-1], 몇g); return; }
+      if(몇g>=1 && 몇g<=지금갈래.목록.length){ if(지금갈래.신청){ 강좌신청확인(지금갈래.목록[몇g-1], text); return; } 강좌하나(지금갈래.목록[몇g-1], 몇g); return; }
       if(몇g>지금갈래.목록.length){ info(은는(지금갈래.이름)+" "+지금갈래.목록.length+"번까지 있어요. 다른 걸 들으시려면 「다른 거」라고 말씀해 주세요.", "", "몇 번<br>들으실래요?"); return; } }
     else if(메뉴){ var 몇=번호(t0); if(몇>=1 && 몇<=메뉴.length){ 갈래읽기(메뉴[몇-1]); return; }
       if(몇>메뉴.length){ info(메뉴.length+"번까지 있어요. 몇 번 들으실래요?", "", "몇 번<br>들으실래요?"); $("infopick").hidden=false; return; } }
     지금갈래=null;   // 번호가 아닌 새 물음이면 읽던 갈래는 놓는다(아래에서 갈래를 또 읽으면 다시 잡힌다)
+    들은강좌=null;   // 🔴 9/28 코덱스 N: 다른 걸 물으면 「그거」는 더 이상 그 강좌가 아니다
     // 🔴 「더」·「다음」·「또 들려줘」 — 어디까지 읽었는지 기억해 이어서 읽는다
     if(이어듣기 && /^(더|다음|또|계속|더들려|더알려|더말해|그다음)/.test(t0) && t0.length<12){ 더읽기(); return; }
     // 2층 강좌 — 「말에 강좌 이름이 들어 있는가」로 판정한다(「있어/얼마/자리」처럼 말끝이 제각각이라)
@@ -916,6 +1000,7 @@ input.txt::placeholder{color:var(--mute)}
         if(g.없음){ 숙제올리기(text); info(은는(g.없음)+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return; }
         if(g.메뉴){ 메뉴읽기(L, g.말머리.indexOf("어르신")>=0 ? "어르신 강좌 있어요." : "지금 신청할 수 있는 강좌 있어요."); return; }
         if(g.갈래){ 갈래읽기({이름:g.갈래, 목록:L}); return; }
+        if(L.length>6){ 좁히기시작(L, g.말머리, false); return; }   // 🔴 9/28 대표 「강좌가 너무 많아」
         var n=Math.min(L.length,3), 말=g.말머리+" "+L.length+"개 있어요. ";
         if(L.length>6){
           var 종=[]; L.forEach(function(x){ if(종.indexOf(x.과목)<0) 종.push(x.과목); });
@@ -1090,7 +1175,9 @@ input.txt::placeholder{color:var(--mute)}
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
         if(isJoin()){ addMember(cur.시설); $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
-        else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }
+        else if(d.완료종류==="결제화면"){ $("restitle").textContent="결제 화면까지 왔어요"; $("stamp").textContent="결제 전"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" · 아직 신청 전"; $("res-next").textContent=d.다음||"결제는 직접 하셔야 해요"; }
+        else if(d.완료종류==="이미"){ $("restitle").textContent="이미 들어 있어요"; $("stamp").textContent="확인됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:""); $("res-next").textContent=d.다음||"마이페이지에서 확인"; }
+        else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }   // 🔴 9/28 코덱스 N: 결제 화면만 열었는데도 「접수됐어요」였다
         ring(d.결과,d.메모); show("s-result"); }
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
     }catch(e){} };
@@ -1102,6 +1189,13 @@ input.txt::placeholder{color:var(--mute)}
       show("s-progress"); renderSteps("요청","");
       speak("네, 가입하러 갈게요. 문자로 숫자가 오면 읽어 주세요.");
       post({type:"회원가입",시설:r.시설,원문:r.raw,이름:NAME,생년월일:PROFILE.생년월일,성별:PROFILE.성별,통신사:PROFILE.통신사,전화번호:PROFILE.전화번호,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      return;
+    }
+    if(r.type==="강좌신청"){
+      $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
+      show("s-progress"); renderSteps("요청","");
+      speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
+      post({type:"신청",예약번호:r.예약번호,시설:r.시설,과목:r.과목,요일:r.요일,시간:r.시간,해당월:r.해당월,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
