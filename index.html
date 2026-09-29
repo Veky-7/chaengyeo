@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260928215255">
+<meta name="cbdr-version" content="20260929100123">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -664,7 +664,7 @@ input.txt::placeholder{color:var(--mute)}
       var 그갈래=어린이뺌.filter(function(x){return 갈래(x)===표[i].이름;});
       // 「탁구 뭐 있어」 — 갈래(배드민턴·탁구) 안에서 말한 종목만 먼저 추린다
       //    🔴 종목 이름일 때만 좁힌다 — 「노래」로 좁히면 가곡·민요가 빠진다(갈래 이름 자체는 좁히지 않는다)
-      var 종목낱말=["탁구","스쿼시","배드민턴","아쿠아","검도","줌바","라인댄스","훌라","우쿨렐레","피아노","바이올린","하모니카","오카리나","드럼","가야금","플루트","첼로","영어","일본어","중국어","태국어","필라테스"];
+      var 종목낱말=["탁구","스쿼시","배드민턴","아쿠아","검도","줌바","라인댄스","훌라","우쿨렐레","피아노","바이올린","하모니카","오카리나","드럼","가야금","플루트","첼로","영어","일본어","중국어","태국어","필라테스","서예","캘리"];   // 9/29 「서예」가 그림·글씨 전체(55건)로 넓어졌다(코덱스 T-D)
       var 낱말=종목낱말.filter(function(w){ return t.indexOf(w)>=0; });
       for(var w=0; w<낱말.length; w++){
         var 좁힘=그갈래.filter(function(x){ return 밀(x.과목).indexOf(낱말[w])>=0; });
@@ -1032,6 +1032,8 @@ input.txt::placeholder{color:var(--mute)}
         if(cz){ 좁히기.끝=(좁히기.끝||[]).concat(cz.쓴); 좁히기.보기=null;
           if(cz.목록.length){ 좁히기.목록=cz.목록; 좁히기.앞말=cz.목록.length+"개로 줄였어요. "; } else 좁히기.앞말="말씀하신 반은 없어요. ";
           좁히기다음(); return; } }
+      // 🔴 9/29 좁히는 중에 「이걸로 신청해 줘」 — 아직 하나로 안 정해졌다. 엉뚱한 3개(골라 드림)로 가지 말고 같은 물음을 다시
+      if(신청z){ 좁히기.앞말="아직 하나로 안 정해졌어요. 조금만 더 골라 주세요. "; 좁히기.보기=null; 좁히기다음(); return; }
       좁히기=null;   // 다른 물음이면 좁히기는 놓는다
     }
     // 🔴 9/28 예선 심사위원 「우리 아버지도 파크골프장 예약」 → 수원 파크골프장은 예약제가 아니다(통합예약 「파크골프」 0건 · 공사 공식 「9홀 무료개방 · 월요일 휴장 · 우천·잔디관리 임시휴장」 · 과제S)
@@ -1118,6 +1120,11 @@ input.txt::placeholder{color:var(--mute)}
         if(g.없음){ 숙제올리기(text); info(은는(g.없음)+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return; }
         if(g.메뉴){ var cm=조건거르기(L, t0.replace(/^(광교|장안|칠보|가족여성)/,"")); if(cm && cm.목록.length) L=cm.목록;
           골라드림(L, g.말머리.indexOf("어르신")>=0 ? "어르신 강좌 있어요." : "지금 신청할 수 있는 강좌 있어요."); return; }   // 🔴 9/28: 넓은 물음은 3개만
+        // 9/29 「영어 초급반」「일본어 배우고 싶어 월요일」 — 종목 뒤에 붙인 초급·오전·요일·무료를 처음부터 거른다(코덱스 T-D·U-B)
+        //      맞는 반이 0이면 조건을 버리고 전체를 보여주지 않는다 — 「그런 반은 없어요」
+        var cg=조건거르기(L, t0.replace(/^(광교|장안|칠보|가족여성)/,""));
+        if(cg && !cg.목록.length){ info(String(g.말머리||"").replace(/(은|는)$/,"")+" 중에 말씀하신 반은 없어요. 다른 시간이나 요일을 말씀해 주세요.", "", "그런 반은<br>없어요"); return; }
+        if(cg) L=cg.목록;
         if(g.갈래){ 갈래읽기({이름:g.갈래, 목록:L}); return; }
         if(L.length>6){ 좁히기시작(L, g.말머리, false); return; }   // 🔴 9/28 대표 「강좌가 너무 많아」
         var n=Math.min(L.length,3), 말=g.말머리+" "+L.length+"개 있어요. ";
