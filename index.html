@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260929100123">
+<meta name="cbdr-version" content="20260929132722">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -428,11 +428,19 @@ input.txt::placeholder{color:var(--mute)}
   //    고르는 순서: 어르신반 → 신청할 수 있는 반(예약번호) → 남은 자리 있는 반 → 낮 시간(8~17시) → 싼 반 · 종류(갈래)는 겹치지 않게
   function 이름정리(n){ n=String(n==null?"":n).trim(); return /^[가-힣](\s[가-힣])+[0-9]*$/.test(n) ? n.replace(/\s+/g,"") : n; }
   // 🔴 9/28 코덱스 R: 목록을 읽을 때 한 줄에 대상·정원·할인까지 붙여 한 번에 150~250자였다 → 목록은 「이름, 요일 시각, 돈」만. 자세한 건 번호를 고르면(강좌하나)
+  // 🔴 9/29 남은 자리 — 로그인 목록(자리받기.py)이 적은 「남은자리」. 광교 103개 중 44개가 재등록으로 이미 꽉 찼다
+  // 코덱스 V-C: 「0.0」「 0」·음수도 꽉 참 · null·빈칸·「null」은 「모름」(있음과 다르다)
+  function 자리값(x){ if(!x||x.자리비공개) return null; var v=x.남은자리; if(v==null) return null; v=String(v).trim(); if(!/^-?\d+(\.\d+)?$/.test(v)) return null; return Math.max(0, Math.floor(+v)); }
+  function 꽉참(x){ return 자리값(x)===0; }
+  // 코덱스 X-A2: 예약번호는 있는데 이번 달 예약 목록에서 못 찾은 반(자리 모름) — 신청을 권하지 않는다 · 장안은 자리를 원래 안 받는다
+  function 자리못봄(x){ return !!(x && x.예약번호 && x.시설!=="장안구민회관" && !x.자리비공개 && 자리값(x)===null && x.자리확인===undefined); }
+  function 자리날(x){ var m=String(x.자리확인||"").match(/^\d{4}-(\d{2})-(\d{2})/); return m?(+m[1])+"월 "+(+m[2])+"일 기준":""; }
   function 목록말(x, 곳도){
     var 글=function(v){ return String(v==null?"":v).trim(); };
     var p=[(곳도?짧은곳(x)+" ":"")+이름정리(x.과목)];
     var 때=(글(x.요일)+" "+(글(x.시간).match(/\d{1,2}:\d{2}/)||[""])[0]).trim(); if(때) p.push(때);
     var d=돈(x); if(d){ if(d.indexOf("확인해")>=0) 금액숙제(x); else p.push(d); }
+    if(꽉참(x)) p.push("자리 없음");
     return p.join(", ");
   }
   function 짧은곳(x){ var 곳=String(x.시설||"").trim(); if(시설별칭&&시설별칭[곳]&&시설별칭[곳][0]) return 시설별칭[곳][0]; return 곳.replace(/국민체육센터|웰빙|체육관|구민회관|가족여성회관|수원|서수원/g,"")||곳; }
@@ -447,8 +455,8 @@ input.txt::placeholder{color:var(--mute)}
   function 골라드림(L, 머리, 앞말){
     var 시각=function(x){ var m=String(x.시간||"").match(/(\d{1,2}):/); return m?+m[1]:-1; };
     var 점수=function(x){ var h=시각(x);
-      return [x.딱지==="어르신맞춤"?0:1, x.예약번호?0:1, (x.남은자리===0||x.남은자리==="0")?1:0, (h>=8&&h<=17)?0:1, 원값(x)]; };
-    var 순=L.filter(function(x){ return (x.상태||"모집")==="모집" && x.딱지!=="어린이"; }).slice().sort(function(a,b){ var p=점수(a),q=점수(b); for(var i=0;i<p.length;i++){ if(p[i]!==q[i]) return p[i]-q[i]; } return 0; });
+      return [(자리못봄(x)||x.시설==="장안구민회관")?1:0, x.딱지==="어르신맞춤"?0:1,   /* 9/29: 제가 넣어 드릴 수 없는 반(예약 목록에서 못 찾음 · 장안)은 맨 뒤 — 그것뿐이면 그대로 보여 준다 */ x.예약번호?0:1, (x.남은자리===0||x.남은자리==="0")?1:0, (h>=8&&h<=17)?0:1, 원값(x)]; };
+    var 순=L.filter(function(x){ return (x.상태||"모집")==="모집" && x.딱지!=="어린이" && !꽉참(x); }).slice().sort(function(a,b){ var p=점수(a),q=점수(b); for(var i=0;i<p.length;i++){ if(p[i]!==q[i]) return p[i]-q[i]; } return 0; });
     var 고름=[], 본갈래=[];
     순.forEach(function(x){ if(고름.length>=3) return; var g=갈래(x); if(본갈래.indexOf(g)>=0) return; 본갈래.push(g); 고름.push(x); });
     if(고름.length<3) 순.forEach(function(x){ if(고름.length<3 && 고름.indexOf(x)<0) 고름.push(x); });
@@ -481,6 +489,8 @@ input.txt::placeholder{color:var(--mute)}
     box.hidden=false;
   }
   function 갈래읽기(g){
+    g={이름:g.이름, 목록:g.목록.filter(function(x){return !꽉참(x);}).concat(g.목록.filter(꽉참))};   // 9/29 꽉 찬 반은 뒤로
+    if(g.목록.length && g.목록.every(꽉참)){ 지금갈래=null; 들은강좌=null; 이어듣기=null; info(은는(g.이름)+" "+g.목록.length+"개 모두 지금은 자리가 다 찼어요. 다른 걸 말씀해 주세요.", "", "자리가<br>다 찼어요"); return; }
     if(g.목록.length>6){ var 메뉴있음=!!메뉴; 좁히기시작(g.목록, 은는(g.이름), false); return; }   // 🔴 9/28: 많으면 좁힌다
     지금갈래=g;
     var L=g.목록, n=Math.min(L.length,3), 어=L.filter(function(x){return x.딱지==="어르신맞춤";}).length;
@@ -502,7 +512,9 @@ input.txt::placeholder{color:var(--mute)}
     {물음:"언제가 좋으세요?", 값:function(x){ var m=String(x.시간||"").match(/(\d{1,2})\s*:/); if(!m) return "시간 자유"; var h=+m[1]; return h<12?"오전":(h<18?"오후":"저녁"); }, 짧:function(v){ return v; }, 순서:["오전","오후","저녁","시간 자유"]},
     {물음:"무슨 요일이 좋으세요?", 값:function(x){ var d=(String(x.요일||"").match(/[월화수목금토일]/g)||[]); d=d.filter(function(c,i){return d.indexOf(c)===i;}).join(""); return d||"요일 자유"; }, 짧:function(v){ return v; }}
   ];
-  function 좁히기시작(L, 머리, 신청){ 이어듣기=null; 지금갈래=null; 좁히기={목록:L, 머리:머리||"", 신청:!!신청, 단계:0, 보기:null}; 좁히기다음(); }
+  function 좁히기시작(L, 머리, 신청){ 이어듣기=null; 지금갈래=null;
+    if(신청){ var 빈=L.filter(function(x){return !꽉참(x);}); if(빈.length) L=빈; }   // 코덱스 V-C3: 신청하려는데 꽉 찬 반 묶음으로 들어가지 않게
+    좁히기={목록:L, 머리:머리||"", 신청:!!신청, 단계:0, 보기:null}; 좁히기다음(); }
   function 좁히기다음(){
     var z=좁히기;
     while(z.단계<좁힘단계.length && z.목록.length>5){
@@ -548,6 +560,8 @@ input.txt::placeholder{color:var(--mute)}
   }
   function 좁힘고름(b){ if(!좁히기) return; 좁히기.목록=b.목록; 좁히기.단계++; 좁히기.보기=null; 좁히기다음(); }
   function 목록끝(L, 머리, 신청){
+    L=L.filter(function(x){return !꽉참(x);}).concat(L.filter(꽉참));   // 9/29 꽉 찬 반은 뒤로(순서는 그대로)
+    if(L.length && L.every(꽉참)){ 지금갈래=null; 들은강좌=null; info((머리&&머리!=="골라 드림"?String(머리).replace(/(은|는)$/,"")+" ":"")+L.length+"개 모두 지금은 자리가 다 찼어요. 다른 시간이나 요일을 말씀해 주세요.", "", "자리가<br>다 찼어요"); return; }   // 코덱스 V-C2
     if(L.length===1 && 신청){ 강좌신청확인(L[0], ""); return; }
     if(L.length===1){ 들은강좌=L[0]; 들은때=Date.now(); }
     지금갈래={이름:(머리&&머리!=="골라 드림")?머리:"찾은 강좌", 목록:L, 신청:!!신청};
@@ -575,9 +589,13 @@ input.txt::placeholder{color:var(--mute)}
     var 때=(글(x.요일)+" "+글(x.시간)).trim(); if(때) p.push(때);
     var d=돈(x); if(d){ p.push(d); if(d.indexOf("확인해")>=0) 금액숙제(x); else { var 할=할인말(x); if(할) p.push(할); } }
     if(글(x.정원)) p.push("정원 "+글(x.정원)+"명");
+    var 자=자리값(x), 날=자리날(x);
+    if(x.자리비공개) p.push("접수 전이라 자리 수는 아직 공개하지 않아요");   // 코덱스 V-B: 가족여성은 사이트가 일부러 숨긴다
+    else if(자!==null) p.push((자===0 ? "지금은 자리가 다 찼어요" : "인터넷 신청 자리 "+자+"개 남았어요")+(날?"("+날+")":""));
+    else if(자리못봄(x)) p.push("이 반은 이번 달 예약 목록에서 찾지 못했어요. 센터에 확인이 필요해요");
     if(글(x.강사)) p.push(글(x.강사)+" 선생님");
     들은강좌=x; 들은때=Date.now();
-    var 말=p.join(". ")+"."+다툼말(x)+(x.예약번호?" 이걸로 하시려면 「이걸로 신청해 줘」라고 말씀해 주세요.":"")+" 다른 번호를 말씀하셔도 돼요.";
+    var 말=p.join(". ")+"."+다툼말(x)+(x.예약번호&&!꽉참(x)&&!자리못봄(x)?" 이걸로 하시려면 「이걸로 신청해 줘」라고 말씀해 주세요.":"")+" 다른 번호를 말씀하셔도 돼요.";
     info(말, "", "이 강좌예요");
     $("infomore").hidden = !(이어듣기 && 이어듣기.다음<이어듣기.목록.length);
   }
@@ -842,6 +860,8 @@ input.txt::placeholder{color:var(--mute)}
   function 강좌신청확인(x, raw){
     var 말=(x.시설+" "+(x.과목||"")+" "+(x.요일||"")+" "+(x.시간||"")).replace(/\s+/g," ").trim();
     if(!x.예약번호){ 숙제올리기(raw||말); info(말+"은 예약 사이트 번호를 아직 못 찾았어요. 확인해서 알려드릴게요.", "", "잠깐만요"); return; }
+    if(자리못봄(x)){ 들은강좌=null; info(말+"은 이번 달 예약 목록에서 찾지 못해서 제가 넣을 수 없어요. 센터에 확인이 필요해요.", "", "확인이<br>필요해요"); return; }
+    if(꽉참(x)){ 들은강좌=null; info(말+"은 지금 자리가 다 찼어요"+(자리날(x)?"("+자리날(x)+")":"")+". 다른 반을 골라 주세요.", "", "자리가<br>다 찼어요"); return; }
     if(x.시설==="장안구민회관"){ info("장안구민회관은 예약 방식이 달라서 제가 아직 못 넣어요. 031-228-3028 로 전화하시면 돼요.", "031-228-3028", "아직<br>못 넣어요"); return; }
     if(!isMember(x.시설)){ speak(x.시설+"은 "+orgOf(x.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((raw||"")+" "+x.시설+" 가입"); return; }
     cur={type:"강좌신청",raw:raw||"",사람:NAME,시설:x.시설,종목:x.종목||"",반:(x.과목||""),시간:((x.요일||"")+" "+(x.시간||"")).trim(),예약번호:String(x.예약번호),과목:x.과목||"",요일:x.요일||"",해당월:x.해당월||""};
@@ -1030,7 +1050,9 @@ input.txt::placeholder{color:var(--mute)}
       if(/^(상관없|아무거나|아무때|다괜찮|전부|다좋아)/.test(t0)){ 좁히기.단계++; 좁히기.보기=null; 좁히기다음(); return; }
       if(t0.length<=12){ var cz=조건거르기(좁히기.목록, t0);
         if(cz){ 좁히기.끝=(좁히기.끝||[]).concat(cz.쓴); 좁히기.보기=null;
-          if(cz.목록.length){ 좁히기.목록=cz.목록; 좁히기.앞말=cz.목록.length+"개로 줄였어요. "; } else 좁히기.앞말="말씀하신 반은 없어요. ";
+          if(cz.목록.length){ 좁히기.목록=cz.목록; 좁히기.앞말=cz.목록.length+"개로 줄였어요. "; }
+          else { var 곳z2=[]; if(cz.쓴.indexOf(0)>=0) 좁히기.목록.forEach(function(x){ var q=짧은곳(x); if(곳z2.indexOf(q)<0) 곳z2.push(q); });   // 9/29 칠보 탁구 7줄이 되며 좁히기로 갔다 — 없는 곳을 말하면 있는 곳을 알려준다(전 목록 흐름과 같게)
+            좁히기.앞말="말씀하신 반은 없어요. "+(곳z2.length?"이건 "+곳z2.join(", ")+"에 있어요. ":""); }
           좁히기다음(); return; } }
       // 🔴 9/29 좁히는 중에 「이걸로 신청해 줘」 — 아직 하나로 안 정해졌다. 엉뚱한 3개(골라 드림)로 가지 말고 같은 물음을 다시
       if(신청z){ 좁히기.앞말="아직 하나로 안 정해졌어요. 조금만 더 골라 주세요. "; 좁히기.보기=null; 좁히기다음(); return; }
