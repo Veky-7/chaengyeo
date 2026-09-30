@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260929195204">
+<meta name="cbdr-version" content="20260930122023">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1261,9 +1261,9 @@ input.txt::placeholder{color:var(--mute)}
   $("callyes").addEventListener("click",function(){ shutUp(); $("call").hidden=true; heard("넣어 줘"); });
   $("callno").addEventListener("click",function(){ shutUp(); $("call").hidden=true; heard("아니요"); });
   // ── 진행 단계
-  var STEPS=[["강좌를 찾았어요","진행중"],["신청서를 쓰고 있어요","진행중2"],["보내기 전에 자녀가 한 번 확인","제출"],["접수 완료","완료"]];
+  var STEPS=[["강좌를 찾았어요","진행중"],["신청서를 쓰고 있어요","진행중2"],["결제 화면까지 가요","제출"],["다 됐어요","완료"]];
   var STEPS_JOIN=[["약관에 동의했어요","진행중"],["본인 확인 — 문자 숫자를 읽어 주세요","인증번호"],["아이디를 만들고 있어요","진행중2"],["가입 완료","완료"]];
-  var NOTES={"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"자녀가 확인하고 있어요","완료":"접수 내역을 확인했어요"};
+  var NOTES={"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"결제 화면을 열고 있어요","완료":"다 됐어요 — 결과를 말씀드릴게요"};
   var NOTES_JOIN={"요청":"회원가입 화면을 열고 있어요…","진행중":"약관을 읽고 동의했어요","인증번호":"문자로 온 숫자를 기다려요","진행중2":"아이디와 비밀번호를 만들고 있어요","완료":"회원이 됐어요"};
   function isJoin(){ return !!(cur&&cur.type==="회원가입"); }
   function renderSteps(state,note){
