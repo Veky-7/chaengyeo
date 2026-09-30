@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260930210608">
+<meta name="cbdr-version" content="20260930211941">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -196,7 +196,7 @@ input.txt::placeholder{color:var(--mute)}
     <div class="watch"><div class="bar"><i></i><i></i><i></i><span id="watchsite">공단 통합예약</span></div><div class="body"><b>제가 보고 있는 화면</b><span id="watchnote">화면을 열고 있어요…</span></div></div>
     <div class="steps" id="steps"></div>
     <img class="hand" src="assets/hand_raise.jpg" alt="">
-    <div class="note" id="prognote">다 되면 전화처럼 알려드릴게요. 화면은 그대로 두셔도 돼요.</div>
+    <div class="note" id="prognote">다 되면 이 화면에 소식이 떠요. 화면은 그대로 두셔도 돼요.</div>
     <button class="link" id="reset" type="button">처음으로</button>
   </section>
 
@@ -256,8 +256,8 @@ input.txt::placeholder{color:var(--mute)}
 
 <!-- 전화 알림 -->
 <div class="call" id="call" hidden><div class="bgi"></div>
-  <div class="top"><div>전화 알림</div><div>챙겨드림</div></div><div class="rule"></div>
-  <div class="ringing"><i></i>챙겨드림에서 전화 왔어요</div>
+  <div class="top"><div>새 소식</div><div>챙겨드림</div></div><div class="rule"></div>
+  <div class="ringing"><i></i>챙겨드림에서 소식이 왔어요</div>
   <h1 class="pen" style="margin-top:6px">새 소식<br>편지가 왔어요</h1>
   <img class="halm" src="assets/halmoni_phone.jpg" alt="">
   <div class="sheet" style="transform:rotate(-.6deg)"><div class="dog"></div><div class="msg" id="callmsg"></div><div class="msg2" id="callsub"></div></div>
@@ -1359,13 +1359,13 @@ input.txt::placeholder{color:var(--mute)}
     if(r.type==="강좌신청"){
       $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
       show("s-progress"); renderSteps("요청","");
-      speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
+      speak("네, 신청하러 갈게요. 다 되면 이 화면으로 알려드릴게요.");
       post({type:"신청",예약번호:r.예약번호,시설:r.시설,과목:r.과목,요일:r.요일,시간:r.시간,해당월:r.해당월,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
     show("s-progress"); renderSteps("요청","");
-    speak("네, 신청하러 갈게요. 다 되면 전화처럼 알려드릴게요.");
+    speak("네, 신청하러 갈게요. 다 되면 이 화면으로 알려드릴게요.");
     post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
   });
   connect(); restore();
