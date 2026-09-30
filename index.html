@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260930124452">
+<meta name="cbdr-version" content="20260930210608">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -160,7 +160,7 @@ input.txt::placeholder{color:var(--mute)}
     </div>
     <div class="btns" id="typebtns" hidden><button class="btn small" id="typedok" type="button">이렇게 보내기</button></div>
     <button class="link" id="totype" type="button">말하기가 안 되면 글로 적기</button>
-    <div class="foot">전화로도 똑같이 돼요</div>
+    <div class="foot"></div>
   </section>
 
   <!-- 5 찾아드림 -->
@@ -238,7 +238,7 @@ input.txt::placeholder{color:var(--mute)}
     <div class="sheet" style="transform:rotate(.4deg)"><div class="dog"></div><div class="stamp" id="stamp">접수됨</div>
       <div class="t pen" id="res-t">—</div>
       <div class="row"><b>다음</b><span id="res-next">—</span></div>
-      <div class="row"><b>알림</b><span>결과 나오면 전화로</span></div>
+      <div class="row"><b>알림</b><span>결과 나오면 챙겨드림에 소식이 떠요</span></div>
     </div>
     <div class="note">사이트에 실제로 적힌 것만 알려드려요. 순번·당첨 가능성은 추측하지 않아요.</div>
     <div class="btns"><button class="btn" id="resok" type="button">네, 알겠어요</button></div>
@@ -250,7 +250,7 @@ input.txt::placeholder{color:var(--mute)}
     <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
     <div class="sheet" style="transform:rotate(-.4deg)"><div class="dog"></div><div class="say pen" id="infotext" style="font-size:27px;line-height:1.35"></div></div>
     <div class="picks" id="infopick" hidden></div>
-    <div class="btns"><button class="btn" id="infomore" type="button" hidden>더 들려주세요</button><button class="btn" id="infosay" type="button">또 말할게요</button><button class="btn ghost" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infoagain" type="button">다시 듣기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
+    <div class="btns"><button class="btn" id="infoapply" type="button" hidden style="font-size:1.25em">이 강좌 신청하기</button><button class="btn" id="infomore" type="button" hidden>더 들려주세요</button><button class="btn" id="infosay" type="button">또 말할게요</button><button class="btn ghost" id="infocall" type="button">전화 걸기</button><button class="btn ghost" id="infoagain" type="button">다시 듣기</button><button class="btn ghost" id="infook" type="button">알겠어요</button></div>
   </section>
 </div>
 
@@ -595,9 +595,10 @@ input.txt::placeholder{color:var(--mute)}
     else if(자리못봄(x)) p.push("이 반은 이번 달 예약 목록에서 찾지 못했어요. 센터에 확인이 필요해요");
     if(글(x.강사)) p.push(글(x.강사)+" 선생님");
     들은강좌=x; 들은때=Date.now();
-    var 말=p.join(". ")+"."+다툼말(x)+(x.예약번호&&!꽉참(x)&&!자리못봄(x)?" 이걸로 하시려면 「이걸로 신청해 줘」라고 말씀해 주세요.":"")+" 다른 번호를 말씀하셔도 돼요.";
+    var 말=p.join(". ")+"."+다툼말(x)+(x.예약번호&&!꽉참(x)&&!자리못봄(x)?" 신청하시려면 아래 「이 강좌 신청하기」를 누르시거나, 「이걸로 신청해 줘」라고 말씀해 주세요.":"")+" 다른 번호를 말씀하셔도 돼요.";
     info(말, "", "이 강좌예요");
     $("infomore").hidden = !(이어듣기 && 이어듣기.다음<이어듣기.목록.length);
+    $("infoapply").hidden = !(x.예약번호&&!꽉참(x)&&!자리못봄(x));   // 🔴 9/30 밤 대표: 「신청하기 버튼이 없고 말로만」 → 큰 버튼(시안 A)
   }
   // 🔴 9/27: 「장안 수영 뭐 있어」 가 광교 수영부터 읽었다 — 강좌 찾기에 시설 좁히기가 없었다. 부르는 이름은 수첩 「시설별칭」 이 정한다
   var 시설별칭=null;
@@ -856,7 +857,7 @@ input.txt::placeholder{color:var(--mute)}
     단추들(L.slice(시,끝), 시, !!(지금갈래&&지금갈래.신청));
     $("infomore").hidden = (끝>=L.length);
   }
-  function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; $("infopick").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
+  function info(msg,tel,title){ var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; $("infopick").hidden=true; $("infoapply").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
   function 강좌신청확인(x, raw){
     var 말=(x.시설+" "+(x.과목||"")+" "+(x.요일||"")+" "+(x.시간||"")).replace(/\s+/g," ").trim();
     if(!x.예약번호){ 숙제올리기(raw||말); info(말+"은 예약 사이트 번호를 아직 못 찾았어요. 확인해서 알려드릴게요.", "", "잠깐만요"); return; }
@@ -1190,15 +1191,15 @@ input.txt::placeholder{color:var(--mute)}
       if(!q.시설&&/전주/.test(t0)) cands=OPEN.filter(function(o){return o.지역==="전주"&&o.구조});
       var pick=cands.filter(function(o){return !q.종목||o.종목===q.종목})[0]||cands[0];
       if(pick){ info(pick.시설+" "+(pick.종목||"")+" 안내예요. "+pick.구조, pick.전화); return; }
-      info("그 공지는 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"공지읽기",원문:text}); return;
+      info("그 공지는 아직 확인하지 않았어요. 확인해서 챙겨드림에 올려 둘게요."); post({type:"공지읽기",원문:text}); return;
     }
     if(/가입|회원|아이디/.test(t0)){ joinConfirm(text); return; }
     if(isFind(text)){
       REGION=물음지역((text||"").replace(/\s+/g,""));
       var sport=(text.match(/(파크골프|탁구|배드민턴|헬스|요가|필라테스|테니스|골프|문화센터|평생학습|노인복지관|댄스|에어로빅|게이트볼|배구|축구|풋살)/)||[])[1];
-      if(sport){ info(sport+"은 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
+      if(sport){ info(sport+"은 아직 확인하지 않았어요. 확인해서 챙겨드림에 올려 둘게요."); post({type:"찾기요청",종목:sport,원문:text}); return; }
       var other=(text.match(/(서울|부산|대구|인천|광주|대전|울산|세종|용인|고양|화성|안양|부천|평택|의정부|파주|김포|시흥|안산|청주|천안|익산|군산|목포|여수|순천|포항|창원|김해|제주|강릉|춘천|원주)/)||[])[1];
-      if(other){ info(other+" 수영장은 아직 확인하지 않았어요. 확인하고 전화로 알려드릴게요."); post({type:"찾기요청",지역:other,원문:text}); return; }
+      if(other){ info(other+" 수영장은 아직 확인하지 않았어요. 확인해서 챙겨드림에 올려 둘게요."); post({type:"찾기요청",지역:other,원문:text}); return; }
       showList(); return;
     }
     var r=parse(text);
@@ -1246,6 +1247,7 @@ input.txt::placeholder{color:var(--mute)}
   $("no").addEventListener("click",function(){ shutUp(); if(cur&&cur.type==="회원가입"){ PROFILE={}; saveProfile(); joinConfirm(cur.raw); return; } resetIdle(); show("s-idle"); speak("네, 다시 말씀해 주세요."); });
   $("infook").addEventListener("click",function(){ shutUp(); 이어듣기=null; 메뉴=null; 지금갈래=null; resetIdle(); show("s-idle"); });
   $("infomore").addEventListener("click",function(){ shutUp(); 더읽기(); });
+  $("infoapply").addEventListener("click",function(){ shutUp(); if(들은강좌) 강좌신청확인(들은강좌, "이 강좌 신청하기(버튼)"); });
   // 🔴 「또 말할게요」 — 전에는 「알겠어요」로 나가서 마이크를 다시 찾아야 했다. 한 번 누르면 바로 듣는다.
   $("infosay").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); setTimeout(start, 250); });
   $("infoagain").addEventListener("click",function(){ var t=$("infotext").textContent||LAST_SAID; try{ speechSynthesis.cancel(); }catch(e){} var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; LAST_SAID=t; u.onend=function(){stopBtn.hidden=true}; speechSynthesis.speak(u); stopBtn.hidden=false; });
@@ -1340,7 +1342,7 @@ input.txt::placeholder{color:var(--mute)}
         if(isJoin()){ addMember(cur.시설); $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
         else if(d.완료종류==="결제화면"){ $("restitle").textContent="결제 화면까지 왔어요"; $("stamp").textContent="결제 전"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" · 아직 신청 전"; $("res-next").textContent=d.다음||"결제는 직접 하셔야 해요"; }
         else if(d.완료종류==="이미"){ $("restitle").textContent="이미 들어 있어요"; $("stamp").textContent="확인됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:""); $("res-next").textContent=d.다음||"마이페이지에서 확인"; }
-        else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 전화로"; }   // 🔴 9/28 코덱스 N: 결제 화면만 열었는데도 「접수됐어요」였다
+        else { $("restitle").textContent="접수됐어요"; $("stamp").textContent="접수됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" 접수"; $("res-next").textContent=d.다음||"추첨 결과 나오면 챙겨드림에 소식이 떠요"; }   // 🔴 9/28 코덱스 N: 결제 화면만 열었는데도 「접수됐어요」였다
         ring(d.결과,d.메모); show("s-result"); }
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
     }catch(e){} };
