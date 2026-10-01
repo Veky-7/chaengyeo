@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20260930211941">
+<meta name="cbdr-version" content="20261001103016">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1017,9 +1017,21 @@ input.txt::placeholder{color:var(--mute)}
   }
   // ── 추첨 결과: 서버가 {type:"결과",받는사람,결과} 를 올려두면 폰이 갖고 있다가 물으면 바로 읽는다. 벨은 안 울린다 (대표 9/15)
   var RESULT=(function(){try{return localStorage.getItem("cbdr_result")||""}catch(e){return ""}})();
-  var NO_RESULT="아직 안 나왔어요. 결과가 나오면 바로 알려드릴게요.";
+  // 🔴 10/1 수원은 선착순(추첨 없음) — 「결과 나왔어?」엔 「아직 안 나왔어요」가 아니라 지금 하실 일로 답한다
+  var NO_RESULT="수원 강좌는 추첨이 아니라 먼저 신청하는 순서예요. 아직 맡기신 신청이 없어요. 「나 할 거 뭐 있어」라고 말씀해 보세요.";
+  var 최근신청=(function(){try{return JSON.parse(localStorage.getItem("cbdr_최근신청")||"null")}catch(e){return null}})();
+  function 최근신청저장(d){ 최근신청={종류:d.완료종류||"",반:(cur?(cur.시설||"")+" "+(cur.반||""):"").trim(),다음:d.다음||"",시각:Date.now()}; try{localStorage.setItem("cbdr_최근신청",JSON.stringify(최근신청))}catch(e){} }
+  function 할일말(){
+    var r=최근신청; if(!r||Date.now()-r.시각>3*24*3600*1000) return "";
+    var 반=r.반?r.반+"은 ":"";
+    if(r.종류==="결제화면") return 반+"결제 화면까지 해 두었어요. 결제만 하시면 끝나요. 카드로 하시면 돼요.";
+    if(r.종류==="접수됨") return 반+"넣어 두었어요. 내일 밤 10시까지 결제하시면 자리가 확정돼요.";
+    if(r.종류==="이미") return 반+"이미 들어 있어요. 따로 하실 일은 없어요.";
+    return "";
+  }
   function keepResult(d){ if(d.받는사람&&d.받는사람!==NAME) return; RESULT=d.결과||""; try{localStorage.setItem("cbdr_result",RESULT)}catch(e){} }
   function answerResult(){
+    var 할일=할일말(); if(할일){ info(할일); return; }
     if(RESULT){ info(RESULT); return; }
     var done=false, t=setTimeout(function(){ if(!done){ done=true; info(NO_RESULT); } },2500);
     fetch(NT+RES+"/json?poll=1&since=48h").then(function(r){return r.text()}).then(function(txt){
@@ -1265,7 +1277,7 @@ input.txt::placeholder{color:var(--mute)}
   // ── 진행 단계
   var STEPS=[["강좌를 찾았어요","진행중"],["신청서를 쓰고 있어요","진행중2"],["결제 화면까지 가요","제출"],["다 됐어요","완료"]];
   var STEPS_JOIN=[["약관에 동의했어요","진행중"],["본인 확인 — 문자 숫자를 읽어 주세요","인증번호"],["아이디를 만들고 있어요","진행중2"],["가입 완료","완료"]];
-  var NOTES={"요청":"화면을 열고 있어요…","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"결제 화면을 열고 있어요","완료":"다 됐어요 — 결과를 말씀드릴게요"};
+  var NOTES={"요청":"사이트에서 찾는 중이에요 · 보통 1분쯤 걸려요","진행중":"통합예약 화면을 열었어요","진행중2":"강습을 골라 신청서를 쓰고 있어요","제출":"결제 화면을 열고 있어요","완료":"다 됐어요 — 결과를 말씀드릴게요"};
   var NOTES_JOIN={"요청":"회원가입 화면을 열고 있어요…","진행중":"약관을 읽고 동의했어요","인증번호":"문자로 온 숫자를 기다려요","진행중2":"아이디와 비밀번호를 만들고 있어요","완료":"회원이 됐어요"};
   function isJoin(){ return !!(cur&&cur.type==="회원가입"); }
   function renderSteps(state,note){
@@ -1339,6 +1351,7 @@ input.txt::placeholder{color:var(--mute)}
       renderSteps(d.상태,d.메모);
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
+        if(!isJoin()) 최근신청저장(d);
         if(isJoin()){ addMember(cur.시설); $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
         else if(d.완료종류==="결제화면"){ $("restitle").textContent="결제 화면까지 왔어요"; $("stamp").textContent="결제 전"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" · 아직 신청 전"; $("res-next").textContent=d.다음||"결제는 직접 하셔야 해요"; }
         else if(d.완료종류==="이미"){ $("restitle").textContent="이미 들어 있어요"; $("stamp").textContent="확인됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:""); $("res-next").textContent=d.다음||"마이페이지에서 확인"; }
@@ -1359,13 +1372,13 @@ input.txt::placeholder{color:var(--mute)}
     if(r.type==="강좌신청"){
       $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
       show("s-progress"); renderSteps("요청","");
-      speak("네, 신청하러 갈게요. 다 되면 이 화면으로 알려드릴게요.");
+      speak("네, 신청하러 갈게요. 사이트에서 찾는 중이에요. 보통 1분쯤 걸려요. 다 되면 이 화면으로 알려드릴게요.");
       post({type:"신청",예약번호:r.예약번호,시설:r.시설,과목:r.과목,요일:r.요일,시간:r.시간,해당월:r.해당월,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
     show("s-progress"); renderSteps("요청","");
-    speak("네, 신청하러 갈게요. 다 되면 이 화면으로 알려드릴게요.");
+    speak("네, 신청하러 갈게요. 사이트에서 찾는 중이에요. 보통 1분쯤 걸려요. 다 되면 이 화면으로 알려드릴게요.");
     post({type:"신청",시설:r.시설,종목:r.종목,반:r.반,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
   });
   connect(); restore();
