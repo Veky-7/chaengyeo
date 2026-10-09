@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261009131011">
+<meta name="cbdr-version" content="20261009164616">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -868,11 +868,14 @@ input.txt::placeholder{color:var(--mute)}
     var 든다=function(w){ return [t,t밀].some(function(u){ var at=u.indexOf(w); while(at>=0){ var 뒤=u.charAt(at+w.length), 앞=u.charAt(at-1);
         var 틀림=(/\d$/.test(w) && /\d/.test(뒤)) || (/^[A-Z]$/.test(w) && (/[A-Za-z0-9]/.test(뒤) || /[A-Za-z0-9]/.test(앞)));
         if(!틀림) return true; at=u.indexOf(w,at+1); } return false; }); };   // 「기초요가 1」을 「기초요가1」로도 본다(10/9)   // 「탁구1」은 「탁구10시」 안에 든 게 아니다
-    var 맞수=function(x){ var tk=토막(x), n=0, k=0; tk.forEach(function(w){ if(든다(w)){ n+=w.length; k++; } }); return {n:n, 다:tk.length>0 && k===tk.length}; };   // 맞은 글자 수 — 「탁구1」(3) > 「탁구」(2)
+    var 맞수=function(x){ var tk=토막(x), n=0, k=0, 온글=0; tk.forEach(function(w){ 온글+=w.length; if(든다(w)){ n+=w.length; k++; } }); return {n:n, 다:tk.length>0 && k===tk.length, 반넘:n*2>=온글}; };   // 맞은 글자 수 — 「탁구1」(3) > 「탁구」(2)
     var 온=LESSON.filter(function(x){ return (x.지역||"")===지 && (!곳 || x.시설===곳); });
     var 닫최=null, 닫점=0, 열점=0;
-    온.forEach(function(x){ var m=맞수(x), 점=m.n+(m.다?1:0); if((x.상태||"모집")==="모집"){ if(점>열점) 열점=점; } else if(점>닫점){ 닫점=점; 닫최=x; } });
+    온.forEach(function(x){ var m=맞수(x), 점=m.n+(m.다?1:0); if((x.상태||"모집")==="모집"){ if(점>열점) 열점=점; } else if(점>닫점 && (m.다||m.반넘)){ 닫점=점; 닫최=x; } });   // 🔴 10/9 말투 시험: 「옷 한 벌 완성하는 거」 → 「AI로 완성하는 블로그」(폐강)라고 답함 — 이름 낱말 절반 넘게 맞아야 그 반
     if(닫최 && 닫점>=3 && 닫점>열점) return {목록:[], 닫힘:닫최, 말머리:은는(이름정리(닫최.과목))};
+    if(/같이|섞|함께|한꺼번|합쳐|합친|둘다|둘 다/.test(t)){   // 🔴 10/9 말투 시험: 「요가하고 필라테스 같이 하는 거」 → 「필라테스」 이름이 먼저 잡혀 요가&필라테스가 빠졌다
+      var 겹반=r.filter(function(x){ var 쪽=String(x.과목||"").split("&"); return 쪽.length>1 && 쪽.every(function(w){ w=밀(w).replace(/\(.*$/,""); return w.length>=2 && 밀(t).indexOf(w)>=0; }); });
+      if(겹반.length) return {목록:겹반, 말머리:은는(이름정리(겹반[0].과목))}; }
     var 이름들=[]; r.forEach(function(x){ var n=밀(x.과목); if(n && 이름들.indexOf(n)<0) 이름들.push(n); });
     이름들.sort(function(a,b){return b.length-a.length;});          // 긴 이름부터
     // ① 이름을 통째로 말한 경우
@@ -1519,7 +1522,7 @@ input.txt::placeholder{color:var(--mute)}
     // 2층 강좌 — 「말에 강좌 이름이 들어 있는가」로 판정한다(「있어/얼마/자리」처럼 말끝이 제각각이라)
     // 🔴 수첩이 지난달 것이면 새 달 것인 양 말하지 않는다 — 틀린 걸 말하느니 모른다고 한다
     if(수첩깨짐 && /뭐있|뭐가|어떤|있어|있나|얼마|가격|수강료|자리|정원|요일|시간|강좌|강습|배우/.test(t0)
-        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
+        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
       숙제올리기(text); info("아직 이번 달 강좌를 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return;
     }
     if(LESSON.length && LESSON_월){
@@ -1534,11 +1537,11 @@ input.txt::placeholder{color:var(--mute)}
     // 🔴 그 도시 강좌를 아직 안 갖고 있으면 딴 도시 시간표를 읽어주거나 신청 목록으로 떠넘기지 않는다
     if(LESSON.length && !있는지역
         && /뭐있|뭐가|어떤|있어|있나|얼마|가격|수강료|자리|정원|요일|시간|강좌|강습|배우/.test(t0)
-        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|공지|안내문|읽어/.test(t0)){
+        && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|소식|공지|안내문|읽어/.test(t0)){
       숙제올리기(text);
       info("저는 "+내지역+" 것만 봐요. "+은는(물음지역(t0))+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return;
     }
-    if(LESSON.length && 있는지역 && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
+    if(LESSON.length && 있는지역 && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
       var g=강좌찾기(t0), L=g.목록;
       var 지금만=/(지금|당장|바로|오늘|이번달)/.test(t0) && /(신청|할수있|되는|가능|받는|들을수|다닐수|할수있는)/.test(t0);
       if(지금만 && L.length && !g.닫힘){ var 된=L.filter(지금가능);
@@ -1581,7 +1584,7 @@ input.txt::placeholder{color:var(--mute)}
     // 서버가 먼저 「접수 열렸어요, 넣어드릴까요?」 한 뒤의 대답 — 「넣어 줘·응·네·그래·해줘」
     if(OFFER&&/^(넣어|응|네|그래|해줘|좋아|알았|오케이|넣자)/.test(t0)&&t0.length<12){ var c=OFFER; OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} c.raw=text; confirmWith(c,""); return; }
     if(OFFER&&/^(아니|싫|됐어|안해|나중)/.test(t0)){ OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} info("네, 안 넣을게요. 다음에 또 열리면 알려드릴게요."); return; }
-    if(/결과|당첨|추첨|떨어|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
+    if(/결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
       var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
       // 내 동네에 아무것도 없으면 빈손으로 두지 않고 전국에서 찾는다
@@ -1794,7 +1797,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   setTimeout(켤때, 1200);   // 수첩(목록.json)을 받은 뒤에 판단한다
 
-  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 갈래:갈래, 번호:번호, 파크골프말:파크골프말, 메뉴:function(){return 메뉴}, 지금갈래:function(){return 지금갈래}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
+  try{ window.__cbdr = { heard: heard, 관문:첫관문, 준비:function(){return 준비됨}, 잠그기:잠그기, 공지:function(){return OPEN}, 강좌:function(){return LESSON}, 갈래:갈래, 번호:번호, 파크골프말:파크골프말, 메뉴:function(){return 메뉴}, 지금갈래:function(){return 지금갈래}, 좁히기:function(){return 좁히기?{목록:좁히기.목록.map(function(x){return x.과목;})}:null}, 마이크켜기: start, 마이크끄기: stop, 마이크상태:function(){return {듣는중:listening, 주인:(마이크주인?(마이크주인.이름||"있음"):null), 글:$("miclabel").textContent}} }; }catch(e){}
 })();
 
 </script>
