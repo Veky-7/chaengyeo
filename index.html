@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261013152417">
+<meta name="cbdr-version" content="20261017184513">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -283,8 +283,11 @@ input.txt::placeholder{color:var(--mute)}
   $("who").addEventListener("click",function(){ var v=window.prompt("누구 이름으로 쓸까요?",NAME); if(v&&v.trim()){ try{localStorage.setItem("cbdr_name",v.trim())}catch(e){} location.href=location.pathname+"?n="+encodeURIComponent(v.trim()); } });
   // ── 지금 열려 있는 것 (아이디어팀이 공단 공지를 읽어 넣음 · 2026-09-14 밤)
   var OPEN=[{"대상": "성인/청소년", "마감": "2026-09-30", "반": "10월 수영 강좌 (신규)", "방식": "둘다", "비고": "성인 종합반은 6개월 진도반입니다. 기초반 모집은 매월 변동되며 모집 요강 확인 후 신청 바랍니다.", "시간": "입문반 오전 6시, 오후 7시; 초급 오후 8시", "시설": "광교웰빙국민체육센터", "시작": "2026-09-30", "전화": "031-228-3201", "종목": "수영 강습", "지역": "수원", "구조": "원래 다니던 분은 9월 17일부터 23일까지예요. 처음 오는 분은 수원 사시면 9월 28일과 29일에 먼저 받아요. 그날은 직접 가야 해요. 9월 30일은 방문이나 인터넷 돼요. 먼저 온 순서로 받아요. 수원 시민은 신분증과 등본을 챙겨요. 수영장은 10월 1일부터 11일까지 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "출처": "2026년 10월 생활체육강좌 회원모집 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64324&bbsId=Notice_suwonsc3", "별칭": ["광교", "광교웰빙", "웰빙", "광교호수"]}, {"시설": "장안구민회관", "종목": "수영 강습", "반": "기초L1·초급L1", "방식": "둘다", "시작": "2026-09-22", "마감": "2026-09-30", "시간": "월수금 16:00~16:50 초급L1, 화목 16:00~16:50 기초L1, 월수금·화목 20:00~20:50 초급L1", "대상": "성인, 처음 배우면 기초L1 권장", "비고": "운영기간 2026-10-01~2026-10-31. 강습 정원 20명(상급 30명). 둘째·넷째 일요일 휴관. 70세 이상 수강동의서 작성(1층 안내데스크). 온라인·현장결제 가능.", "전화": "031-228-3028", "구조": "장안구민회관 수영이에요. 원래 회원은 9월 15일부터 19일까지예요. 현장에서만 결제돼요. 처음 오는 분은 9월 22일부터 30일까지예요. 인터넷이나 방문으로 신청해요. 수영은 10월 1일부터 31일까지예요. 둘째와 넷째 일요일은 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 스포츠시설 운영(회원모집) 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64325&bbsId=Notice_jacc", "별칭": ["장안", "장안구민", "구민회관"]}, {"시설": "장안구민회관", "종목": "아쿠아로빅", "반": "아쿠아로빅", "방식": "둘다", "시작": "2026-09-22", "마감": "2026-09-30", "시간": "월수금 13:00~13:50 아쿠아로빅3, 화목 13:00~13:50 아쿠아로빅4, 월수금 14:00~14:50 아쿠아로빅5, 화목 14:00~14:50 아쿠아로빅6, 월수금 18:00~18:50 아쿠아로빅7", "대상": "성인", "비고": "운영기간 2026-10-01~2026-12-31. 아쿠아로빅 정원 45명. 둘째·넷째 일요일 휴관. 70세 이상 수강동의서 작성(1층 안내데스크). 온라인·현장결제 가능.", "전화": "031-228-3028", "구조": "장안구민회관 아쿠아로빅이에요. 원래 회원은 9월 15일부터 19일까지예요. 현장에서만 결제돼요. 처음 오는 분은 9월 22일부터 30일까지예요. 인터넷이나 방문으로 신청해요. 아쿠아로빅은 10월부터 12월까지예요. 칠십세 이상은 동의서가 있어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 스포츠시설 운영(회원모집) 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64325&bbsId=Notice_jacc", "별칭": ["장안", "장안구민", "구민회관"]}, {"시설": "광교웰빙국민체육센터", "종목": "아쿠아로빅", "반": "", "방식": "둘다", "시작": "2026-09-30", "마감": "2026-09-30", "시간": "오전 11시, 오후 1시", "대상": "성인/청소년", "비고": "신청 기간 내 먼저 온 순서. 온라인: 광교웰빙국민체육센터 인터넷 수강 신청 https://rsv.suwonudc.co.kr/suwonudc/uat/uia/LoginUsr.do. 수영장 휴장 10월 1일~10월 11일.", "전화": "031-228-3201", "구조": "원래 다니던 분은 9월 17일부터 23일까지예요. 처음 오는 분은 수원 사시면 9월 28일과 29일에 먼저 받아요. 그날은 직접 가야 해요. 9월 30일은 방문이나 인터넷 돼요. 먼저 온 순서로 받아요. 수원 시민은 신분증과 등본을 챙겨요. 수영장은 10월 1일부터 11일까지 쉬어요. 인터넷 접수는 그날 제가 넣을게요.", "지역": "수원", "출처": "2026년 10월 생활체육강좌 회원모집 안내 (2026-09-14)", "url": "https://www.suwonudc.co.kr/main/cop/bbs/selectBoardArticle.do?nttId=64324&bbsId=Notice_suwonsc3", "별칭": ["광교", "광교웰빙", "웰빙", "광교호수"]}];
+  // 🆕 10/16 밤: 공지 풀이 글의 「인터넷 접수는 그날 제가 넣을게요」는 지킬 수 없는 약속(앱이 그날 혼자 넣지 않는다 · 어르신이 「넣어 줘」 하셔야 한다) → 읽을 때 뺀다
+  function 구조다듬기(){ (OPEN||[]).forEach(function(o){ if(o&&o.구조) o.구조=String(o.구조).replace(/\s*(인터넷 접수는 그날 제가 넣을게요|그날 인터넷은 제가 넣을게요)\.?/g,""); }); }
+  구조다듬기();
   // ── 서버가 공지를 읽어 쓴 목록(목록.json · 공지읽기.py 가 갱신)을 열 때마다 받아온다. 못 받으면 위 내장 목록 그대로
-  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
+  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 구조다듬기(); 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.시설전화) 시설전화표=j.시설전화; if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
 
   // ── 2층: 강좌 목록(목록.json 의 "강좌") — 가격·정원·딱지가 여기 있다
   var 서버차=null;   // 코덱스 6차: 수첩을 받을 때 서버가 알려 준 지금 시각(HTTP Date) − 폰 시각. 있으면 폰 시계가 빠르든 느리든 서버 시각으로 「오래됨」을 잰다
@@ -599,7 +602,7 @@ input.txt::placeholder{color:var(--mute)}
     if(꽉참(x)) p.push("자리 없음");
     else if(지금상태(x)===false) p.push("지금 접수 안 해요");
     else if(묵은(x)) p.push("자리 확인이 늦어졌어요");
-    else if(자리못봄(x)) p.push(달말(x) ? "아직 접수 전이에요" : "이번 달엔 신청 못 해요");   // 10/4: 다음 달 반은 아직 예약 목록에 안 떴을 뿐   // 10/3 대표 「광교 배드민턴 — 다 물어보고 마지막에 안 된대」 → 목록에서부터
+    else if(자리못봄(x) || !x.예약번호) p.push(달말(x) ? "아직 접수 전이에요" : "인터넷 신청 안 돼요");   // 10/16 대표 「인터넷 신청이 아닌 건 정확히 안내」   // 10/4: 다음 달 반은 아직 예약 목록에 안 떴을 뿐   // 10/3 대표 「광교 배드민턴 — 다 물어보고 마지막에 안 된대」 → 목록에서부터
     return p.join(", ");
   }
   function 짧은곳(x){ var 곳=String(x.시설||"").trim(); if(시설별칭&&시설별칭[곳]&&시설별칭[곳][0]) return 시설별칭[곳][0]; return 곳.replace(/국민체육센터|웰빙|체육관|구민회관|가족여성회관|수원|서수원/g,"")||곳; }
@@ -822,7 +825,7 @@ input.txt::placeholder{color:var(--mute)}
     if(x.자리비공개) p.push("접수 전이라 자리 수는 아직 공개하지 않아요");   // 코덱스 V-B: 가족여성은 사이트가 일부러 숨긴다
     else if(자!==null) p.push((자===0 ? "지금은 자리가 다 찼어요" : "인터넷 신청 자리 "+자+"개 남았어요")+(날?"("+날+")":""));
     else if(묵은(x)) p.push("이 반은 자리와 접수 상태를 확인한 지 며칠 지나서 지금은 제가 넣지 않아요. 새로 확인되면 다시 알려 드릴게요");
-    else if(자리못봄(x)) p.push("이 반은 이번 달 예약 목록에서 찾지 못했어요. 센터에 확인이 필요해요");
+    else if(자리못봄(x) || !x.예약번호) p.push(인터넷안됨말(x));
     if(글(x.강사)) p.push(글(x.강사)+" 선생님");
     들은강좌=x; 들은때=Date.now();
     if(지금상태(x)===false) p.splice(1,0,"지금은 접수 기간이 아니에요"+다음접수말(x));
@@ -834,7 +837,18 @@ input.txt::placeholder{color:var(--mute)}
     $("infoapply").hidden = !(x.예약번호&&!꽉참(x)&&!자리못봄(x)&&지금상태(x)!==false&&지금상태(x)!=="이미");   // 🔴 9/30 밤 대표: 「신청하기 버튼이 없고 말로만」 → 큰 버튼(시안 A)
   }
   // 🔴 9/27: 「장안 수영 뭐 있어」 가 광교 수영부터 읽었다 — 강좌 찾기에 시설 좁히기가 없었다. 부르는 이름은 수첩 「시설별칭」 이 정한다
-  var 시설별칭=null;
+  var 시설별칭=null, 시설전화표=null;   // 시설전화표 = 수첩(목록.json 「시설전화」) · 없으면 공지 카드의 전화
+  function 시설전화(f){ if(시설전화표&&시설전화표[f]) return 시설전화표[f]; for(var i=0;i<OPEN.length;i++) if(OPEN[i].시설===f&&OPEN[i].전화) return OPEN[i].전화; return ""; }
+  // 🆕 10/16 밤 대표 「올라오면 알려 드릴게요 — 어떻게 알려줘?」 → 앱 판은 그 시설만 폰에 적어 두고 매일 아침 공개 수첩을 봐서 폰 알림(Watch.java)
+  //    웹 판엔 알릴 길이 없다 → 약속하지 않는다(빈 말)
+  function 알림걸기(시설들, 종목){ try{ if(!(window.CBDR && CBDR.watch)) return false; var 걸=0;
+      (시설들||[]).forEach(function(f){ if(!f) return; var x=LESSON.filter(function(y){ return y.시설===f; })[0]; CBDR.watch(f, x?짧은곳(x):f, 종목||""); 걸++; }); return 걸>0; }catch(e){ return false; } }
+  function 알림말(시설들, 종목){ return 알림걸기(시설들, 종목) ? "날짜가 나오면 이 폰으로 알려 드릴게요. 접수날 아침에도 한 번 더 알려 드려요" : ""; }
+  function 인터넷안됨말(x){   // 10/16: 수원 인터넷 예약 목록(매일 새벽 전부 읽음)에 없는 반 — 왜 안 되는지 + 어떻게 하는지
+    if(달말(x)){ var 알=알림말([x.시설], 이름정리(x.과목)); return 달말(x)+"이라 아직 인터넷 예약 목록에 안 올라왔어요"+(알?". "+알.replace(/^날짜가 나오면/,"올라오면"):""); }
+    var 전=시설전화(x.시설);
+    return "수원 인터넷 예약 목록에 없는 반이라 인터넷으로는 신청이 안 돼요. "+x.시설+"에 직접 가시거나 전화로 신청하셔야 해요"+(전?". 전화는 "+전+"이에요":"");
+  }
   function 말한시설(t){
     if(!시설별칭) return "";
     var 답="", 길이=0;
@@ -1181,7 +1195,9 @@ input.txt::placeholder{color:var(--mute)}
     }finally{ 되돌리는중=false; }
     앞목록단추();
   }
-  function info(msg,tel,title){ 목록기억(); 화면상태=null; setTimeout(function(){ 화면상태=상태찍기(); },0);   // 이 화면을 그리는 코드가 상태를 다 정한 뒤에 찍는다 try{ $("infoback").hidden=true; }catch(e){}
+  // 🆕 10/16 밤: 앱 판은 서버 중계(ntfy)를 막아 둬서 「확인해서 알려드릴게요」 숙제가 사무실에 안 간다 → 앱 판에선 그 약속을 말하지 않는다
+  function 앱말(m){ if(!window.CBDR) return m; return String(m).replace(/\s*확인해서 (알려드릴게요|챙겨드림에 올려 둘게요)\./g,"").replace(/\s*새로 확인되면 다시 알려 드릴게요\.?/g,""); }
+  function info(msg,tel,title){ msg=앱말(msg); 목록기억(); 화면상태=null; setTimeout(function(){ 화면상태=상태찍기(); },0);   // 이 화면을 그리는 코드가 상태를 다 정한 뒤에 찍는다 try{ $("infoback").hidden=true; }catch(e){}
     var _h=document.querySelector("#s-info h1"); if(_h) _h.innerHTML = title || "이건 이렇게<br>하셔야 해요"; try{ $("infomore").hidden=true; $("infopick").hidden=true; $("infoapply").hidden=true; }catch(e){} $("infotext").textContent=msg; $("infocall").dataset.tel=(tel||"").replace(/-/g,""); $("infocall").hidden=!tel; show("s-info"); speak(msg); }
   // 🔴 10/3 대표 「누르는 것마다 안 되는 화면」 → 꽉 찼으면 끝내지 말고, 같은 종류 중 자리 있는 반을 번호로 바로 보여준다(같은 수준·같은 곳 먼저)
   function 비슷한반들(x, 뺄){
@@ -1208,14 +1224,14 @@ input.txt::placeholder{color:var(--mute)}
   }
   function 강좌신청확인(x, raw){
     var 말=(x.시설+" "+(달말(x)?달말(x)+" ":"")+(x.과목||"")+" "+(x.요일||"")+" "+(x.시간||"")).replace(/\s+/g," ").trim();   // 코덱스 1004 C2: 확인 말에도 「11월 강좌」
-    if(!x.예약번호){ 숙제올리기(raw||말); info(말+"은 예약 사이트 번호를 아직 못 찾았어요. 확인해서 알려드릴게요.", "", "잠깐만요"); return; }
+    if(!x.예약번호){ 숙제올리기(raw||말); 들은강좌=null; info(말+"은 "+인터넷안됨말(x)+".", 시설전화(x.시설), "인터넷 신청이<br>안 돼요"); return; }   // 10/16: 「번호 못 찾았어요」 대신 왜 안 되는지·어떻게 하는지
     if(묵은(x)){ 들은강좌=null; info(말+"은 자리와 접수 상태를 확인한 지 며칠 지나서 지금은 제가 넣지 않아요. 새로 확인되면 다시 알려 드릴게요.", "", "확인이<br>필요해요"); return; }
-    if(자리못봄(x)){ 들은강좌=null; info(말+"은 이번 달 예약 목록에서 찾지 못해서 제가 넣을 수 없어요. 센터에 확인이 필요해요.", "", "확인이<br>필요해요"); return; }
+    if(자리못봄(x)){ 들은강좌=null; info(말+"은 "+인터넷안됨말(x)+".", 시설전화(x.시설), "인터넷 신청이<br>안 돼요"); return; }   // 10/16 대표 검도: 「찾지 못해서 넣을 수 없어요」는 고장 소리로 들림
     var 지s=지금상태(x);
     if(지s==="이미"){ 들은강좌=null; info(말+"은 이미 신청해 두신 반이에요.", "", "이미<br>신청하셨어요"); return; }
     if(지s===false){ 들은강좌=null;
       if(비슷안내(말+"은 지금 접수 기간이 아니에요. ", x, [x], null, "지금은<br>접수 안 해요")) return;
-      var 다음=다음접수말(x); info(말+"은 지금 접수 기간이 아니에요"+(다음? 다음+". 그날 제가 넣을게요." : ". 다음 접수가 열리면 알려 드릴게요."), "", "지금은<br>접수 안 해요"); return; }
+      var 다음=다음접수말(x); var 알=알림말([x.시설], 이름정리(x.과목)); info(말+"은 지금 접수 기간이 아니에요"+(다음? 다음+"."+(알?" 접수날 아침에 이 폰으로 알려 드릴게요.":"") : "."+(알?" "+알+".":"")), "", "지금은<br>접수 안 해요"); return; }
     if(꽉참(x)){ 들은강좌=null;
       if(비슷안내(말+"은 지금 자리가 다 찼어요"+(자리날(x)?"("+자리날(x)+")":"")+". ", x, [x])) return;
       info(말+"은 지금 자리가 다 찼어요"+(자리날(x)?"("+자리날(x)+")":"")+". 다른 반을 골라 주세요.", "", "자리가<br>다 찼어요"); return; }
@@ -1242,7 +1258,7 @@ input.txt::placeholder{color:var(--mute)}
     var items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남" && (!REGION||(o.지역||"")===REGION)});
     var 넓힘=false;
     if(!items.length && REGION){ items=OPEN.filter(function(o){return dueText(o.마감)!=="접수 끝남"}); 넓힘=true; }
-    if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; $("listlead").textContent="새로 열리면 먼저 알려드릴게요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
+    if(!items.length){ $("listtitle").innerHTML="지금은<br>없어요"; var 곳빈=[]; OPEN.concat(LESSON||[]).forEach(function(o){ if((!REGION||(o.지역||"")===REGION) && o.시설 && 곳빈.indexOf(o.시설)<0) 곳빈.push(o.시설); }); var 알빈=알림걸기(곳빈); $("listlead").textContent=알빈?"새로 열리면 이 폰으로 알려 드릴게요":"새로 열리면 여기에 나와요"; $("cards").innerHTML=""; show("s-list"); speak("지금 신청할 수 있는 건 없어요. "+(알빈?"새로 열리면 이 폰으로 알려 드릴게요.":"")); return; }
     $("listtitle").innerHTML="지금 할 수<br>있는 거예요"; $("listlead").textContent=(넓힘?은는(REGION)+" 지금 받는 데가 없어요 · "+내지역+" "  :(REGION?REGION+" · ":""))+items.length+"개 — 누르면 그걸로 신청할게요";
     $("cards").innerHTML=items.map(function(o,i){ var ft=fromText(o.시작); return '<button class="card" type="button" data-i="'+i+'"><span class="tag '+(인터넷되나(o)?"":"visit")+'">'+방식말(o)+'</span><span class="place">'+o.시설+'</span><span class="cls">'+o.반+(o.대상?' · '+o.대상:'')+'</span><span class="when">'+(o.시간||'')+'</span><span class="due">'+(ft?ft:dueText(o.마감))+(o.지역?' · '+o.지역:'')+'</span></button>'; }).join("");
     [].forEach.call($("cards").querySelectorAll(".card"),function(b){ b.addEventListener("click",function(){ var o=items[+this.dataset.i]; shutUp(); if(!인터넷되나(o)){ info((o.구조?o.구조+" ":"")+o.시설+" "+(o.반||"")+"은 인터넷으로 안 돼요. "+o.시설+"에 직접 가셔야 해요. "+(o.안내||"")+visitLine(o.시설),o.전화); return; } var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드릴게요.",o.전화); return; } confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":""); }); });
@@ -1438,6 +1454,23 @@ input.txt::placeholder{color:var(--mute)}
     // 🔴 9/28 예선 심사위원 「우리 아버지도 파크골프장 예약」 → 수원 파크골프장은 예약제가 아니다(통합예약 「파크골프」 0건 · 공사 공식 「9홀 무료개방 · 월요일 휴장 · 우천·잔디관리 임시휴장」 · 과제S)
     //    → 「예약해 드릴게요」는 거짓말. 오늘 여는지 · 몇 시까지 · 어디인지를 정확히 말한다
     if(/파크골프|파크꼴프|팍골프/.test(t0)){ info(파크골프말(new Date()), "", "파크골프는<br>예약 없어요"); return; }
+    // 🔴 10/16 밤 대표 탭 실기 「수영 언제 접수해? 지금 안 한다며」 → 「수영은 너무 많아요 좁혀 볼게요」로 갔다 — 접수 날짜를 묻는 말은 반 고르기가 아니라 날짜로 답한다
+    if(/언제|며칠|몇일|날짜/.test(t0) && /접수|신청|등록|모집|받아|받나|받냐|열려|열리/.test(t0)){
+      var g언=강좌찾기(text), L언=(g언&&g언.목록&&g언.목록.length)?g언.목록:LESSON.filter(function(x){ return (x.상태||"모집")==="모집" && (x.지역||"")===물음지역(text) && (!말한시설(t0)||x.시설===말한시설(t0)); });
+      var 곳언=[]; L언.forEach(function(x){ if(곳언.indexOf(x.시설)<0) 곳언.push(x.시설); });
+      var 머리언=(g언&&g언.목록&&g언.목록.length&&g언.말머리&&!/걸로|있는|없는/.test(g언.말머리))?String(g언.말머리).replace(/(은|는)$/,"")+" 접수 날짜예요. ":"";
+      var 묶언=[];   // 같은 답이 나온 곳은 한 문장으로(「광교, 장안은 …」)
+      곳언.forEach(function(f){ var 반=L언.filter(function(x){ return x.시설===f; }), 이름=짧은곳(반[0]), 꼬리, 따로=false;
+        if(반.some(지금가능)) 꼬리=" 지금 접수하고 있어요";
+        else if(반.every(function(x){ return (자리못봄(x) && !묵은(x) || !x.예약번호) && !달말(x); })){ var 전=시설전화(f); 꼬리=" 반은 인터넷 신청이 안 돼요. 직접 가시거나 전화로 신청하셔야 해요"+(전?". 전화는 "+전+"이에요":""); 따로=true; }
+        else { var 다=다음접수말(반[0]); if(다){ 꼬리=다.replace(/^\.\s*/,"에서 "); 따로=true; } else 꼬리=" 다음 접수 날짜가 아직 안 올라왔어요"; }
+        var 있=!따로 && 묶언.filter(function(m){ return m.꼬리===꼬리; })[0]; if(있) 있.곳.push(이름); else 묶언.push({곳:[이름], 꼬리:꼬리, 따로:따로}); });
+      var 걸곳=[]; 묶언.forEach(function(m){ if(m.꼬리.indexOf("인터넷 신청이 안 돼요")<0 && m.꼬리.indexOf("지금 접수하고")<0) m.곳.forEach(function(q){ 곳언.forEach(function(f){ if(짧은곳(L언.filter(function(x){ return x.시설===f; })[0])===q && 걸곳.indexOf(f)<0) 걸곳.push(f); }); }); });
+      var 알언=알림걸기(걸곳, 머리언?String(g언.말머리).replace(/(은|는)$/,""):"");
+      var 줄언=묶언.map(function(m){ var 앞=m.곳.join(", "); return (m.따로?앞:은는(앞))+m.꼬리+(m.꼬리===" 다음 접수 날짜가 아직 안 올라왔어요"&&알언?". 올라오면 이 폰으로 알려 드릴게요":""); });
+      if(알언 && 묶언.some(function(m){ return m.따로 && m.꼬리.indexOf("부터")>=0; })) 줄언.push("접수날 아침에 이 폰으로 한 번 더 알려 드릴게요");
+      info(머리언+(줄언.length?줄언.join(". ")+".":"접수 날짜를 아직 못 찾았어요."), "", "접수 날짜");
+      return; }
     // 🔴 9/28 「이걸로 신청해 줘」「3번 신청해 줘」 — 읽어드린 강좌 하나를 예약번호까지 담아 신청한다
     if((/신청|넣어|접수|등록/.test(t0) || /(걸로|거로|것으로|반으로)해줘(요|세요)?$/.test(t0)) && !/어떻게|방법|해줘야|야돼|언제|되나|돼\?|할수있|있어|있나|뭐|가입|회원|아이디/.test(t회)){
       t0=t0.replace(/(걸로|거로|것으로|반으로)해줘(요|세요)?$/,"$1신청");   // 9/29 코덱스 Z: 「광교 줌바 첫 번째 걸로 해 줘」
@@ -1545,7 +1578,7 @@ input.txt::placeholder{color:var(--mute)}
       var g=강좌찾기(t0), L=g.목록;
       var 지금만=/(지금|당장|바로|오늘|이번달)/.test(t0) && /(신청|할수있|되는|가능|받는|들을수|다닐수|할수있는)/.test(t0);
       if(지금만 && L.length && !g.닫힘){ var 된=L.filter(지금가능);
-        if(!된.length){ info("말씀하신 것 중에 지금 바로 신청할 수 있는 반은 없어요. 다음 접수가 열리면 알려 드릴게요.", "", "지금은<br>없어요"); return; }
+        if(!된.length){ var 곳된=[]; L.forEach(function(x){ if(곳된.indexOf(x.시설)<0 && x.예약번호 && !(자리못봄(x)&&!묵은(x))) 곳된.push(x.시설); }); var 알=알림말(곳된); info("말씀하신 것 중에 지금 바로 신청할 수 있는 반은 없어요."+(알?" 접수 "+알+".":""), "", "지금은<br>없어요"); return; }
         g={목록:된, 말머리:g.메뉴?"지금 바로 신청할 수 있는 강좌예요.":g.말머리, 메뉴:g.메뉴, 갈래:g.갈래}; L=된; }
       if(g.닫힘){ 닫힌반말(g.닫힘); return; }
       var 구체적 = !!(g.없음) || (L.length && g.말머리.indexOf("지금 신청") < 0);
@@ -1583,7 +1616,7 @@ input.txt::placeholder{color:var(--mute)}
     }
     // 서버가 먼저 「접수 열렸어요, 넣어드릴까요?」 한 뒤의 대답 — 「넣어 줘·응·네·그래·해줘」
     if(OFFER&&/^(넣어|응|네|그래|해줘|좋아|알았|오케이|넣자)/.test(t0)&&t0.length<12){ var c=OFFER; OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} c.raw=text; confirmWith(c,""); return; }
-    if(OFFER&&/^(아니|싫|됐어|안해|나중)/.test(t0)){ OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} info("네, 안 넣을게요. 다음에 또 열리면 알려드릴게요."); return; }
+    if(OFFER&&/^(아니|싫|됐어|안해|나중)/.test(t0)){ var 알o=알림걸기([OFFER&&OFFER.시설]); OFFER=null; try{localStorage.removeItem("cbdr_offer")}catch(e){} info("네, 안 넣을게요."+(알o?" 다음에 또 열리면 이 폰으로 알려 드릴게요.":"")); return; }
     if(/결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
       var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
@@ -1616,9 +1649,9 @@ input.txt::placeholder{color:var(--mute)}
       if(!기본){ info("어느 곳인지 못 알아들었어요. 「광교 수영 신청해 줘」처럼 장소를 같이 말씀해 주세요."); return; }
       r.시설=기본.시설; }
     var o=item(r);
-    if(!o){ info(r.시설+"은 지금 신청받는 게 없어요. 새로 열리면 먼저 알려드릴게요."); return; }
-    var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+"그러니까 "+o.시설+" 인터넷 접수는 "+ft+"예요. 그날 제가 먼저 알려드리고, 「넣어 줘」 하시면 바로 넣을게요.",o.전화); return; }
-    if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 이번 접수는 끝났어요. "+(o.구조?o.구조+" ":"")+"다음 달에 다시 열리면 제가 먼저 알려드릴게요.",o.전화); return; }
+    if(!o){ var 알r=알림걸기([r.시설]); info(r.시설+"은 지금 신청받는 게 없어요."+(알r?" 새로 열리면 이 폰으로 알려 드릴게요.":"")); return; }
+    var ft=fromText(o.시작); if(ft&&!soon(o.시작)){ info((o.구조?o.구조+" ":"")+"그러니까 "+o.시설+" 인터넷 접수는 "+ft+"예요. "+(알림걸기([o.시설],o.종목)?"그날 아침 이 폰으로 알려 드릴게요. 그때 ":"그날 ")+"「넣어 줘」 하시면 바로 넣을게요.",o.전화); return; }
+    if(dueText(o.마감)==="접수 끝남"){ info(o.시설+" 이번 접수는 끝났어요. "+(o.구조?o.구조+" ":"")+(알림걸기([o.시설],o.종목)?"다음 달에 다시 열리면 이 폰으로 알려 드릴게요.":""),o.전화); return; }
     o.raw=r.raw; confirmWith(o, ft?"접수는 내일 열려요. 열리면 바로 넣을게요.":"");
   }
   // ── 음성 인식
