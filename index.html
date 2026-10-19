@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261019052852">
+<meta name="cbdr-version" content="20261020053026">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -345,10 +345,12 @@ input.txt::placeholder{color:var(--mute)}
   function 은는(w){ var 끝=w.charAt(w.length-1); if(/\d/.test(끝)) return w+("013678".indexOf(끝)>=0?"은":"는");   // 10/3: 「탁구1는」 → 「탁구1은」
     var c=w.charCodeAt(w.length-1); var 받침=(c>=0xAC00&&c<=0xD7A3)&&((c-0xAC00)%28)!==0; return w+(받침?"은":"는"); }
   // 「확인해서 알려드릴게요」는 약속이다 — 못 답한 물음을 서버에 올려 둔다
+  function 이름표(){ var h=2166136261; for(var i=0;i<NAME.length;i++){ h^=NAME.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return "p"+h.toString(16); }
+  function 나에게(d){ return !d.받는사람 || d.받는사람===NAME || d.받는사람===이름표(); }
   function 숙제올리기(물음){
     try{
       fetch(NT+REQ,{method:"POST",body:JSON.stringify({
-        type:"숙제", 받는사람:NAME, 물음:물음,
+        type:"숙제", 받는사람:이름표(), 물음:물음,   // 🔒 10/19 공개 중계에 이름 대신 알아볼 수 없는 표식(서버는 그대로 돌려줄 뿐)
         때:new Date().toISOString().slice(0,16)
       })}).catch(function(){});
     }catch(e){}
@@ -1378,7 +1380,7 @@ input.txt::placeholder{color:var(--mute)}
 
   function joinConfirm(raw){
     // 🔒 10/3 앱 판(window.CBDR)은 대리 가입을 하지 않는다(10/1 대표 결정 — 생년월일·통신사·인증번호를 받지 않는다)
-    if(window.CBDR){ var 이미=false; try{ 이미=!!CBDR.isMember(); }catch(e){}
+    if(true){ var 이미=false; try{ 이미=window.CBDR ? !!CBDR.isMember() : isMember(공단); }catch(e){}   // 🔒 10/19 웹 판도 대리 가입 ✗(생년월일·통신사·전화를 받지 않는다 · 10/1 법 틀)
       info(이미 ? "이미 수원 예약 사이트 회원이세요. 이 폰 금고에 아이디가 들어 있어서 따로 가입하실 필요 없어요. 하고 싶은 강좌를 말씀해 주세요."
                 : "회원가입은 본인 확인 때문에 수원 예약 사이트에서 직접 하셔야 해요. 가입하신 뒤 아이디를 이 폰 금고에 한 번 넣어 두시면, 그다음부터는 제가 대신 찾아가 드려요.",
            "", 이미 ? "이미<br>회원이세요" : "가입은<br>직접 하세요"); return; }
@@ -1406,7 +1408,7 @@ input.txt::placeholder{color:var(--mute)}
     if(r.종류==="이미") return 반+"이미 들어 있어요. 따로 하실 일은 없어요.";
     return "";
   }
-  function keepResult(d){ if(d.받는사람&&d.받는사람!==NAME) return; RESULT=d.결과||""; try{localStorage.setItem("cbdr_result",RESULT)}catch(e){} }
+  function keepResult(d){ if(!나에게(d)) return; RESULT=d.결과||""; try{localStorage.setItem("cbdr_result",RESULT)}catch(e){} }
   function answerResult(){
     var 할일=할일말(); if(할일){ info(할일); return; }
     if(RESULT){ info(RESULT); return; }
@@ -1426,9 +1428,22 @@ input.txt::placeholder{color:var(--mute)}
          + 오늘 + "비 오거나 잔디 손볼 땐 문을 닫아요. 아침 일찍 사람이 많아요.";
   }
   var OFFER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_offer")||"null")}catch(e){return null}})();
+  // 🆕 10/19 일개미(팀 게이트웨이 클로드·GPT·제미나이) 말투 시험에서 나온 구멍 — 강좌 이름 뒤의 영어 숫자·알파벳 · 소리로 읽은 줄임말
+  //    「만 원」「얼마 원」 「포기」「비 오는」은 안 바꾼다: 숫자는 앞말이 금액(만·천·백·십·억·얼마·몇)이 아니고 뒤가 요·반·번·끝일 때만 · 알파벳은 뒤가 반·요·끝일 때만
+  function 영어읽기(t){
+    var 수={"원":"1","투":"2","쓰리":"3","포":"4","파이브":"5","식스":"6","세븐":"7","에잇":"8","나인":"9"}, 글={"에이":"A","비":"B","씨":"C","디":"D"};
+    t=String(t||"").replace(/에[스쓰]\s?엔\s?피\s?이?/g,"SNPE").replace(/핏트니스|피트니쓰|피트네스/g,"피트니스").replace(/태뽀|테보|태보오/g,"태보").replace(/무닌화|문닌화/g,"문인화");
+    t=t.replace(/([가-힣A-Za-z]+)(\s?)(원|투|쓰리|포|파이브|식스|세븐|에잇|나인)(요)?(?=\s|$|[,.…?!]|반|번)/g,function(m,앞,띄,n,요){
+      if(/[만천백십억]$|^(얼마|몇|한|두|세|네|시|분)$/.test(앞)) return m;
+      if(!띄 && /^(원|투|포)$/.test(n)) return m;   // 「서수원」「광교웰빙투」처럼 붙은 한 글자는 낱말의 일부(10/19 「서수원」→「서수1」 사고)
+      return 앞+띄+수[n]+(요?" ":""); });
+    t=t.replace(/(\s)(에이|비|씨|디)(?=\s?반|요|$|[,.…?!])/g,function(m,띄,a){ return 띄+글[a]; });
+    return t;
+  }
   function heard(text){
     shutUp();
     text=String(text||"").replace(/땐스/g,"댄스").replace(/초금|초굽/g,"초급").replace(/스마튼폰|스마투폰/g,"스마트폰").replace(/이써|있서/g,"있어").replace(/읎/g,"없").replace(/공짜루/g,"공짜로").replace(/차자/g,"찾아").replace(/덴스|땐쓰|댄쓰/g,"댄스").replace(/헬스장/g,"헬스").replace(/끊어\s*(줘|주시오|주이소|주세요|주라|도|달라)/g,"신청해 줘").replace(/필라테쓰|필라테즈|필라테스으/g,"필라테스").replace(/(^|\s)줌마(댄스)?(?=\s|$)/g,"$1줌바$2").replace(/(^|\s)타구(?=\s|$)/g,"$1탁구").replace(/켈리|캘리그래피/g,function(m){ return m==="켈리"?"캘리":"캘리그라피"; }).replace(/(중국|일본|태국|베트남)말(?!고|구|아)/g,"$1어").replace(/아쿠아\s+로빅/g,"아쿠아로빅").replace(/(^|\s)(뎐산|전산)(?=\s|$)/g,"$1컴퓨터").replace(/엘\s?(원|일)(?![가-힣])/g,"L1").replace(/엘\s?(투|이)(?=\s|$)/g,"L2").replace(/엘\s?(쓰리|삼)(?=\s|$)/g,"L3").replace(/엘\s?(포|사)(?=\s|$)/g,"L4").replace(/엘\s?(파이브|오)(?=\s|$)/g,"L5").replace(/엘\s?([1-5])/g,"L$1").replace(/(^|\s)l([1-5])(?=\s|$)/g,"$1L$2").replace(/(^|\s)안교(?=\s|$|에|웰빙|호수)/g,"$1광교").replace(/안경\s?호수/g,"광교호수").replace(/(^|\s|수원)(지보|제보|시보|치보|칠포|실보|칠뽀)(?=\s|$|체육|에|는|도|로|파크|꺼|거|강좌|센터)/g,function(m,a){ return (a==="수원"?"수원 ":a)+"칠보"; }).replace(/웰링크|웰빙크/g,"웰빙").replace(/장난\s?치니어/g,"장안 시니어").replace(/치니어/g,"시니어").replace(/수감료/g,"수강료").replace(/한국\s?(짓는|만들기)/g,"한복 $1").replace(/(^|\s|[초침정트락음형])유가(?=\s|$|\d|&|[는도를랑좀반])/g,"$1요가");   // 🔴 10/9 밤 탭 실기: 「수원칠보」를 「수원 시보」로 들어 「시보는 못 알아들었어요」+광교 반 추천 → 시보·치보·칠포·실보도 칠보(수원 붙은 꼴 포함 · 뒤가 띄어쓰기·조사·체육관일 때만)   // 🔴 10/9 탭 실기: 「기초요가 1」을 「기초유가」로 들어 「유가는 없어요」 — 수첩에 「유가」 든 강좌 0개 · 우유가·석유가는 안 바꿈   // 🔴 10/4 말투 시험: 음성 인식이 비슷한 소리로 적는 말 · 10/6 목소리 시험(탭 실측)에서 나온 지명·낱말(안교→광교 · 지보/제보→칠보 · 웰링크→웰빙 · 치니어→시니어 · l3→L3)
+    text=영어읽기(text);   // 🆕 10/19 팀AI 말투 시험(307문장): 「필라테쓰 쓰리요」「점핑 원」「어반스케치 씨반」「에스엔피이」를 못 알아들음
     var t0=(text||"").replace(/\s+/g,"");
     // 🔴 10/3 전수검사: 「수영 월회원 자유 신청해 줘」가 회원가입(생년월일)으로 빠졌다 — 강좌 이름의 「월회원」을 가입 말로 읽지 않는다
     var t회=t0.replace(/(수영|헬스|아쿠아|자유수영|요가|탁구|배드민턴)(월|일|연|정기|자유|평일|주말|일일)회원(?!되|가입|으로|이되)/g,"$1");   // 「수영 연회원 되고 싶어」는 가입 말로 남긴다(코덱스 2차)   // 10/3 코덱스: 「연회원 되고 싶어」까지 지웠다 → 종목 바로 뒤의 「○회원」(강좌 이름)만 뺀다
@@ -1742,7 +1757,8 @@ input.txt::placeholder{color:var(--mute)}
   $("codetyped").addEventListener("keydown",function(e){ if(e.key==="Enter") $("codeok").click(); });
   // ── 사무실 연결 (ntfy 공개 중계 · 주소는 무작위 · 개인정보 최소)
   var REQ="cbdr-req-0e0b6b7df99c5db4", RES="cbdr-res-db09565ac6f83574", NT="https://ntfy.sh/";
-  function post(o){ o.사람=NAME; o.시각=new Date().toISOString(); return fetch(NT+REQ,{method:"POST",body:JSON.stringify(o),headers:{"Content-Type":"text/plain"}}); }
+  // 🔒 10/19 개인정보: ntfy 는 공개 중계라 잠그지 않은 글은 누구나 볼 수 있다 → 가입 정보·인증번호·묻고 답한 값은 아예 안 보내고, 이름도 안 붙인다(아이디·비밀번호는 위 공개키로 잠근 것만)
+  function post(o){ if(/^(회원가입|인증번호|답)$/.test(o&&o.type)) return Promise.resolve({ok:false,막음:true}); delete o.이름; delete o.생년월일; delete o.성별; delete o.통신사; delete o.전화번호; o.시각=new Date().toISOString(); return fetch(NT+REQ,{method:"POST",body:JSON.stringify(o),headers:{"Content-Type":"text/plain"}}); }
   // 서버가 묻는 것: 인증번호는 숫자 화면, 그 밖은 말하기 화면. 답은 {type:"답",항목,값}
   function handleAsk(d){
     if(!cur) cur={type:"회원가입",시설:d.시설||"",반:"회원가입"};
@@ -1767,7 +1783,7 @@ input.txt::placeholder{color:var(--mute)}
     try{ es=new EventSource(NT+RES+"/sse"); }catch(e){ return; }
     es.onopen=function(){ $("dot").classList.add("on"); };
     es.onerror=function(){ $("dot").classList.remove("on"); };
-    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message); if(d.받는사람&&d.받는사람!==NAME) return;
+    es.onmessage=function(ev){ try{ var m=JSON.parse(ev.data); if(m.event!=="message") return; var d=JSON.parse(m.message); if(!나에게(d)) return;
       if(d.type==="list"&&d.items){ OPEN=d.items; return; }
       if(d.type==="결과"){ keepResult(d); return; }
       if(d.type==="제안"&&d.카드){ OFFER=d.카드; try{localStorage.setItem("cbdr_offer",JSON.stringify(d.카드))}catch(e){} return; }
