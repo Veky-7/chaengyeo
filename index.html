@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261020120012">
+<meta name="cbdr-version" content="20261021052936">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -124,7 +124,73 @@ input.txt{width:100%;font:inherit;font-family:'Nanum Pen Script',cursive;font-si
 input.txt::placeholder{color:var(--mute)}
 .link{background:none;border:0;color:var(--mute);font:inherit;font-size:16px;text-decoration:underline;cursor:pointer;padding:6px;align-self:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+/* 🆕 10/20 처음 화면 = 대표 승인 시안(인트로 봉투 · 할머니+「무엇을 챙겨 드릴까요?」 · 큰 말하기 · 글씨로 쓰기 · 예시 단추 · D-day 띠) · 코드 초안 = 팀 포인트 claude-opus(_팀AI/메인화면_1020) · 검수·적용 = 클로드 코드 */
+/* ===== 처음 화면: 승인 시안 ===== */
+:root{--leaf:#3f7a68}
+
+/* 점선 고리·화살표 제거 */
+#s-idle .ring,#s-idle .hint{display:none}
+
+/* 할머니 + 제목 두 줄 */
+.idlehead{display:flex;align-items:center;gap:8px;margin-top:4px}
+.idlehead img{width:120px;height:120px;flex:none;mix-blend-mode:multiply;
+  -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent);
+  mask-image:radial-gradient(closest-side,#000 72%,transparent)}
+#title1{margin:0;font-family:'Gowun Batang','Batang',serif;font-weight:700;
+  font-size:clamp(28px,8vw,34px);line-height:1.22;-webkit-text-stroke:0;white-space:nowrap}
+#title1 em{font-style:normal;color:var(--terra)}
+
+/* 단추 아래 손글씨 한 줄 */
+#s-idle #lead1{text-align:center;font-family:'Nanum Pen Script',cursive;
+  font-size:27px;line-height:1.3;color:var(--ink);margin-top:2px}
+
+/* ✏ 글씨로 쓰기 넓은 단추 (기존 #totype 재활용) */
+#totype{display:flex;align-items:center;justify-content:center;gap:10px;align-self:stretch;
+  width:100%;background:var(--sheet);border:1.5px solid var(--line);border-radius:16px;
+  padding:12px 16px;color:#5a5048;font-family:'Gowun Dodum',sans-serif;font-size:20px;
+  text-decoration:none;margin-top:2px}
+#totype svg{width:24px;height:24px;color:var(--terra);flex:none}
+#totype b{color:var(--ink)}
+#totype:active{background:rgba(0,0,0,.04)}
+
+/* 예시 말 단추 3개 */
+.exrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.exrow button{min-width:0;overflow-wrap:anywhere;background:var(--sheet);
+  border:1px solid var(--line);border-radius:16px;padding:8px 14px;
+  font-family:'Gowun Dodum',sans-serif;font-size:17px;color:var(--ink);cursor:pointer}
+.exrow button:active{background:rgba(0,0,0,.04)}
+
+/* 초록 D-day 띠 */
+.dday{display:flex;align-items:center;gap:12px;align-self:stretch;width:100%;
+  background:var(--leaf);color:#fff;border:0;border-radius:16px;padding:14px 16px;
+  font-family:'Gowun Dodum',sans-serif;font-size:18px;text-align:left;cursor:pointer;margin-top:4px}
+.dday b{background:var(--sheet);color:var(--leaf);border-radius:10px;padding:5px 9px;font-size:18px;flex:none}
+.dday[hidden]{display:none}
+
+/* 시트는 평소 숨김 · 듣는 중/글씨 쓰기 때만 보임 */
+#micwrap.listening ~ #sheet1{display:block!important}
+
+/* ===== 인트로 ===== */
+#intro{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  background:var(--paper) url("assets/paper_bg.jpg") center/cover;transition:opacity .55s ease}
+#intro.gone{opacity:0;pointer-events:none}   /* 10/20 3-AI 검증: 사라지는 0.6초 동안 뒤 단추를 막지 않게 */
+#intro .introimg{width:220px;mix-blend-mode:multiply;
+  -webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent);
+  mask-image:radial-gradient(closest-side,#000 70%,transparent)}
+#intro .introname{font-family:'Gowun Batang','Batang',serif;font-weight:700;
+  font-size:50px;letter-spacing:-1px;color:var(--ink);margin-top:4px}
+#intro .intropen{font-family:'Nanum Pen Script',cursive;font-size:30px;color:var(--terra);margin-top:4px}
+#intro small{position:absolute;bottom:calc(46px + env(safe-area-inset-bottom));
+  left:0;right:0;font-size:14px;color:var(--mute)}
 </style></head><body>
+<div class="intro" id="intro" hidden>
+  <img class="introimg" src="assets/envelope_open.jpg" alt="">
+  <div class="introname">챙겨드림</div>
+  <div class="intropen">말씀만 하세요, 제가 챙겨 드릴게요</div>
+  <small>수원 강좌 신청 도우미</small>
+</div>
+
 <div class="bg"><img src="assets/paper_bg.jpg" alt=""></div>
 <div class="app">
   <div class="top"><div id="crumb">말하기</div><div><span class="dot" id="dot"></span><span id="who">챙겨드림</span></div></div>
@@ -150,25 +216,43 @@ input.txt::placeholder{color:var(--mute)}
     <button class="link" id="startskip" type="button">먼저 둘러만 볼래요</button>
   </section>
 
-  <section class="screen" id="s-idle">
-    <h1 class="pen" id="title1">말씀만<br>하세요</h1>
-    <svg class="under" width="150" height="14" viewBox="0 0 150 14" fill="none"><path d="M2 9 C 30 3, 67.5 12, 105 6 S 144 9, 148 5" stroke="#CF5F2A" stroke-width="3.5" stroke-linecap="round"/></svg>
-    <div class="lead" id="lead1">편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요</div>
-    <div class="micwrap" id="micwrap">
-      <div class="hint pen">여기 눌러요<svg width="70" height="60" viewBox="0 0 90 60" fill="none"><path d="M6 8 C 30 4, 55 20, 78 46" stroke="#CF5F2A" stroke-width="3" stroke-linecap="round"/><path d="M62 46 L 79 47 L 74 32" stroke="#CF5F2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <svg class="ring" viewBox="0 0 250 250" fill="none"><path d="M125 18 C 190 14, 236 60, 232 125 C 236 190, 186 236, 125 232 C 60 236, 14 190, 18 125 C 14 62, 62 14, 125 18 Z" stroke="#CF5F2A" stroke-width="3" stroke-dasharray="9 8" stroke-linecap="round"/></svg>
-      <button class="mic" id="mic" type="button" aria-label="말하기"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel">말하기</span></button>
-    </div>
-    <div class="sheet" id="sheet1" style="transform:rotate(.6deg)"><div class="dog"></div>
-      <div class="say pen" id="ex1">“수영 신청할 수 있는 거 있어?”</div>
-      <div class="say pen" id="ex2">“어르신 강좌 뭐 있어?”</div>
-      <div id="typewrap" hidden><input class="txt" id="typed" placeholder="여기에 적어도 돼요"></div>
-      <img class="cap" src="assets/swim_cap.jpg" alt="">
-    </div>
-    <div class="btns" id="typebtns" hidden><button class="btn small" id="typedok" type="button">이렇게 보내기</button></div>
-    <button class="link" id="totype" type="button">말하기가 안 되면 글로 적기</button>
-    <div class="foot"></div>
-  </section>
+<section class="screen" id="s-idle">
+  <div class="idlehead">
+    <img class="soft" src="assets/인물_큰버튼폰.jpg" alt="">
+    <h1 id="title1">무엇을<br><em>챙겨 드릴까요?</em></h1>
+  </div>
+
+  <div class="micwrap" id="micwrap">
+    <button class="mic" id="mic" type="button" aria-label="말하기">
+      <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg>
+      <span id="miclabel">말하기</span>
+    </button>
+  </div>
+
+  <div class="lead" id="lead1">누르고 편하게 말씀하세요</div>
+
+  <button class="link" id="totype" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+    <span>말 대신 <b>글씨로 쓰기</b></span>
+  </button>
+
+  <div class="sheet" id="sheet1" style="transform:rotate(.6deg)" hidden><div class="dog"></div>
+    <div class="say pen" id="ex1">“수영 신청할 수 있는 거 있어?”</div>
+    <div class="say pen" id="ex2">“어르신 강좌 뭐 있어?”</div>
+    <div id="typewrap" hidden><input class="txt" id="typed" placeholder="여기에 적어도 돼요"></div>
+    <img class="cap" src="assets/swim_cap.jpg" alt="">
+  </div>
+  <div class="btns" id="typebtns" hidden><button class="btn small" id="typedok" type="button">이렇게 보내기</button></div>
+
+  <div class="exrow" id="exidle">
+    <button type="button" data-say="수영 뭐 있어">“수영 뭐 있어?”</button>
+    <button type="button" data-say="댄스 언제 접수해">“댄스 언제 접수해?”</button>
+    <button type="button" data-say="어르신 강좌 뭐 있어">“어르신 강좌 뭐 있어?”</button>
+  </div>
+
+  <button class="dday" id="dday" type="button" hidden><b></b><span></span></button>
+
+</section>
 
   <!-- 5 찾아드림 -->
   <section class="screen" id="s-list" hidden>
@@ -287,7 +371,7 @@ input.txt::placeholder{color:var(--mute)}
   function 구조다듬기(){ (OPEN||[]).forEach(function(o){ if(o&&o.구조) o.구조=String(o.구조).replace(/\s*[^.!?]*제가 [^.!?]*?(넣을게요|넣어 드릴게요|해 둘게요|확인해 드릴게요|확인해서 알려 ?드려요)[.!?]?/g,"").replace(/(확정은 아니에요),\s*$/,"$1."); }); }
   구조다듬기();
   // ── 서버가 공지를 읽어 쓴 목록(목록.json · 공지읽기.py 가 갱신)을 열 때마다 받아온다. 못 받으면 위 내장 목록 그대로
-  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 구조다듬기(); 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.시설전화) 시설전화표=j.시설전화; if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
+  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; 구조다듬기(); try{ drawDday(); }catch(e){} } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 구조다듬기(); 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.시설전화) 시설전화표=j.시설전화; try{ drawDday(); }catch(e){} if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
 
   // ── 2층: 강좌 목록(목록.json 의 "강좌") — 가격·정원·딱지가 여기 있다
   var 서버차=null;   // 코덱스 6차: 수첩을 받을 때 서버가 알려 준 지금 시각(HTTP Date) − 폰 시각. 있으면 폰 시계가 빠르든 느리든 서버 시각으로 「오래됨」을 잰다
@@ -862,8 +946,9 @@ input.txt::placeholder{color:var(--mute)}
   function 닫힌반말(x){
     var 왜={"폐강":"폐강돼서 열리지 않아요","휴강":"지금 쉬고 있어요","확인중":"아직 열리는지 확인 중이에요","목록없음":"지금은 신청 목록에 없어요"}[x.상태]||"지금 모집하지 않아요";
     들은강좌=null; 지금갈래=null;
-    var 때x=(String(x.요일||"")+" "+String(x.시간||"")).replace(/\s+/g," ").trim();   // 「7시 반만 확인 중」처럼 어느 반인지까지(10/3)
-    info(x.시설+" "+은는(이름정리(x.과목)+(때x?" "+때x+" 반":""))+" "+왜+". 비슷한 반을 들으시려면 「"+(이름정리(x.과목).replace(/[\(\[][^\)\]]*[\)\]]/g,"").replace(/주\d회/,"").replace(/\s*\d+$/,"").trim()||이름정리(x.과목))+" 뭐 있어」라고 말씀해 주세요.", "", "이 반은<br>지금 없어요");
+    var 같은닫힘=LESSON.filter(function(y){ return y.시설===x.시설 && y.과목===x.과목 && (y.상태||"모집")!=="모집"; }).length;
+    var 때x=같은닫힘>1 ? "" : (String(x.요일||"")+" "+String(x.시간||"")).replace(/\s+/g," ").trim();   // 🔴 10/20: 같은 이름 닫힌 반이 5개인데 첫 반 시각만 말했다   // 「7시 반만 확인 중」처럼 어느 반인지까지(10/3)
+    info(x.시설+" "+은는(이름정리(x.과목)+(때x?" "+때x+" 반":""))+" "+왜+". 비슷한 반을 들으시려면 「"+(이름정리(x.과목).replace(/[\(\[][^\)\]]*[\)\]]/g,"").replace(/주\d회/,"").replace(/\s*(L\d+|\d+)$/,"").trim()||이름정리(x.과목))+" 뭐 있어」라고 말씀해 주세요.", "", "이 반은<br>지금 없어요");
   }
   function 강좌찾기(t){
     var 지=물음지역(t);
@@ -1463,15 +1548,24 @@ input.txt::placeholder{color:var(--mute)}
             좁히기.앞말="말씀하신 반은 없어요. "+(곳z2.length?"이건 "+곳z2.join(", ")+"에 있어요. ":""); }
           좁히기다음(); return; } }
       // 🔴 9/29 좁히는 중에 「이걸로 신청해 줘」 — 아직 하나로 안 정해졌다. 엉뚱한 3개(골라 드림)로 가지 말고 같은 물음을 다시
-      if(신청z){ 좁히기.앞말="아직 하나로 안 정해졌어요. 조금만 더 골라 주세요. "; 좁히기.보기=null; 좁히기다음(); return; }
+      if(신청z && LESSON.length){ var 앞z=t0.replace(/(을|를)?(신청|넣어|접수|등록).*$/,"");   // 🔴 10/20 전수검사: 「수영 상급 L1」 좁히는 중에 「장안구민회관 수영 초급 L1 신청해 줘」 → 새 반을 말했는데 같은 물음을 되풀이했다
+        if(앞z.length>=4 && !/(이걸|이거|그걸|그거|요걸|요거)/.test(앞z)){ var gz=강좌찾기(앞z);
+          if(gz && !gz.메뉴 && !gz.없음 && (gz.닫힘 || (gz.목록 && gz.목록.length && gz.목록.some(function(x){ return 좁히기.목록.indexOf(x)<0; })))) 좁히기=null; } }
+      if(좁히기 && 신청z){ 좁히기.앞말="아직 하나로 안 정해졌어요. 조금만 더 골라 주세요. "; 좁히기.보기=null; 좁히기다음(); return; }
       좁히기=null;   // 다른 물음이면 좁히기는 놓는다
     }
     // 🔴 9/28 예선 심사위원 「우리 아버지도 파크골프장 예약」 → 수원 파크골프장은 예약제가 아니다(통합예약 「파크골프」 0건 · 공사 공식 「9홀 무료개방 · 월요일 휴장 · 우천·잔디관리 임시휴장」 · 과제S)
     //    → 「예약해 드릴게요」는 거짓말. 오늘 여는지 · 몇 시까지 · 어디인지를 정확히 말한다
     if(/파크골프|파크꼴프|팍골프/.test(t0)){ info(파크골프말(new Date()), "", "파크골프는<br>예약 없어요"); return; }
     // 🔴 10/16 밤 대표 탭 실기 「수영 언제 접수해? 지금 안 한다며」 → 「수영은 너무 많아요 좁혀 볼게요」로 갔다 — 접수 날짜를 묻는 말은 반 고르기가 아니라 날짜로 답한다
-    if(/언제|며칠|몇일|날짜/.test(t0) && /접수|신청|등록|모집|받아|받나|받냐|열려|열리/.test(t0)){
-      var g언=강좌찾기(text), L언=(g언&&g언.목록&&g언.목록.length)?g언.목록:LESSON.filter(function(x){ return (x.상태||"모집")==="모집" && (x.지역||"")===물음지역(text) && (!말한시설(t0)||x.시설===말한시설(t0)); });
+    // 🔴 10/20 대표 「광교 수영장 신청할 수 있다고 하는데? 신청 가능한 거 있어?」 → 「수영은 46개 있어요 좁혀 볼게요」로 갔다(전부 접수 기간 아님인데 되는 것처럼 들림)
+    //    → 「신청할 수 있는 거 / 신청 가능한 거」를 물었는데 지금 되는 반이 하나도 없으면 반 고르기 대신 「지금은 없어요 + 시설별 접수 날짜」로 답한다(되는 반이 있으면 원래대로 목록)
+    var 언제묻기=/언제|며칠|몇일|날짜/.test(t0) && /접수|신청|등록|모집|받아|받나|받냐|열려|열리/.test(t0);
+    var 가능묻기=!언제묻기 && (/(신청|접수|등록)(할수있|가능|되는|돼|되나|됩니까)/.test(t0) || /(할수있는|가능한)(거|것|강좌|반|수업)/.test(t0));
+    var g언=null, L언=[];
+    if(언제묻기 || 가능묻기){ g언=강좌찾기(text); L언=(g언&&g언.목록&&g언.목록.length)?g언.목록:LESSON.filter(function(x){ return (x.상태||"모집")==="모집" && (x.지역||"")===물음지역(text) && (!말한시설(t0)||x.시설===말한시설(t0)); }); }
+    var 알맹이=String(t0).replace(/지금|바로|혹시|당장|신청|접수|등록|할수있는|할수있|가능한|가능|되는|거|것|강좌|반|수업|뭐|무엇|있어요|있어|있나요|있나|있니|요|[?.!~]/g,"");
+    if(언제묻기 || (가능묻기 && 알맹이.length>=2 && g언 && g언.목록 && g언.목록.length && !L언.some(지금가능))){   // 종목·반을 말했을 때만(「지금 신청할 수 있는 거 뭐 있어」는 원래 길 = 「지금 바로 신청할 수 있는 반은 없어요」)
       var 곳언=[]; L언.forEach(function(x){ if(곳언.indexOf(x.시설)<0) 곳언.push(x.시설); });
       var 머리언=(g언&&g언.목록&&g언.목록.length&&g언.말머리&&!/걸로|있는|없는/.test(g언.말머리))?String(g언.말머리).replace(/(은|는)$/,"")+" 접수 날짜예요. ":"";
       var 묶언=[];   // 같은 답이 나온 곳은 한 문장으로(「광교, 장안은 …」)
@@ -1484,7 +1578,8 @@ input.txt::placeholder{color:var(--mute)}
       var 알언=알림걸기(걸곳, 머리언?String(g언.말머리).replace(/(은|는)$/,""):"");
       var 줄언=묶언.map(function(m){ var 앞=m.곳.join(", "); return (m.따로?앞:은는(앞))+m.꼬리+(m.꼬리===" 다음 접수 날짜가 아직 안 올라왔어요"&&알언?". 올라오면 이 폰으로 알려 드릴게요":""); });
       if(알언 && 묶언.some(function(m){ return m.따로 && m.꼬리.indexOf("부터")>=0; })) 줄언.push("접수날 아침에 이 폰으로 한 번 더 알려 드릴게요");
-      info(머리언+(줄언.length?줄언.join(". ")+".":"접수 날짜를 아직 못 찾았어요."), "", "접수 날짜");
+      if(가능묻기) 머리언=(머리언?머리언.replace(/ 접수 날짜예요\. $/,""):"")+(머리언?"은 ":"")+"지금 신청할 수 있는 반이 없어요. 접수 기간이 아니에요. ";
+      info(머리언+(줄언.length?줄언.join(". ")+".":"접수 날짜를 아직 못 찾았어요."), "", 가능묻기?"지금은<br>접수 안 해요":"접수 날짜");
       return; }
     // 🔴 9/28 「이걸로 신청해 줘」「3번 신청해 줘」 — 읽어드린 강좌 하나를 예약번호까지 담아 신청한다
     if((/신청|넣어|접수|등록/.test(t0) || /(걸로|거로|것으로|반으로)해줘(요|세요)?$/.test(t0)) && !/어떻게|방법|해줘야|야돼|언제|되나|돼\?|할수있|있어|있나|뭐|가입|회원|아이디/.test(t회)){
@@ -1687,10 +1782,59 @@ input.txt::placeholder{color:var(--mute)}
                   $("miclabel").textContent="말하기";
                   $("lead1").textContent="마이크가 안 열렸어요. 아래에 적어 주세요"; toType(); });
   }
-  function stop(){ listening=false; if(마이크주인===rec) 마이크주인=null; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="말씀만<br>하세요"; try{rec&&rec.stop()}catch(e){} }
+  function stop(){ listening=false; if(마이크주인===rec) 마이크주인=null; $("micwrap").classList.remove("listening"); $("miclabel").textContent="말하기"; $("title1").innerHTML="무엇을<br><em>챙겨 드릴까요?</em>"; try{rec&&rec.stop()}catch(e){} }
   var 가입안내="";
-  function resetIdle(){ 앞목록들=[]; try{ $("gback").hidden=true; }catch(e){} $("ex1").textContent="“수영 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("lead1").textContent=(가입안내 && MEMBER.indexOf(공단)<0) ? 가입안내 : "편지 쓰듯, 하고 싶은 걸 그냥 말하면 돼요"; }
-  function toType(){ $("ex1").hidden=true; $("ex2").hidden=true; $("typewrap").hidden=false; $("typebtns").hidden=false; $("typed").focus(); }
+  function resetIdle(){ 앞목록들=[]; try{ $("gback").hidden=true; }catch(e){} $("ex1").hidden=false; $("ex1").textContent="“수영 신청할 수 있는 거 있어?”"; $("ex2").hidden=false; $("typewrap").hidden=true; $("typebtns").hidden=true; $("sheet1").hidden=true; $("lead1").textContent=(가입안내 && MEMBER.indexOf(공단)<0) ? 가입안내 : "누르고 편하게 말씀하세요"; drawDday(); }
+  function toType(){ $("sheet1").hidden=false; $("ex1").hidden=true; $("ex2").hidden=true; $("typewrap").hidden=false; $("typebtns").hidden=false; $("typed").focus(); }
+  /* 시설 짧은 이름 */
+  function shortName(name){
+    var n=(name||"").replace(/^(서수원|수원)/,"");
+    ["웰빙","국민","체육관","체육","센터","구민","회관"].forEach(function(t){ n=n.split(t).join(""); });
+    return n||name;
+  }
+
+  /* D-day 초록 띠 그리기 (OPEN 공지 배열에서 오늘 이후 가장 가까운 시작 1개) */
+  function drawDday(){
+    var band=$("dday"); if(!band) return;
+    var list=(typeof OPEN!=="undefined"&&OPEN)?OPEN:[];
+    var today=new Date(); today.setHours(0,0,0,0);
+    var best=null, bestDiff=Infinity;
+    for(var i=0;i<list.length;i++){
+      var o=list[i]; if(!o||!o.시작) continue;
+      var p=String(o.시작).split("-");
+      var s=new Date(+p[0], +p[1]-1, +p[2]); s.setHours(0,0,0,0);
+      var diff=Math.round((s-today)/86400000);
+      if(diff>=0 && diff<bestDiff){ bestDiff=diff; best=o; }
+    }
+    if(!best){ band.hidden=true; band.onclick=null; return; }
+    var q=String(best.시작).split("-");
+    var nm=shortName(best.시설);
+    band.querySelector("b").textContent=(bestDiff===0?"오늘":"D-"+bestDiff);
+    band.querySelector("span").textContent=nm+" "+(String(best.종목||"").length<=5?best.종목+" ":"")+"접수 "+(+q[1])+"월 "+(+q[2])+"일부터";   // 종목이 길면(「GX·요가·탁구」) 두 줄로 깨져서 뺀다
+    band.hidden=false;
+    band.onclick=function(){ heard(nm+" "+best.종목+" 언제 접수해"); };
+  }
+
+  /* 예시 말 단추 → heard() */
+  (function(){
+    var ex=$("exidle"); if(!ex) return;
+    Array.prototype.forEach.call(ex.querySelectorAll("button"),function(b){
+      b.addEventListener("click",function(){ heard(b.getAttribute("data-say")); });
+    });
+  })();
+
+  /* 인트로: 세션당 1회 · 1.6초 뒤 사라짐 · 누르면 바로 · ?nointro 면 생략 */
+  (function(){
+    var el=$("intro"); if(!el) return;
+    try{ if(location.search.indexOf("nointro")>=0) return; }catch(e){}
+    try{ if(sessionStorage.getItem("introSeen")==="1") return; }catch(e){}
+    try{ sessionStorage.setItem("introSeen","1"); }catch(e){}
+    el.hidden=false;
+    var done=false;
+    function hide(){ if(done) return; done=true; clearTimeout(t); el.classList.add("gone"); setTimeout(function(){ el.hidden=true; },600); }
+    var t=setTimeout(hide,1600);
+    el.addEventListener("click",hide,{once:true});
+  })();
   $("mic").addEventListener("click",function(){ if(listening) stop(); else start(); });
   $("totype").addEventListener("click",toType);
   $("typedok").addEventListener("click",function(){ var v=$("typed").value.trim(); if(v){ $("ex1").hidden=false; $("ex1").textContent="“"+v+"”"; heard(v); } });
