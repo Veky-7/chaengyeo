@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261026115341">
+<meta name="cbdr-version" content="20261026120117">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -693,7 +693,12 @@ input.txt::placeholder{color:var(--mute)}
     var c=OPEN.filter(function(o){ return o.시설===x.시설 && /^\d{4}-\d{2}-\d{2}$/.test(o.시작||"") && o.시작>=오늘; }).sort(function(a,b){ return a.시작<b.시작?-1:1; })[0];
     if(!c) return ""; var m=+c.시작.slice(5,7), d=+c.시작.slice(8,10); var e=c.마감&&/^\d{4}-\d{2}-\d{2}$/.test(c.마감)?(" "+(+c.마감.slice(5,7)===m?"":(+c.마감.slice(5,7))+"월 ")+(+c.마감.slice(8,10))+"일까지"):"";
     return ". 처음 오는 분 접수는 "+m+"월 "+d+"일부터"+e+"예요"; }catch(e){ return ""; } }
-  function 지금상태(x){ if(!x || x.신청상태==null || 오래됨(x)) return null; var v=+x.신청상태; if(v===2||v===3||v===4) return true; if(v===0||v===1) return "이미"; return false; }
+  // 🔴 10/26 대표 「자리 있었는데 왜 없다고 나왔어」 — 새벽 5:28 점검 때 사이트가 인터넷 접수를 잠깐 막아 칠보 43반이 전부 -1(안 열림)로 적혔고,
+  //   앱이 그 값을 하루 종일 믿어 공지 접수 기간(10/24~27) 한가운데에 「접수 기간이 아니에요」로 문을 닫았다(11:48 다시 보니 43반 전부 열림)
+  //   → 공지에 오늘이 접수 기간인 시설은 「안 열림」을 믿지 않고 「모름」으로 둔다 → 신청 화면까지 가고, 정말 닫혔으면 사이트가 거절한다
+  function 공지기간안(x){ try{ var t=new Date(Date.now()+(typeof 서버차==="number"?서버차:0)); var 오늘=t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);
+    return OPEN.some(function(o){ return o.시설===x.시설 && /^\d{4}-\d{2}-\d{2}$/.test(o.시작||"") && /^\d{4}-\d{2}-\d{2}$/.test(o.마감||"") && o.시작<=오늘 && 오늘<=o.마감; }); }catch(e){ return false; } }
+  function 지금상태(x){ if(!x || x.신청상태==null || 오래됨(x)) return null; var v=+x.신청상태; if(v===2||v===3||v===4) return true; if(v===0||v===1) return "이미"; if(공지기간안(x)) return null; return false; }
   function 지금가능(x){ return 지금상태(x)===true && !꽉참(x) && !자리못봄(x); }
   // 코덱스 X-A2: 예약번호는 있는데 이번 달 예약 목록에서 못 찾은 반(자리 모름) — 신청을 권하지 않는다 · 장안은 자리를 원래 안 받는다
   // 코덱스 1004 2차 P0: 오래돼서 「모름」이 된 반에 신청 버튼이 그대로 나왔다(자리확인이 남아 있어서) → 오래된 반도 「제가 못 넣는 반」 · 장안은 원래 자리·상태 없이 넣는다
