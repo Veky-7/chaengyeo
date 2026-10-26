@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261026182721">
+<meta name="cbdr-version" content="20261027005518">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -707,6 +707,7 @@ input.txt::placeholder{color:var(--mute)}
   // 코덱스 1004 2차 P0: 오래돼서 「모름」이 된 반에 신청 버튼이 그대로 나왔다(자리확인이 남아 있어서) → 오래된 반도 「제가 못 넣는 반」 · 장안은 원래 자리·상태 없이 넣는다
   function 묵은(x){ return !!(x && x.예약번호 && x.시설!=="장안구민회관" && 오래됨(x)); }
   function 자리못봄(x){ return 묵은(x) || !!(x && x.예약번호 && x.시설!=="장안구민회관" && !x.자리비공개 && 자리값(x)===null && x.자리확인===undefined); }
+  function 웹장안(x){ return !window.CBDR && !!x && x.시설==="장안구민회관"; }   // 10/27: 웹 판(아이폰)은 장안(/jacc)을 못 넣는다 — 탭 앱만 됨
   function 자리날(x){ var m=String(x.자리확인||"").match(/^\d{4}-(\d{2})-(\d{2})/); return m?(+m[1])+"월 "+(+m[2])+"일 기준":""; }
   function 목록말(x, 곳도){
     var 글=function(v){ return String(v==null?"":v).trim(); };
@@ -718,6 +719,7 @@ input.txt::placeholder{color:var(--mute)}
     if(글(x.강사) && LESSON.some(function(y){ return y!==x && y.시설===x.시설 && y.과목===x.과목 && (y.해당월||"")===(x.해당월||"") && 글(y.요일)===글(x.요일) && 글(y.시간)===글(x.시간) && (y.상태||"모집")==="모집"; })) p.push(글(x.강사)+" 선생님");
     if(꽉참(x)) p.push("자리 없음");
     else if(지금상태(x)===false) p.push("지금 접수 안 해요");
+    else if(웹장안(x)) p.push("전화로만 신청돼요");   // 🔴 10/27 대표 「안 되는 거면 신청해 드릴까요라고 묻지를 말아야지」 — 웹 판은 장안을 못 넣는다 → 목록에서부터
     else if(묵은(x)) p.push("자리 확인이 늦어졌어요");
     else if(자리못봄(x) || !x.예약번호) p.push(달말(x) ? "아직 접수 전이에요" : "인터넷 신청 안 돼요");   // 10/16 대표 「인터넷 신청이 아닌 건 정확히 안내」   // 10/4: 다음 달 반은 아직 예약 목록에 안 떴을 뿐   // 10/3 대표 「광교 배드민턴 — 다 물어보고 마지막에 안 된대」 → 목록에서부터
     return p.join(", ");
@@ -904,13 +906,15 @@ input.txt::placeholder{color:var(--mute)}
     return 남는말(t, {과목:"", 시설:""}); }
   function 목록끝(L, 머리, 신청, 앞말, 안바로){ 앞말=앞말||"";
     L=L.filter(function(x){return !꽉참(x);}).concat(L.filter(꽉참));   // 9/29 꽉 찬 반은 뒤로(순서는 그대로)
-    var 못함=function(x){ return 꽉참(x) || 지금상태(x)===false || 지금상태(x)==="이미" || 자리못봄(x); };   // 코덱스 1004 A2: 이미 신청·결제 중인 반도 뒤로
+    var 못함=function(x){ return 꽉참(x) || 지금상태(x)===false || 지금상태(x)==="이미" || 자리못봄(x) || 웹장안(x); };   // 코덱스 1004 A2: 이미 신청·결제 중인 반도 뒤로
     L=L.filter(function(x){ return !못함(x); }).concat(L.filter(못함));   // 🆕 10/3: 지금 신청 못 하는 반(접수 기간 아님 · 이번 달 목록에 없음)도 뒤로 — 되는 반이 먼저
     var 본줄={}; L=L.filter(function(x){ var k=[x.시설,x.과목,x.요일,x.시간,x.수강료,x.강사,x.해당월||""].join("|");   /* 10/4: 10월 반과 11월 반은 따로 */ if(본줄[k]) return false; 본줄[k]=1; return true; });   // 🔴 10/3: 강사까지 똑같은 반(장안 헬스 정규)은 한 줄로 — 자리 남은 쪽이 앞이라 그쪽이 남는다
     if(L.length && L.every(꽉참)){ 지금갈래=null; 들은강좌=null;
       var 꽉말=(L.length===1 ? (짧은곳(L[0])+" "+은는(이름정리(L[0].과목))+" 지금 자리가 다 찼어요. ") : ((머리&&머리!=="골라 드림"&&머리!=="찾은 강좌"?String(머리).replace(/(은|는)$/,"")+" ":"")+L.length+"개 모두 지금 자리가 다 찼어요. "));   // 10/3: 「찾은 강좌 1개 모두」 같은 말 대신
       꽉말=앞말+꽉말; if(비슷안내(꽉말, L[0], L, L)) return;   // 10/3 코덱스: 첫 반 하나만 보지 않고 목록의 모든 과목으로
       info(꽉말+"다른 시간이나 요일을 말씀해 주세요.", "", "자리가<br>다 찼어요"); return; }   // 코덱스 V-C2
+    if(신청 && L.length && L.every(웹장안)){ 지금갈래=null; 들은강좌=null;   // 🔴 10/27: 전부 장안이면 「몇 번으로 할까요?」 묻지 않고 처음부터 전화 안내
+      info(앞말+"장안구민회관 강좌는 여기서는 신청이 안 되고 전화로만 신청돼요. 전화는 031-228-3028 이에요.", "031-228-3028", "전화로만<br>신청돼요"); return; }
     if(L.length===1 && 신청 && !안바로){ 강좌신청확인(L[0], ""); return; }   // 🔴 10/4 말투 시험: 「대신 있는 반」이 하나뿐이면 말한 요일·시각과 다른 반 신청서로 바로 갔다(시니어 컴퓨터 중급 수금 1시 → 화목 14시)
     if(L.length===1){ 들은강좌=L[0]; 들은때=Date.now(); } else 들은강좌=null;   // 🔴 코덱스 1004말투 4차 P0: 새 번호표를 보여 줬는데 「그거 2번」이 옛 들은 반으로 갔다
     지금갈래={이름:(머리&&머리!=="골라 드림")?머리:"찾은 강좌", 목록:L, 신청:!!신청, 안바로:!!안바로};   // 코덱스 1005 3차(끊기기 전): 번호표 뒤 「수요일 10시」로 하나 남아도 뜻 사전 길이면 한 번 묻는다
@@ -1360,7 +1364,7 @@ input.txt::placeholder{color:var(--mute)}
     if(꽉참(x)){ 들은강좌=null;
       if(비슷안내(말+"은 지금 자리가 다 찼어요"+(자리날(x)?"("+자리날(x)+")":"")+". ", x, [x])) return;
       info(말+"은 지금 자리가 다 찼어요"+(자리날(x)?"("+자리날(x)+")":"")+". 다른 반을 골라 주세요.", "", "자리가<br>다 찼어요"); return; }
-    if(x.시설==="장안구민회관" && !window.CBDR){ info("장안구민회관은 예약 방식이 달라서 제가 아직 못 넣어요. 031-228-3028 로 전화하시면 돼요.", "031-228-3028", "아직<br>못 넣어요"); return; }
+    if(x.시설==="장안구민회관" && !window.CBDR){ 들은강좌=null; info(말+"은 여기서는 신청이 안 되고 전화로만 신청돼요. 전화는 031-228-3028 이에요.", "031-228-3028", "전화로만<br>신청돼요"); return; }
     if(!isMember(x.시설)){ speak(x.시설+"은 "+orgOf(x.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((raw||"")+" "+x.시설+" 가입"); return; }
     cur={type:"강좌신청",raw:raw||"",사람:NAME,시설:x.시설,종목:x.종목||"",반:(x.과목||""),시간:((x.요일||"")+" "+(x.시간||"")).trim(),예약번호:String(x.예약번호),과목:x.과목||"",요일:x.요일||"",해당월:x.해당월||""};
     $("formtitle").textContent=x.시설+" "+(달말(x)?달말(x)+" ":"")+(x.과목||"")+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=x.과목||"—"; $("f-time").textContent=cur.시간||"—";
