@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261026144545">
+<meta name="cbdr-version" content="20261026182721">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1997,9 +1997,19 @@ input.txt::placeholder{color:var(--mute)}
     ["신한(SOL페이)",/신한|쏠페이|SOL/],["농협(NH페이)",/농협|NH|엔에이치/],["비씨(페이북)",/비씨|BC|페이북/],["하나카드",/하나/],["롯데카드",/롯데/],["우리카드",/우리/],["삼성카드",/삼성/],["현대카드",/현대/],["KB국민카드",/국민|KB|케이비/]];
   function 카드찾기(t){ var s=String(t||"").replace(/\s+/g,"").toUpperCase(); if(!s) return null; for(var i=0;i<카드사들.length;i++) if(카드사들[i][1].test(s)) return 카드사들[i][0]; return null; }
   function 저장카드(){ try{ return localStorage.getItem("cbdr_card")||""; }catch(e){ return ""; } }
+  // 🆕 10/26 대표 「2번을 앞세워서 3번으로 통로를」 — 폰에 깔린 은행·카드 앱(결제창 카드사 것만 · 폰 안에서만)을 보고 먼저 여쭌다
+  function 폰카드앱(){ try{ return (window.CBDR&&CBDR.cardApps)?JSON.parse(CBDR.cardApps()||"[]"):[]; }catch(e){ return []; } }
+  function 로(s){ var c=String(s).replace(/\)$/,"").slice(-1).charCodeAt(0)-0xAC00; return (c>=0&&c<11172&&c%28&&c%28!==8)?"으로":"로"; }
   window.__cbdrPayCard=function(go){ var c=저장카드(); if(c){ go(c); return; }
-    ask({k:"카드",title:"어떤 카드로<br>결제하세요?",lead:"「현대카드」「농협카드」처럼 카드 회사만 말씀해 주세요 · 카드 번호는 묻지 않아요",say:"어떤 카드로 결제하세요? 현대카드, 농협카드처럼 카드 회사만 말씀해 주세요.",parse:카드찾기},
-      function(v){ try{ localStorage.setItem("cbdr_card",v); }catch(e){} speak(v+"로 적어 둘게요. 결제 화면에서 미리 골라 둘게요."); go(v); }); };
+    function 적기(v){ try{ localStorage.setItem("cbdr_card",v); }catch(e){} speak(v+로(v)+" 적어 둘게요. 결제 화면에서 미리 골라 둘게요."); go(v); }
+    function 묻기(앞){ ask({k:"카드",title:"어떤 카드로<br>결제하세요?",lead:(앞||"")+"「현대카드」「농협카드」처럼 카드 회사만 말씀해 주세요 · 카드 번호는 묻지 않아요",say:(앞?앞.replace(/ · $/,". "):"")+"어떤 카드로 결제하세요? 현대카드, 농협카드처럼 카드 회사만 말씀해 주세요.",parse:카드찾기}, 적기); }
+    var 앱=폰카드앱();
+    if(앱.length===1){ var a=앱[0];
+      ask({k:"카드",예아니오:true,버튼만:false,title:a+로(a)+"<br>결제하세요?",lead:"폰에 "+a+" 앱이 있으시네요 · 다른 카드면 「아니요」를 눌러 주세요",say:"폰에 "+a+" 앱이 있으시네요. "+a+로(a)+" 결제하세요?",
+        parse:function(t){ var s=String(t||"").replace(/\s+/g,""); if(/^(아니|안|다른)/.test(s)) return "아니요"; var k=카드찾기(s); if(k) return k; if(/^(네|예|응|맞|그래|좋아)/.test(s)) return "예"; return null; },
+        show:function(v){ return v==="예"?a:v==="아니요"?"다른 카드":v; }},
+        function(v){ if(v==="예") 적기(a); else if(v==="아니요") 묻기(); else 적기(v); }); return; }
+    묻기(앱.length>1?"폰에 "+앱.join(", ")+" 앱이 있어요 · ":""); };
   // 🆕 10/26 확인 화면 말로 대답 — 「네·맞아요·응·신청해」만 받는다 · 「아니·잠깐·고칠」이 섞이면 멈춘다
   //   마이크는 누를 때만 켠다(앱이 소리 내는 「맞아요?」를 스스로 듣고 넘어가지 않게) · 「네」를 들어도 3초 동안 「아니」로 멈출 수 있다
   function 확인말(t){ var s=String(t||"").replace(/[\s.,!?~]+/g,""); if(!s) return null;
