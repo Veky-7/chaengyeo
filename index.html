@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261026120117">
+<meta name="cbdr-version" content="20261026125906">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -276,6 +276,9 @@ input.txt::placeholder{color:var(--mute)}
     </div>
     <div class="note" id="confnote" style="color:var(--terra);font-weight:700"></div>
     <div class="note">한 번 적어두신 것을 제가 대신 넣어요. <span class="hl">주민번호 뒷자리·계좌·비밀번호는 저장하지 않아요.</span></div>
+    <!-- 🆕 10/26 대표 「맞아요 칸 하나면 돼? 말로 하는 칸 만들어서 마이크도」 → 앱이 「맞아요?」라고 말로 물으니 말로도 「네」를 받는다(단추는 그대로) -->
+    <div class="micwrap" id="micwrap4" style="margin:6px auto 2px"><button class="mic" id="mic4" type="button" aria-label="말로 대답하기"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M8 21h8"/></svg><span id="miclabel4">「네」라고 말하기</span></button></div>
+    <div class="lead" id="confheard" style="text-align:center;min-height:1.4em"></div>
     <div class="btns"><button class="btn" id="yes" type="button">맞아요, 신청해 주세요</button><button class="btn ghost" id="no" type="button">고칠 게 있어요</button></div>
   </section>
 
@@ -1362,7 +1365,7 @@ input.txt::placeholder{color:var(--mute)}
     cur={type:"강좌신청",raw:raw||"",사람:NAME,시설:x.시설,종목:x.종목||"",반:(x.과목||""),시간:((x.요일||"")+" "+(x.시간||"")).trim(),예약번호:String(x.예약번호),과목:x.과목||"",요일:x.요일||"",해당월:x.해당월||""};
     $("formtitle").textContent=x.시설+" "+(달말(x)?달말(x)+" ":"")+(x.과목||"")+" 신청서"; $("f-name").textContent=NAME; $("f-class").textContent=x.과목||"—"; $("f-time").textContent=cur.시간||"—";
     var d=돈(x), extra=(d?d+". ":"")+"접수하면 결제는 직접 하셔야 해요.";
-    document.getElementById("confnote").textContent=extra; show("s-confirm"); speak(말+" 신청할게요. "+extra+" 맞아요?");
+    document.getElementById("confnote").textContent=extra; 확인멈춤(); $("confheard").textContent=""; show("s-confirm"); speak(말+" 신청할게요. "+extra+" 맞아요? 맞으면 「네」라고 하시거나 단추를 눌러 주세요.");
   }
   function confirmWith(o,extra){
     if(!isMember(o.시설)){ speak(o.시설+"은 "+orgOf(o.시설)+" 회원이어야 신청할 수 있어요. 가입부터 할게요."); joinConfirm((o.raw||"")+" "+o.시설+" 가입"); return; }
@@ -1983,6 +1986,31 @@ input.txt::placeholder{color:var(--mute)}
       if(d.상태==="확인필요"&&d.결과){ $("prognote").textContent=d.결과; speak(d.결과); }
     }catch(e){} };
   }
+  // 🆕 10/26 확인 화면 말로 대답 — 「네·맞아요·응·신청해」만 받는다 · 「아니·잠깐·고칠」이 섞이면 멈춘다
+  //   마이크는 누를 때만 켠다(앱이 소리 내는 「맞아요?」를 스스로 듣고 넘어가지 않게) · 「네」를 들어도 3초 동안 「아니」로 멈출 수 있다
+  function 확인말(t){ var s=String(t||"").replace(/[\s.,!?~]+/g,""); if(!s) return null;
+    if(/아니|잠깐|잠시만|틀려|틀렸|고칠|고쳐|취소|말고|싫어|안해|안할|하지마|그만/.test(s)) return "아니";
+    if(/^(네|예|응|맞아|맞아요|맞습니다|맞네|그래|그래요|좋아|좋아요|신청해|신청해줘|신청해주세요|넣어|넣어줘|해줘|해주세요)+$/.test(s)) return "예";
+    return null; }
+  var rec4=null, listening4=false, 확인타이머=null;
+  function 확인멈춤(){ if(확인타이머){ clearTimeout(확인타이머); 확인타이머=null; } }
+  function stop4(){ listening4=false; if(마이크주인===rec4) 마이크주인=null; $("micwrap4").classList.remove("listening"); $("miclabel4").textContent="「네」라고 말하기"; try{rec4&&rec4.stop()}catch(e){} }
+  function 확인들음(t){ var v=확인말(t);
+    if(확인타이머){ if(v==="아니"){ 확인멈춤(); $("confheard").textContent="멈췄어요"; speak("멈췄어요. 고칠 게 있으면 아래 단추를 눌러 주세요."); } return; }
+    if(v==="예"){ $("confheard").textContent="“"+t+"” — 3초 뒤에 신청해요. 멈추려면 「아니」"; speak("신청할게요.");
+      확인타이머=setTimeout(function(){ 확인타이머=null; stop4(); $("yes").click(); },3000); setTimeout(start4,900); return; }
+    if(v==="아니"){ $("confheard").textContent="“"+t+"”"; speak("알겠어요. 고칠 게 있으면 아래 단추를 눌러 주세요."); return; }
+    $("confheard").textContent="“"+t+"”"; speak("잘 못 알아들었어요. 맞으면 「네」라고 하시거나 단추를 눌러 주세요."); }
+  function start4(){ var S=window.SpeechRecognition||window.webkitSpeechRecognition; if(!S){ $("confheard").textContent="말로는 안 돼요. 단추를 눌러 주세요"; return; }
+    if(!rec4){ rec4=new S(); rec4.lang="ko-KR"; rec4.interimResults=true; rec4.continuous=false;
+      rec4.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(!확인타이머) $("confheard").textContent="“"+(s||"…")+"”"; if(e.results[e.results.length-1].isFinal){ stop4(); 확인들음(s); } };
+      rec4.onerror=function(){ stop4(); }; rec4.onend=function(){ if(listening4) stop4(); }; }
+    if(!확인타이머) shutUp(); $("miclabel4").textContent="켜는 중…";
+    마이크잡기(rec4, function(){ listening4=true; $("micwrap4").classList.add("listening"); $("miclabel4").textContent="듣는 중"; },
+      function(){ listening4=false; $("micwrap4").classList.remove("listening"); $("miclabel4").textContent="「네」라고 말하기"; $("confheard").textContent="마이크가 안 열렸어요. 단추를 눌러 주세요"; }); }
+  $("mic4").addEventListener("click",function(){ if(listening4) stop4(); else start4(); });
+  $("no").addEventListener("click",function(){ 확인멈춤(); stop4(); }, true);
+  $("yes").addEventListener("click",function(){ 확인멈춤(); stop4(); }, true);
   $("yes").addEventListener("click",function(){
     var r=cur; if(!r) return; shutUp();
     if(r.type==="회원가입"){
