@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261027092915">
+<meta name="cbdr-version" content="20261027130352">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -335,7 +335,7 @@ input.txt::placeholder{color:var(--mute)}
       <div class="row"><b>알림</b><span>결과 나오면 챙겨드림에 소식이 떠요</span></div>
     </div>
     <div class="note">사이트에 실제로 적힌 것만 알려드려요. 순번·당첨 가능성은 추측하지 않아요.</div>
-    <div class="btns"><button class="btn" id="resok" type="button">네, 알겠어요</button></div>
+    <div class="btns"><button class="btn" id="resgo" type="button" hidden style="font-size:1.25em">수원 예약 사이트 열기</button><button class="btn" id="resok" type="button">네, 알겠어요</button></div>
   </section>
 
   <!-- 6 안내 -->
@@ -1894,6 +1894,9 @@ input.txt::placeholder{color:var(--mute)}
   $("reset").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
   $("listback").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
   $("resok").addEventListener("click",function(){ shutUp(); resetIdle(); show("s-idle"); });
+  // 🆕 10/27 웹 판(아이폰) 결과 「결제 화면까지」에 단추가 없었다 — 서버 화면은 폰으로 못 넘겨준다 → 수원 예약 사이트를 새로 연다(로그인·반 고르기는 직접) · 탭은 shim.js 「결제하러 가기」
+  $("resgo").addEventListener("click",function(){ shutUp(); resetIdle();
+    try{ window.open("https://rsv.suwonudc.co.kr/suwonudc/mainPage.do","_blank"); }catch(e){ location.href="https://rsv.suwonudc.co.kr/suwonudc/mainPage.do"; } });
   // ── 전화 알림
   var pendingMsg="";
   function ring(msg,sub){ pendingMsg=msg+" "+(sub||""); $("callmsg").textContent=msg; $("callsub").textContent=sub||""; $("call").hidden=false; setTimeout(function(){ var has=!!OFFER; $("callyes").hidden=!has; $("callno").hidden=!has; },600); try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){} speak("챙겨드림에서 전화 왔어요. 듣기를 눌러 주세요."); }
@@ -1980,6 +1983,7 @@ input.txt::placeholder{color:var(--mute)}
       if(d.상태==="인증번호"){ showCode(d.결과); return; }
       if(d.상태==="완료"&&d.결과){
         if(!isJoin()) 최근신청저장(d);
+        $("resgo").hidden=!(!window.CBDR && !isJoin() && d.완료종류==="결제화면");   // 탭은 shim.js 가 「결제하러 가기」(카드사 미리 고르기 포함)를 따로 붙인다 → 웹 판만
         if(isJoin()){ addMember(cur.시설); $("restitle").textContent="회원이 됐어요"; $("stamp").textContent="가입됨"; $("res-t").textContent=(cur?cur.시설:"")+" 회원가입"; $("res-next").textContent=d.다음||"이제 「신청해 줘」만 하시면 돼요"; }
         else if(d.완료종류==="결제화면"){ $("restitle").textContent="결제 화면까지 왔어요"; $("stamp").textContent="결제 전"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:"")+" · 아직 신청 전"; $("res-next").textContent=d.다음||"결제는 직접 하셔야 해요"; }
         else if(d.완료종류==="이미"){ $("restitle").textContent="이미 들어 있어요"; $("stamp").textContent="확인됨"; $("res-t").textContent=(cur?cur.시설+" "+cur.반:""); $("res-next").textContent=d.다음||"마이페이지에서 확인"; }
