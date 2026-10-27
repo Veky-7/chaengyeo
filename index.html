@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261027130352">
+<meta name="cbdr-version" content="20261027183012">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -996,7 +996,7 @@ input.txt::placeholder{color:var(--mute)}
     //    → 모집 중이 아닌 반을 이름 통째로 말했으면, 비슷한 반으로 바꾸지 않고 「그 반은 지금 ○○이에요」라고 먼저 말한다
     // 🔴 10/3 코덱스: 「부동산공경매 **주간**」처럼 줄여 말하면 통째 비교를 빠져나가 열린 「(야간)」으로 갔다
     //    → 과목 이름을 낱말(괄호 안 포함)로 쪼개 「말에 든 낱말 수」로 견준다. 가장 잘 맞는 반이 닫힌 반이고 열린 반보다 확실히 더 맞으면 닫힘
-    var 토막=function(x){ var 낱=String(x.과목||"").split(/[\s()\[\]&\/,·~\-]+/).filter(Boolean), 답=[];
+    var 토막=function(x){ var 낱=String(x.과목||"").split(/[\s()\[\]&＆\/,·~\-]+/).filter(Boolean), 답=[];
       낱.forEach(function(w,i){ if((w.length>=2 || /^[A-Z]$/.test(w)) && !/^\d+$|^(반|교실|배우기)$/.test(w)) 답.push(w);
         if(/^\d+$/.test(w) && i>0 && 낱[i-1].length>=2 && !/\d$/.test(낱[i-1])) 답.push(낱[i-1]+w); });   // 🔴 10/9 전수검사: 「기초요가 1」(목록없음)이 열린 「기초요가 2」로 갔다 — 띄어 쓴 반 번호를 앞 낱말에 붙여 한 낱말로 견준다
       return 답; };   // 「(A)」「(B)」 한 글자도 반을 가른다(10/3 바이올린 목요반 B 폐강)   // 「주1회」도 반을 가르는 낱말이다(10/3)
@@ -1062,7 +1062,7 @@ input.txt::placeholder{color:var(--mute)}
     // 🔴 10/3 전수검사·교차검증: 「수영 10시반」→ 스쿼시 「10시(1년이상)」 · 「화요일하고 목요일 탁구」→ 「감성 통기타 목요일 B반」 · 「수영 아침」→ 「수영 아쿠아」(수영아)
     //    → 조각은 ⓐ 과목 이름의 **낱말 경계에 딱 맞고**(낱말을 반쯤 자르지 않고) ⓑ 숫자·요일·때 낱말만으로 된 게 아니어야 한다
     var 경계={}; r.forEach(function(x){ var n0=밀(x.과목); if(경계[n0]) return; var b={0:1}, pos=0;
-      String(x.과목||"").split(/[\s()\[\]&\/,·~\-]+/).forEach(function(tk){ if(!tk) return; var at=n0.indexOf(tk,pos); if(at<0) return; b[at]=1; b[at+tk.length]=1; pos=at+tk.length; }); b[n0.length]=1;
+      String(x.과목||"").split(/[\s()\[\]&＆\/,·~\-]+/).forEach(function(tk){ /* ＆(전각) = 10/27 팀AI 말투 시험 「칠보 스텝박스」(스텝박스＆펑셔널 핏) */ if(!tk) return; var at=n0.indexOf(tk,pos); if(at<0) return; b[at]=1; b[at+tk.length]=1; pos=at+tk.length; }); b[n0.length]=1;
       for(var bi=1;bi<n0.length;bi++){ if(/\d/.test(n0.charAt(bi))!==/\d/.test(n0.charAt(bi-1))) b[bi]=1; }   // 10/3: 「필라테스1」의 「필라테스」도 낱말 — 글자↔숫자 사이도 경계(제가 넣은 규칙이 칠보 필라테스1·7 을 빠뜨렸다)
       경계[n0]=b; });
     var 때말=/\d|요일|^[월화수목금토일]+$|오전|오후|저녁|아침|주말|평일|시반|시간/;
@@ -1088,6 +1088,15 @@ input.txt::placeholder{color:var(--mute)}
       if(반글){ var 글반=m2.filter(function(x){ return new RegExp("(^|[^A-Za-z0-9])"+반글+"(반|[^A-Za-z0-9]|$)").test(String(x.과목||"")); }); if(글반.length) m2=글반; }
       // 이름이 여럿이면 첫 강좌 이름 말고 **겹친 낱말**로 부른다(「원어민 일본어 (고급)는 9개」 → 「일본어는 9개」)
       if(m2.length) return {목록:m2, 말머리:은는(후보.length>1 ? 조각말 : 이름정리(m2[0].과목))};
+    }
+    // 🆕 10/27 팀AI 말투 시험: 「헬스 있어?」「바둑 있어?」「점핑 피트니스 2」 — 두 글자 종목은 ②(세 글자부터)가 못 잡아 「지금 신청할 수 있는 걸로」 500여 개가 나왔다
+    //    → 말 속 두 글자 낱말(조사 뗌)이 강좌 이름 낱말의 **머리**와 같을 때만 · 흔한 말(초급·정규·오전…)은 뺀다 · 어른 반이 있으면 어른 반만
+    var 흔한두=/^(초급|중급|고급|상급|기초|입문|심화|정규|일반|자유|성인|어른|오전|오후|저녁|아침|새벽|주말|평일|회원|강좌|교실|수업|과정|실버|여성|남성|어린|유아|초등|가족|주간|야간|매일|운동|건강|취미|자격|특강|신청|접수|자리|그거|그게|저기|거기|우리|손주|있어|있나|있제|넣어|찾아|해줘|알려|광교|장안|칠보|웰빙|구민|회관|여성|센터)$/;
+    var 두낱=t.split(/[\s,.?!~·]+/).map(function(w){ return w.replace(/(이랑|에서|으로|하는|하고|이나|은|는|이|가|을|를|도|만|랑|로|요|좀)$/,""); }).filter(function(w){ return /^[가-힣]{2}$/.test(w) && !흔한두.test(w) && !때말.test(w); });
+    for(var wi=0; wi<두낱.length; wi++){
+      var 두m=r.filter(function(x){ return String(x.과목||"").split(/[\s()\[\]&＆\/,·~\-!]+/).some(function(tk){ return tk.indexOf(두낱[wi])===0; }); });
+      var 두어른=두m.filter(function(x){ return x.딱지!=="어린이" && !/초등|유아|어린이|아동|키즈|\(청소년\)/.test(String(x.과목||"")); });
+      if(두m.length) return {목록:어르신먼저(두어른.length ? 두어른 : 두m), 말머리:은는(두낱[wi])};
     }
     if(비킨뜻) return 비킨뜻;   // 10/23 위 「비킨뜻」 참고 — 이름 찾기가 못 찾았을 때만
     // 이름으로 못 찾으면 큰 분류(종목·대상)로 넓힌다
