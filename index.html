@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261029172824">
+<meta name="cbdr-version" content="20261029174056">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1236,11 +1236,11 @@ input.txt::placeholder{color:var(--mute)}
   function shutUp(){try{speechSynthesis.cancel()}catch(e){} stopBtn.hidden=true;}
   stopBtn.addEventListener("click",shutUp);
   var LAST_SAID="";
-  function speak(t){ LAST_SAID=t; try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); setTimeout(function(){ try{ speechSynthesis.speak(u); }catch(e){} },80); stopBtn.hidden=false; }catch(e){} }
+  function speak(t){ LAST_SAID=t; try{ var u=new SpeechSynthesisUtterance(t); u.lang="ko-KR"; u.rate=.92; u.onend=function(){stopBtn.hidden=true}; u.onerror=function(){stopBtn.hidden=true}; speechSynthesis.cancel(); var 말하기=function(){ setTimeout(function(){ try{ speechSynthesis.speak(u); }catch(e){} },80); }; if(마이크주인 && !window.CBDR) 마이크놓기(말하기); else 말하기(); stopBtn.hidden=false; }catch(e){} }   // 🔴 10/29 대표 폰(웹): 「마이크는 듣는데 소리가 안 나와」 — 마이크가 열린 채 말하면 폰이 통화 모드라 소리가 안 난다 → 마이크를 먼저 놓고 말한다
   // 아이폰: 손가락 동작 안에서 한 번 말해 둬야 그 뒤 화면이 알아서 말할 수 있다 — 마이크·버튼 누를 때마다 연다
   function unlockVoice(){ try{ if(speechSynthesis.speaking) return; var u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
   document.addEventListener("click",function(ev){ if(ev.target.closest("button")) unlockVoice(); },true);
-  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; try{ if(localStorage.getItem("cbdr_마이크")!=="1") return; }catch(x){ return; }   /* 🔴 9/28: 말하기를 누르기도 전에 마이크 허용 창이 떴다 */ try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ if(마이크주인===r2) 마이크주인=null; r2=null; }; r2.start(); 마이크주인=r2; }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) setTimeout(arm,120); else if(r2){ try{ r2.abort?r2.abort():r2.stop() }catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
+  (function(){ var SR2=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR2) return; var r2=null; function arm(){ if(stopBtn.hidden||r2||listening) return; if(!window.CBDR && /Android|iPhone|iPad|Mobi/i.test(navigator.userAgent)) return;   /* 🔴 10/29 폰 웹: 말하는 동안 「그만」 듣기로 마이크를 열면 소리가 안 나온다(대표 폰) — 폰 웹은 멈춤 단추로만 */ try{ if(localStorage.getItem("cbdr_마이크")!=="1") return; }catch(x){ return; }   /* 🔴 9/28: 말하기를 누르기도 전에 마이크 허용 창이 떴다 */ try{ r2=new SR2(); r2.lang="ko-KR"; r2.continuous=true; r2.interimResults=true; r2.onresult=function(e){ var s=""; for(var i=0;i<e.results.length;i++) s+=e.results[i][0].transcript; if(/그만|됐어|됐다|알았어|알겠어/.test(s.replace(/\s+/g,""))){ shutUp(); try{r2.stop()}catch(x){} } }; r2.onend=function(){ if(마이크주인===r2) 마이크주인=null; r2=null; }; r2.start(); 마이크주인=r2; }catch(x){ r2=null; } } new MutationObserver(function(){ if(!stopBtn.hidden) setTimeout(arm,120); else if(r2){ try{ r2.abort?r2.abort():r2.stop() }catch(x){} } }).observe(stopBtn,{attributes:true,attributeFilter:["hidden"]}); })();
   // ── 말 → 뜻
   // 🔴 시설을 못 알아들었을 때 「아무거나 맨 앞」을 집지 않는다. 내 동네 → 지금 받는 곳 → 그 다음 순.
   //    전에 여기에 "에코체육센터"(전주)가 못박혀 있어서 수원 사는 분께 전주를 읽어드렸다.
