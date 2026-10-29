@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261029141806">
+<meta name="cbdr-version" content="20261029172824">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -872,14 +872,14 @@ input.txt::placeholder{color:var(--mute)}
       쓴.push(9); R=G; }
     // 🔴 10/29 대표 「말귀를 못 알아들어」: 「5급」「B반」「필라테스 2」「웃음요가 일」 — 같은 이름 여러 반 중 말한 그 반만(없으면 안 거름)
     var 한숫={"일":1,"이":2,"삼":3,"사":4,"오":5,"육":6,"칠":7,"팔":8,"구":9}, 반거름=function(re){ var G=R.filter(function(x){ return re.test(String(x.과목||"")); }); if(G.length && G.length<R.length){ 쓴.push(9); R=G; } };
-    var 급m=t.match(/(\d|[일이삼사오육칠팔구])\s*급/);
+    var 급m=t.match(/(\d{1,2}|[일이삼사오육칠팔구])\s*급/);
     if(급m) 반거름(new RegExp("(^|\\D)"+(한숫[급m[1]]||급m[1])+"\\s*급"));
     // t 는 띄어쓰기가 빠진 채 온다(「드로잉B반수요일에」) — 경계는 글자 종류로 본다
-    var 반m=t.match(/(?:^|[^A-Za-z])([A-Da-d])반/) || t.match(/(에이|비|씨|디)반/);
+    var 반m=t.match(/(?:^|[^A-Za-z])([A-Da-d])반/) || (/준비반|글씨반|아저씨반|솜씨반/.test(t) ? null : t.match(/(에이|비|씨|디)반/));   // 「준비반」「글씨반」은 B·C반이 아니다(팀AI 검토 10/29)
     if(반m){ var 글자={"에이":"A","비":"B","씨":"C","디":"D"}[반m[1]]||반m[1].toUpperCase(); 반거름(new RegExp("(^|[^A-Za-z])"+글자+"([^A-Za-z]|$)")); }
     // 반 번호 「필라테스2」「웃음요가1번」 — 뒤에 시·분·급·세·명·월·일이 오면 번호가 아니다 · 한글 숫자는 「번」이 붙을 때만(「요가일」= 일요일)
     var 끝m=t.match(/[가-힣A-Za-z](\d{1,2})(?![\d시분급세명개월일:~])/) || t.match(/[가-힣A-Za-z]([일이삼사오육칠팔구])번/);
-    if(끝m){ var 끝수=한숫[끝m[1]]||+끝m[1]; if(끝수) 반거름(new RegExp("[가-힣A-Za-z)]"+끝수+"(\\D|$)")); }
+    if(끝m){ var 끝수=한숫[끝m[1]]||+끝m[1]; if(끝수) 반거름(new RegExp("[가-힣A-Za-z)]\\s?"+끝수+"(?![\\d급기])")); }   // 「필라테스 2」(띄어 씀)도 · 「영어2급」은 2반이 아니다 · 급은 두 자리(15급)까지(팀AI 검토 10/29)
     if(/무료|공짜|돈안드|돈안들/.test(t)){ 쓴.push(8); R=R.filter(function(x){ return 돈(x)==="무료"; }); }
     return 쓴.length ? {목록:R, 쓴:쓴, 모호:모호, 정확수:정확수} : null;
   }
