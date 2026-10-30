@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261030152448">
+<meta name="cbdr-version" content="20261030155506">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -703,6 +703,7 @@ input.txt::placeholder{color:var(--mute)}
     return OPEN.some(function(o){ return o.시설===x.시설 && /^\d{4}-\d{2}-\d{2}$/.test(o.시작||"") && /^\d{4}-\d{2}-\d{2}$/.test(o.마감||"") && o.시작<=오늘 && 오늘<=o.마감 && !(/스포츠/.test(o.출처||"") && x.쌍 && String(x.쌍[2])==="1"); }); }catch(e){ return false; } }   // 🆕 10/27: 장안 「스포츠시설」 공지(수영·스쿼시 10/27~31)가 장안 문화강좌(쌍 구분 1 · 경락 등)까지 「모름」으로 열었다 → 스포츠 공지는 문화강좌에 안 씀
   function 지금상태(x){ if(!x || x.신청상태==null || 오래됨(x)) return null; var v=+x.신청상태; if(v===2||v===3||v===4) return true; if(v===0||v===1) return "이미"; if(공지기간안(x)) return null; return false; }
   function 지금가능(x){ return 지금상태(x)===true && !꽉참(x) && !자리못봄(x); }
+  function 지금될듯(x){ return 지금가능(x) || (지금상태(x)===null && x.신청상태!=null && 공지기간안(x) && !꽉참(x) && !자리못봄(x)); }   // 🔴 10/30 광교 실전: 새벽 기록(-1)이 06시 열기 전 것인데 공지로는 오늘 접수 중 → 「없어요」라고 하면 거짓말 · 이런 반은 「없어요」로 말하지 않고 보여 드린다(신청 때 사이트가 마지막으로 가린다)
   // 코덱스 X-A2: 예약번호는 있는데 이번 달 예약 목록에서 못 찾은 반(자리 모름) — 신청을 권하지 않는다 · 장안은 자리를 원래 안 받는다
   // 코덱스 1004 2차 P0: 오래돼서 「모름」이 된 반에 신청 버튼이 그대로 나왔다(자리확인이 남아 있어서) → 오래된 반도 「제가 못 넣는 반」 · 장안은 원래 자리·상태 없이 넣는다
   function 묵은(x){ return !!(x && x.예약번호 && x.시설!=="장안구민회관" && 오래됨(x)); }
@@ -1628,12 +1629,12 @@ input.txt::placeholder{color:var(--mute)}
     var g언=null, L언=[];
     if(언제묻기 || 가능묻기){ g언=강좌찾기(text); L언=(g언&&g언.목록&&g언.목록.length)?g언.목록:LESSON.filter(function(x){ return (x.상태||"모집")==="모집" && (x.지역||"")===물음지역(text) && (!말한시설(t0)||x.시설===말한시설(t0)); }); }
     var 알맹이=String(t0).replace(/지금|바로|혹시|당장|신청|접수|등록|할수있는|할수있|가능한|가능|되는|거|것|강좌|반|수업|뭐|무엇|있어요|있어|있나요|있나|있니|요|[?.!~]/g,"");
-    if(언제묻기 || (가능묻기 && 알맹이.length>=2 && g언 && g언.목록 && g언.목록.length && !L언.some(지금가능))){   // 종목·반을 말했을 때만(「지금 신청할 수 있는 거 뭐 있어」는 원래 길 = 「지금 바로 신청할 수 있는 반은 없어요」)
+    if(언제묻기 || (가능묻기 && 알맹이.length>=2 && g언 && g언.목록 && g언.목록.length && !L언.some(지금될듯))){   // 🔴 10/30 광교 실전: 공지로는 오늘 접수 중인데 새벽 기록(-1)이 06시 열기 전 것 → 「없어요·접수 기간 아니에요」라고 거짓말 · 모름(공지 기간 안)이 하나라도 있으면 「없어요」 대신 목록으로 간다   // 종목·반을 말했을 때만(「지금 신청할 수 있는 거 뭐 있어」는 원래 길 = 「지금 바로 신청할 수 있는 반은 없어요」)
       var 곳언=[]; L언.forEach(function(x){ if(곳언.indexOf(x.시설)<0) 곳언.push(x.시설); });
       var 머리언=(g언&&g언.목록&&g언.목록.length&&g언.말머리&&!/걸로|있는|없는/.test(g언.말머리))?String(g언.말머리).replace(/(은|는)$/,"")+" 접수 날짜예요. ":"";
       var 묶언=[];   // 같은 답이 나온 곳은 한 문장으로(「광교, 장안은 …」)
       곳언.forEach(function(f){ var 반=L언.filter(function(x){ return x.시설===f; }), 이름=짧은곳(반[0]), 꼬리, 따로=false;
-        if(반.some(지금가능)) 꼬리=" 지금 접수하고 있어요";
+        if(반.some(지금될듯)) 꼬리=" 지금 접수하고 있어요";
         else if(반.every(function(x){ return (자리못봄(x) && !묵은(x) || !x.예약번호) && !달말(x); })){ var 전=시설전화(f); 꼬리=" 반은 인터넷 신청이 안 돼요. 직접 가시거나 전화로 신청하셔야 해요"+(전?". 전화는 "+전+"이에요":""); 따로=true; }
         else { var 다=다음접수말(반[0]); if(다){ 꼬리=다.replace(/^\.\s*/,"에서 "); 따로=true; } else 꼬리=" 다음 접수 날짜가 아직 안 올라왔어요"; }
         var 있=!따로 && 묶언.filter(function(m){ return m.꼬리===꼬리; })[0]; if(있) 있.곳.push(이름); else 묶언.push({곳:[이름], 꼬리:꼬리, 따로:따로}); });
@@ -1750,7 +1751,7 @@ input.txt::placeholder{color:var(--mute)}
     if(LESSON.length && 있는지역 && !/신청해줘|신청해주|넣어줘|가입해|결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|소식|어떻게됐|어떻게되|공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)){
       var g=강좌찾기(t0), L=g.목록;
       var 지금만=/(지금|당장|바로|오늘|이번달)/.test(t0) && /(신청|할수있|되는|가능|받는|들을수|다닐수|할수있는)/.test(t0);
-      if(지금만 && L.length && !g.닫힘){ var 된=L.filter(지금가능);
+      if(지금만 && L.length && !g.닫힘){ var 된=L.filter(지금될듯);   // 10/30: 공지 기간 안 「모름」도
         if(!된.length){ var 곳된=[]; L.forEach(function(x){ if(곳된.indexOf(x.시설)<0 && x.예약번호 && !(자리못봄(x)&&!묵은(x))) 곳된.push(x.시설); }); var 알=알림말(곳된); info("말씀하신 것 중에 지금 바로 신청할 수 있는 반은 없어요."+(알?" 접수 "+알+".":""), "", "지금은<br>없어요"); return; }
         g={목록:된, 말머리:g.메뉴?"지금 바로 신청할 수 있는 강좌예요.":g.말머리, 메뉴:g.메뉴, 갈래:g.갈래}; L=된; }
       if(g.닫힘){ 닫힌반말(g.닫힘); return; }
