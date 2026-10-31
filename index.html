@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261031223857">
+<meta name="cbdr-version" content="20261031233126">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1610,11 +1610,39 @@ input.txt::placeholder{color:var(--mute)}
   var 살핌={때:{}, 곳:null, 중:false, 대기:null, 타이머:null};   // 때 = 시설별(전부는 "*") 마지막으로 물은 시각
   var 살핌시설={"광교웰빙국민체육센터":"20010001","서수원칠보체육관":"17110001","수원가족여성회관":"19040001"};   // 장안(jacc)은 다른 목록 — 다음 차례
   function 지금글(){ var t=new Date((지금시각()||Date.now())+9*3600000); return t.toISOString().slice(0,16).replace("T"," "); }
-  function 살필거리(곳){ var 이달=이번달().replace("-",""), 본={}, 할=[];   // 곳 = 어르신이 말한 시설(있으면 그 시설만)
-    LESSON.forEach(function(x){ var a=살핌시설[x.시설], 쌍=x.쌍; if(!a || !쌍 || 쌍.length<2 || !x.예약번호) return; if(곳 && x.시설!==곳) return;
-      var ym=String(x.해당월||"").replace("-","").slice(0,6); if(ym.length!==6 || ym<이달) return;
-      var k=a+"|"+쌍[0]+"|"+쌍[1]+"|"+ym; if(본[k]) return; 본[k]=1; 할.push({a:a,g1:String(쌍[0]),g2:String(쌍[1]),ym:ym}); });
+  // 🔴 10/31 대표 「월 넘어갈 때 정확하게 · 월초·중순·월말마다 열리는 강좌가 다르다」 — 수첩에 있는 달·반만 묻지 않는다:
+  //   그 시설의 종목 칸 전부 × (오늘 기준 이번 달 + 다음 달) · 수첩에 없던 새 반은 사이트 이름 칸으로 그 자리에서 넣는다
+  function 오늘달(더){ var t=new Date((지금시각()||Date.now())+9*3600000), y=t.getUTCFullYear(), m=t.getUTCMonth()+(더||0); y+=Math.floor(m/12); m=((m%12)+12)%12; return y+("0"+(m+1)).slice(-2); }
+  // 🔴 10/31 광교 46칸이 36초 넘어 시간 초과 → 말에 종목 낱말(수영·요가…)이 있으면 그 낱말이 든 반의 칸만 묻는다(없으면 전부)
+  function 살필낱말(text){ var t=String(text||""); try{ var 곳=말한시설(t.replace(/\s+/g,"")); }catch(e){}
+    var 낱=t.replace(/[^가-힣A-Za-z0-9\s]/g," ").split(/\s+/).map(function(w){ var v=w.replace(/(으로|에서|이랑|하고|이나|은|는|이|가|을|를|도|만|로|랑|요)$/,""); return v.length>=2?v:w; })   // 「요가」의 가를 떼지 않는다
+      .filter(function(w){ return w.length>=2 && !/^(신청|접수|등록|있어|있나|있는|있을|할수|할|뭐|어떤|지금|이번|다음|강좌|수업|교실|좀|해줘|해|줘|넣어|싶어|하고|배우|배울|광교|칠보|장안|가족여성|가족|여성|회관|체육관|센터|수원|웰빙)/.test(w); });
+    return 낱; }
+  function 살필거리(곳, text){ var 달들=[오늘달(0), 오늘달(1)], 본={}, 할=[], 낱=살필낱말(text);   // 곳 = 어르신이 말한 시설(있으면 그 시설만)
+    var 맞는쌍={}, 맞음=0; if(낱.length) LESSON.forEach(function(x){ if(곳 && x.시설!==곳) return; if(!x.쌍||x.쌍.length<2) return; var 글=(x.과목||"")+" "+(x.종목||"")+" "+(x.분류||"");
+      if(낱.some(function(w){ return 글.indexOf(w)>=0 || (w.length>=3 && /^[가-힣]{2}/.test(w) && 글.indexOf(w.slice(0,2))>=0 && !/^(다니|하고|싶어|배우|알려|가르)/.test(w)); })){ /* 수영장→수영 */ 맞는쌍[x.시설+"|"+x.쌍[0]+"|"+x.쌍[1]]=1; 맞음++; } });
+    LESSON.forEach(function(x){ var a=살핌시설[x.시설], 쌍=x.쌍; if(!a || !쌍 || 쌍.length<2) return; if(곳 && x.시설!==곳) return; if(맞음 && !맞는쌍[x.시설+"|"+쌍[0]+"|"+쌍[1]]) return;
+      달들.forEach(function(ym){ var k=a+"|"+쌍[0]+"|"+쌍[1]+"|"+ym; if(본[k]) return; 본[k]=1; 할.push({a:a,g1:String(쌍[0]),g2:String(쌍[1]),ym:ym}); }); });
     return 할.sort(function(p,q){ return p.a<q.a?-1:p.a>q.a?1:0; }); }
+  // 강좌받기.py 사이트행() 과 같은 이름 규칙(시설마다 skname 칸 쓰임이 다르다 · 9/27 실측) — 바꾸면 둘 다 바꾼다
+  var 살핌시설이름={"20010001":"광교웰빙국민체육센터","17110001":"서수원칠보체육관","19040001":"수원가족여성회관"};
+  var 대상말=/^(성인|성인\/청소년|성인·청소년|청소년이상|청소년 이상|누구나|성인&초등|임신부|만 ?\d+세이상|초등|유아|청소년)$/, 군말=/^(선택안함|\d+\/\d+|\d{1,2}월~\d{1,2}월|\d+개월|GX\d+|\(시설이용료별도\)|스포츠|다목적체육관)$/;
+  function 사이트행(r){ var 시설=살핌시설이름[r.a]; if(!시설) return null;
+    var 조각=[r.skname1,r.skname2,r.skname3,r.skname4].map(function(v){ return String(v==null?"":v).trim(); });
+    if(/강사출근부|추가\s*결제|수강\s*불가|테스트/.test(조각[0])) return null; if(r.skcnt!=null && /^0(\.0+)?$/.test(String(r.skcnt))) return null;   // 폐강·강좌 아닌 칸
+    var 분=(조각[1]+" "+조각[2]).match(/(\d{1,2})월~(\d{1,2})월/); var 월=+String(r.ym).slice(4);
+    if(분 && !(+분[1]<=월 && 월<=+분[2])) return null;
+    var 대상=조각.filter(function(c){ return 대상말.test(c); })[0]||"";
+    var 이름=조각.filter(function(c){ return c && !대상말.test(c) && !군말.test(c); }).join(" ");
+    var mm=이름.match(/^([가-힣](?: [가-힣])+)(\d*)$/); if(mm) 이름=mm[1].replace(/ /g,"")+mm[2];
+    if(대상 && ["성인","누구나","성인/청소년","성인·청소년","청소년이상","청소년 이상"].indexOf(대상)<0) 이름=이름+" ("+대상+")";
+    var 전체=조각.join(" "), 종목=/수영|아쿠아/.test(전체)?"수영 강습":(시설==="수원가족여성회관"?"문화·교육강좌":"생활체육");
+    var 돈=Math.round(+r.skamt||0);
+    var 어린이=/^(초등|유아|청소년)$/.test(대상) || /초\s?\d|유아|어린이|키즈|아동|다둥이|초등/.test(전체);
+    return {시설:시설, 과목:이름, 종목:종목, 분류:조각[0], 대상:대상, 요일:String(r.skname6||"").split(/[|,\s]+/).filter(Boolean).join(", "),
+      시간:String(r.skname7||"").replace(/-/g,"~"), 수강료:돈?돈.toLocaleString("ko-KR"):"무료", 정원:String(r.sktjwcnt||""), 강사:r.mgname||"",
+      예약번호:String(r.skbno), 출처:"사이트(방금 확인)", 상태:"모집", 딱지:어린이?"어린이":"누구나", 지역:"수원",
+      해당월:String(r.ym).slice(0,4)+"-"+String(r.ym).slice(4), 쌍:[String(r.g1),String(r.g2)] }; }
   window.__cbdr살핌=function(o){
     var 줄=(o&&o.줄)||[], 칸=(o&&o.칸)||[], 지금=지금글(), 고침=0, 닫음=0, 표={}, 본칸={};
     줄.forEach(function(r){ 표[r.a+"|"+r.skbno+"|"+r.ym]=r; }); 칸.forEach(function(k){ 본칸[k]=1; });
@@ -1623,7 +1651,11 @@ input.txt::placeholder{color:var(--mute)}
         if(!(a==="19040001" && v===-1)) x.남은자리=Math.max(0,남); x.자리확인=지금; 고침++; }
       else if(x.쌍 && 본칸[a+"|"+x.쌍[0]+"|"+x.쌍[1]+"|"+ym]){ x.신청상태=-1; x.자리확인=지금; 닫음++; }   // 그 칸을 읽었는데 그 반이 없다 = 지금 인터넷 신청 목록에 없음
     });
-    try{ console.log("[살핌] 고침 "+고침+" · 목록에 없음 "+닫음+" · 칸 "+칸.length+(o&&o.오류?" · "+o.오류:"")); }catch(e){}
+    var 있는={}, 새=0; LESSON.forEach(function(x){ var a=살핌시설[x.시설]; if(a && x.예약번호) 있는[a+"|"+x.예약번호+"|"+String(x.해당월||"").replace("-","").slice(0,6)]=1; });
+    줄.forEach(function(r){ var k=r.a+"|"+r.skbno+"|"+r.ym; if(있는[k]) return; var x=사이트행(r); if(!x || !x.과목 || !(x.요일+x.시간) || 하루수업지남(x)) return;   // 🆕 수첩에 없던 새 반(달 넘김 · 추가 모집)
+      var v=+r.isrev; x.신청상태=isNaN(v)?-1:v; var 인=+r.webjwcnt||0, 현=+r.courrentcnt||0, 신=+r.skrevcnt||0, 정=+r.sktjwcnt||0, 남=v===2?인-현:v===3?인-신:정-신;
+      if(!(r.a==="19040001" && v===-1)) x.남은자리=Math.max(0,남); x.자리확인=지금; LESSON.push(x); 있는[k]=1; 새++; });
+    try{ console.log("[살핌] 고침 "+고침+" · 새 반 "+새+" · 목록에 없음 "+닫음+" · 칸 "+칸.length+(o&&o.오류?" · "+o.오류:"")); }catch(e){}
     clearTimeout(살핌.타이머); 살핌.중=false; 살핌.때[살핌.곳||"*"]=(칸.length?Date.now():Date.now()-15*60000);   // 못 읽었으면 5분 뒤 다시
     var t=살핌.대기; 살핌.대기=null; if(t!=null) heard(t);
   };
@@ -1633,7 +1665,7 @@ input.txt::placeholder{color:var(--mute)}
     try{ if(!CBDR.isMember()) return false; }catch(e){ return false; }
     var 곳=null; try{ 곳=말한시설(String(text||"").replace(/\s+/g,"")); }catch(e){} if(곳 && !살핌시설[곳]) return false;   // 장안만 말하면 아직 못 묻는다(다음 차례)
     var 마지막=Math.max(살핌.때["*"]||0, 곳?(살핌.때[곳]||0):0); if(마지막 && Date.now()-마지막 < 20*60000) return false;
-    var 할=살필거리(곳); if(!할.length) return false; 살핌.곳=곳;
+    var 할=살필거리(곳, text); if(!할.length) return false; 살핌.곳=곳;
     살핌.중=true; 살핌.대기=text;
     info("지금 사이트에서 접수 상태를 바로 확인하고 있어요. 잠깐만 기다려 주세요.", "", "확인하고<br>있어요");
     try{ CBDR.look(JSON.stringify(할)); }catch(e){ 살핌.중=false; 살핌.대기=null; return false; }
