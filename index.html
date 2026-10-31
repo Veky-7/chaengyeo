@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261031140844">
+<meta name="cbdr-version" content="20261031212639">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -379,6 +379,14 @@ input.txt::placeholder{color:var(--mute)}
   // ── 2층: 강좌 목록(목록.json 의 "강좌") — 가격·정원·딱지가 여기 있다
   var 서버차=null;   // 코덱스 6차: 수첩을 받을 때 서버가 알려 준 지금 시각(HTTP Date) − 폰 시각. 있으면 폰 시계가 빠르든 느리든 서버 시각으로 「오래됨」을 잰다
   function 지금시각(){ return 서버차==null ? null : Date.now()+서버차; }
+  function 하루수업지남(x){   // 과목 맨 앞 「11.14.」 = 그 날 하루 수업 · 해에서 연도 · 시간에서 시작 시각 · 한국 시각으로 비교
+    var m=String((x&&x.과목)||"").match(/^\s*(\d{1,2})\s*\.\s*(\d{1,2})\s*\./); if(!m) return false;
+    var 년=+(String(x.해당월||"").slice(0,4))||new Date().getFullYear(), 월=+m[1], 일=+m[2]; if(월<1||월>12||일<1||일>31) return false;
+    var t=String(x.시간||"").match(/(\d{1,2}):(\d{2})/), 시=t?+t[1]:0, 분=t?+t[2]:0;
+    var 시작=Date.UTC(년, 월-1, 일, 시-9, 분);   // KST → UTC
+    var 지금=지금시각(); if(지금==null) 지금=Date.now();
+    return 지금 > 시작;
+  }
   var LESSON=[], LESSON_월="", 수첩깨짐=false, 수첩시각=0;   // 수첩시각 = 서버(자리받기)가 수첩에 마지막으로 적은 시각 — 폰 시계가 느릴 때 쓰는 기준(코덱스 1004 2차·3차)
   // 🔴 이름이 없거나 요일·시간이 둘 다 없는 것은 강좌가 아니다. 공단이 양식을 갈아엎으면 여기서 걸린다.
   //    절반 넘게 버려야 하면 수첩째로 안 쓴다 — 어르신께 「언디파인드」를 읽어드리느니 「못 봤어요」가 낫다.
@@ -403,6 +411,8 @@ input.txt::placeholder{color:var(--mute)}
     for(var i=0;i<a.length;i++){ var x=a[i]; if(!x) continue;
       // 🆕 10/4 달 넘기기: 지난달 강좌(해당월이 이번 달 앞)는 안 읽는다 — 수첩이 아직 못 치운 줄이어도 어르신 귀엔 안 들어간다
       if(x.해당월 && String(x.해당월).slice(0,7) < 이달){ 지난++; continue; }
+      // 🔴 10/31 리허설: 「10.24. 이음클래스 걱정인형」처럼 날짜가 이름에 박힌 하루짜리 수업 — 그 날 시작 시각이 지났으면 안 읽는다(지난 수업을 1번으로 권했다)
+      if(하루수업지남(x)){ 지난++; continue; }
       // 🔴 글자만 받는다. 숫자 123 을 강좌 이름이라고 읽어드리는 것도 undefined 와 같은 종류다.
       if(typeof x.과목!=="string" || !/[^\s0-9,.\-]/.test(x.과목)) continue;   // 🔴 객체·배열은 강좌가 아니다. 통과시키면 나중에 .replace() 에서 죽는다
       x.과목=String(x.과목); if(x.요일!=null) x.요일=String(x.요일); if(x.시간!=null) x.시간=String(x.시간);
