@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261104052822">
+<meta name="cbdr-version" content="20261104225843">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1970,10 +1970,10 @@ input.txt::placeholder{color:var(--mute)}
       if(내L.length===1){ 내강좌보기(내L[0]); return; }
       if(내L.length){ info(내L.map(function(y){ return (y.곳?y.곳+" ":"")+y.이름+(y.언제?", "+y.언제:""); }).join(". ")+". 신청하고 결제까지 끝난 강좌예요.","","신청한 강좌"); return; } }
     if(/(취소|환불)(해|하|좀|시켜|할래|하고)/.test(t0) && !/신청해|넣어/.test(t0)){ var 취L=내강좌들();   // 🆕 11/02 「키캡 취소해 줘」
-      if(취L.length){ var 열쇠=t0.replace(/\s+/g,"").split(/취소|환불/)[0].replace(/(을|를|은|는|이|가|좀|그거|이거|저거|그|것|거)+$/,"").slice(-4);
+      if(취L.length){ var 열쇠=t0.replace(/\s+/g,"").split(/취소|환불/)[0].replace(/(을|를|은|는|이|가|좀|그거|이거|저거|그|것|거)+$/,"").slice(-4); if(/^(강좌|수업|신청|신청한|등록|그강좌|그수업|이강좌|이수업|반)$/.test(열쇠)) 열쇠="";
         var 고른=열쇠.length>=2?취L.filter(function(y){ return String(y.이름).replace(/\s+/g,"").indexOf(열쇠)>=0; }):[];
-        if(고른.length===1 || 취L.length===1){ 취소가기(고른[0]||취L[0]); return; }
-        info(취L.map(function(y,i){ return (i+1)+"번 "+y.이름; }).join(". ")+". 어느 강좌를 취소할지 이름으로 말씀해 주세요.","","어느 걸 취소할까요"); return; } }
+        if(고른.length===1 || (열쇠.length<2 && 취L.length===1)){ 취소가기(고른[0]||취L[0]); return; }   // 11/04 팀AI 검토: 이름을 말했는데 안 맞으면 하나뿐이어도 가지 않음(「탁구 취소」→수영 취소 화면)
+        info((열쇠.length>=2&&!고른.length?"말씀하신 강좌는 신청한 것 중에 없어요. ":"")+취L.map(function(y,i){ return (i+1)+"번 "+y.이름; }).join(". ")+". 어느 강좌를 취소할지 이름으로 말씀해 주세요.","","어느 걸 취소할까요"); return; } }
     if(/결과|당첨|추첨|떨어(?!뜨|트)|붙었|나왔|나왔나|나왔니|어떻게됐|어떻게되|소식|됐어|됐나|됐니|되었어/.test(t0)&&!/신청해줘|신청해주|넣어줘|가입해/.test(t0)){ answerResult(); return; }
     if(/공지|안내문|읽어|어떻게신청|어떻게해|방법/.test(t0)&&!/신청해줘|넣어줘|가입해/.test(t0)){
       var q=parse(text); var cands=OPEN.filter(function(o){return q.시설?o.시설===q.시설:(REGION?o.지역===REGION:true)}).filter(function(o){return o.구조});
