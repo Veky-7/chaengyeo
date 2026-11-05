@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261105052836">
+<meta name="cbdr-version" content="20261105133416">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -795,7 +795,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   function 갈래읽기(g){
     g={이름:g.이름, 목록:g.목록.filter(function(x){return !꽉참(x);}).concat(g.목록.filter(꽉참))};   // 9/29 꽉 찬 반은 뒤로
-    if(g.목록.length && g.목록.every(꽉참)){ 지금갈래=null; 들은강좌=null; 이어듣기=null; info(은는(g.이름)+" "+g.목록.length+"개 모두 지금은 자리가 다 찼어요. 다른 걸 말씀해 주세요.", "", "자리가<br>다 찼어요"); return; }
+    if(g.목록.length && g.목록.every(function(x){ return 꽉참(x) && !지난확인(x); })){ 지금갈래=null;   /* 11/05 팀AI 검토: 목록끝(10/30)과 같이 — 30분 넘은 기록으로는 문을 닫지 않음 */ 들은강좌=null; 이어듣기=null; info(은는(g.이름)+" "+g.목록.length+"개 모두 지금은 자리가 다 찼어요. 다른 걸 말씀해 주세요.", "", "자리가<br>다 찼어요"); return; }
     if(g.목록.length>6){ var 메뉴있음=!!메뉴; 좁히기시작(g.목록, 은는(g.이름), false); return; }   // 🔴 9/28: 많으면 좁힌다
     지금갈래=g;
     var L=g.목록, n=Math.min(L.length,3), 어=L.filter(function(x){return x.딱지==="어르신맞춤";}).length;
@@ -1316,8 +1316,9 @@ input.txt::placeholder{color:var(--mute)}
     var q=t.split("-"), d=new Date(+q[0], +q[1]-1, +q[2], 23, 59, 59);
     return isNaN(d.getTime()) ? null : d; }
   function dueText(iso){ var d=날짜(iso); if(!d) return iso?"마감 확인 중":""; var days=Math.floor((d-new Date())/86400000); if(days<0) return "접수 끝남"; if(days===0) return "오늘까지"; if(days===1) return "내일까지"; if(days===2) return "모레까지"; return (d.getMonth()+1)+"월 "+d.getDate()+"일까지"; }
-  function fromText(iso){ var d=날짜(iso); return (d&&d>new Date())?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
-  function soon(iso){ var d=날짜(iso); if(!d) return false; var h=(d-new Date())/3600000; return h>0&&h<=30; }
+  function 시작날짜(iso){ var d=날짜(iso); if(d) d.setHours(0,0,0,0); return d; }   // 11/05 팀AI 검토: 시작일은 그날 0시부터 — 23:59 로 보면 접수 첫날에도 「내일 열려요」라고 했다
+  function fromText(iso){ var d=시작날짜(iso); return (d&&d>new Date())?((d.getMonth()+1)+"월 "+d.getDate()+"일부터"):null; }
+  function soon(iso){ var d=시작날짜(iso); if(!d) return false; var h=(d-new Date())/3600000; return h>0&&h<=30; }
   var cur=null;
   // 🔴 어디까지 읽어드렸는지 기억한다. 전에는 「더 들으시려면 다시 말씀해 주세요」라고 해놓고
   //    다시 물으면 1·2·3번을 또 읽었다. (대표 2026-09-25 폰 확인)
@@ -2296,7 +2297,7 @@ input.txt::placeholder{color:var(--mute)}
     $("rescancel").hidden=true; var p=document.getElementById("cbdr-pay"); if(p) p.hidden=true; var g=$("resgo"); if(g) g.hidden=true;
     try{ draw내강좌(); }catch(e){} show("s-result"); speak("취소됐어요. "+(y.곳?y.곳+" ":"")+y.이름+". 이제 신청함에서 빠졌어요."); return "ok"; }catch(e){ return "err "+e; } };
   window.__cbdr결제끝=function(o){ try{
-    o=o||{}; var 이름=이름정리(o.과목||(cur&&cur.반)||""), 곳=(cur&&cur.시설)||o.시설||"";
+    o=o||{}; var 이름=이름정리(o.과목||(cur&&cur.반)||""), 곳=o.시설||(cur&&cur.시설)||"";   /* 11/05 팀AI 검토: 수강내역에서 읽은 시설을 먼저 */
     var 때=String(o.요일시간||"").replace(/\s+/g," ").trim(), 돈=String(o.수강료||"").replace(/[^\d,]/g,"");
     var 날=String(o.과목||"").match(/^\s*(\d{1,2})\s*\.\s*(\d{1,2})\s*\./), 시=때.match(/(\d{1,2}):(\d{2})/);
     var 언제=날?(+날[1])+"월 "+(+날[2])+"일 ":""; var 요=때.match(/^[월화수목금토일](,\s*[월화수목금토일])*/);
