@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261105133416">
+<meta name="cbdr-version" content="20261107002351">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -1447,8 +1447,8 @@ input.txt::placeholder{color:var(--mute)}
   }
   // ── 가입에 필요한 것 — 한 번 말해 두면 폰에 남는다 (주민번호 뒷자리·비밀번호는 안 받는다)
   var PROFILE=(function(){try{return JSON.parse(localStorage.getItem("cbdr_profile")||"{}")}catch(e){return {}}})();
-  // ── 누가 어느 공단 회원인지 (실측: 김현순 = 전주 8/28 · 정이서 = 수원 9/15). 가입이 끝나면 자동으로 늘어난다
-  var MEMBER0={"정이서":["수원도시공사"]};   // 이 폴더는 수원 전용. 전주(김현순)는 _보관_전주_어머님/ 에 있다
+  // ── 누가 어느 공단 회원인지 — 공개 파일이라 실제 이름을 넣지 않는다(11/06)
+  var MEMBER0={};
   var MEMBER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_member")||"[]")}catch(e){return []}})().concat(MEMBER0[NAME]||[]);
   function orgOf(fac){ return 공단; }   // 한 지자체만 보므로 시설이 무엇이든 그 공단이다
   function isMember(fac){ return MEMBER.indexOf(orgOf(fac))>=0; }
@@ -1511,7 +1511,7 @@ input.txt::placeholder{color:var(--mute)}
       return false; }catch(e){ return false; } })();
   function 준비끝(){ 준비됨=true; try{ localStorage.setItem("cbdr_준비","1"); }catch(e){} }
 
-  var 이름질문 = {k:"이름", title:"성함이<br>어떻게 되세요?", lead:"「정이서」처럼 이름만 말씀하시면 돼요",
+  var 이름질문 = {k:"이름", title:"성함이<br>어떻게 되세요?", lead:"「홍길동」처럼 이름만 말씀하시면 돼요",
     say:"성함이 어떻게 되세요?",
     parse:function(t){ var v=String(t||"").replace(/[^가-힣a-zA-Z\s]/g,"")
         .replace(/저는|제가|이름은|이에요|예요|입니다|이라고|라고|합니다|해요/g,"").replace(/\s+/g,"").trim();
