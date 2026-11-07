@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261107135800">
+<meta name="cbdr-version" content="20261107140728">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -2095,7 +2095,7 @@ input.txt::placeholder{color:var(--mute)}
   // 🆕 11/7 팀AI 검토: 말한 시설에 없는 강좌면 다른 시설을 알려 준다(그 시설 아무 강좌나 내밀거나 다른 시설 반으로 바꾸지 않는다)
   function 딴곳안내(t0, 말글){ try{ var 곳말=말한시설(t0); if(!곳말) return false;
       var 원=String(말글||t0).replace(/(장안구민회관|장안|광교웰빙국민체육센터|광교웰빙|웰빙|광교|서수원칠보체육관|칠보체육관|칠보|수원가족여성회관|가족여성회관|가족여성)(에서|에)?/,"").trim(), 뺀=원.replace(/\s+/g,"");
-      var g2=강좌찾기(뺀, 원); if(!g2 || g2.메뉴 || g2.없음 || !g2.목록 || !g2.목록.length || g2.목록.some(function(x){ return x.시설===곳말; })) return false;
+      var 옛원=원말; 원말=원; var g2; try{ g2=강좌찾기(뺀); }finally{ 원말=옛원; } if(!g2 || g2.메뉴 || g2.없음 || !g2.목록 || !g2.목록.length || g2.목록.some(function(x){ return x.시설===곳말; })) return false;
       var 곳들=[]; g2.목록.forEach(function(x){ var q=짧은곳(x); if(곳들.indexOf(q)<0) 곳들.push(q); });
       var 이름=String(g2.말머리||"").replace(/(은|는)$/,"").replace(/s*[(（].*$/,""); if(!이름 || /걸로|있는|없는|지금/.test(이름)) return false;
       info(짧은곳({시설:곳말})+"에는 "+이름+" 반이 없어요. "+은는(이름)+" "+곳들.join(", ")+"에 있어요. 「"+곳들[0]+" "+이름+"」처럼 말씀해 주세요.","","여기엔<br>없어요"); return true; }catch(e){ return false; } }
