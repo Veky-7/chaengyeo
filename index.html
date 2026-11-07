@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261107121706">
+<meta name="cbdr-version" content="20261107135800">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -456,7 +456,7 @@ input.txt::placeholder{color:var(--mute)}
   function 숙제올리기(물음){
     try{
       fetch(NT+REQ,{method:"POST",body:JSON.stringify({
-        type:"숙제", 받는사람:이름표(), 물음:물음,   // 🔒 10/19 공개 중계에 이름 대신 알아볼 수 없는 표식(서버는 그대로 돌려줄 뿐)
+        type:"숙제", 받는사람:이름표(), 물음:String(물음||"").replace(/\d[\d\s-]{5,}\d/g,"(숫자 지움)").slice(0,60),   /* 🆕 11/7 공개 중계에 전화번호 같은 숫자가 나가지 않게 */   // 🔒 10/19 공개 중계에 이름 대신 알아볼 수 없는 표식(서버는 그대로 돌려줄 뿐)
         때:new Date().toISOString().slice(0,16)
       })}).catch(function(){});
     }catch(e){}
@@ -518,7 +518,7 @@ input.txt::placeholder{color:var(--mute)}
     {이름:"컴퓨터·폰", 짧:"컴퓨터", 말:/컴퓨터|스마트폰|핸드폰|휴대폰|폰|엑셀|유튜브|문자|카톡|카카오톡|키오스크|사진찍/, 글:/컴퓨터|스마트폰|엑셀|파워포인트|한글문서|캡컷|영상편집|AI/},
     {이름:"그림·글씨", 짧:"그림", 말:/그림|미술|글씨|서예|캘리|수채화|유화|민화|사군자/, 글:/그림|화$|화\(|화[A-Z]|수채화|유화|민화|사군자|한국화|서양화|드로잉|스케치|데생|파스텔|캘리그라피|서예|아트|젠탱글|캐리커처|문인화|수묵|손글씨|추상화|인물화|아크릴/},
     {이름:"요리",     말:/요리|음식|빵|떡|반찬|커피|제과|제빵/, 글:/떡|한과|빵|반찬|밥상|브런치|디저트|베이킹|케이크|바리스타|조리/},
-    {이름:"만들기",   말:/만들기|공예|바느질|재봉|옷|한복|미용|머리(?!쓰|좋|아프|굴)/, 글:/공예|매듭|소잉|재봉|의상|의류|옷|수선|한복|여성복|헤어|미용|컷|페브릭/}
+    {이름:"만들기",   말:/만들기|공예|바느질|재봉|옷|한복|미용|머리(?!쓰|좋|아프|아파|굴)/, 글:/공예|매듭|소잉|재봉|의상|의류|옷|수선|한복|여성복|헤어|미용|컷|페브릭/}
   ];
   // 🆕 10/5 뜻 사전(설명 → 과목) — 「말」은 띄어쓰기 없앤 말에 맞춘다 · 「글」은 과목 이름(띄어쓰기 없앤 것)
   var 뜻사전=[   // 순서가 곧 우선순위 — 좁은 것부터. 강좌 목록 277종을 보고 「무엇을 들고 · 무엇을 하는지」 낱말로 짰다(10/5 2판)
@@ -650,8 +650,8 @@ input.txt::placeholder{color:var(--mute)}
     {머리:"두뇌 놀이", 말:/(치매|두뇌|머리).{0,6}(예방|좋아지|쓰는|운동|놀이)|보드게임/, 글:/두뇌|보드게임/},
     // 🆕 11/7 대표 「피리 부는거 할 수 있는거 있니?? 이런식」 — 어려운 설명보다 일상 낱말이 먼저 · 수첩에 실제 있는 반만 · 맨 끝이라 「흙피리」 같은 좁은 말은 위에서 먼저 잡힌다
     {머리:"부는 악기", 말:/피리|(입으로|불어서).{0,4}(부는|불어|하는).{0,3}(악기|거|것)|부는악기/, 글:/오카리나|플루트|하모니카/},
-    {머리:"공 치는 운동", 말:/공을?(치|가지고|갖고|으로|놀이)/, 글:/배드민턴|탁구|스쿼시/},
-    {머리:"손으로 만드는 것", 말:/손으로.{0,6}(만드|만들)|^(뭐|뭘|뭔가|직접)?만드는|만들어보는/, 글:/공예|매듭|소잉|재봉|한복|도자기/},
+    {머리:"공 치는 운동", 말:/(^|[^인목석세])공을?(치|쳐|가지고|갖고|놀이)/, 글:/배드민턴|탁구|스쿼시/},
+    {머리:"손으로 만드는 것", 말:/손으로.{0,6}(만드|만들)|^(뭐|뭘|뭔가|직접)?만드는(거|것|수업|강좌)/, 글:/공예|매듭|소잉|재봉|한복|도자기/},
     {머리:"그림", 말:/그림그리|그리는(거|것)/, 글:/그림|수채화|유화|민화|사군자|한국화|드로잉|데생|스케치/},
     {머리:"몸 푸는 운동", 말:/몸을?(풀|푸는)/, 글:/스트레칭|요가|체조|바른자세/}
   ];
@@ -1459,7 +1459,7 @@ input.txt::placeholder{color:var(--mute)}
   var MEMBER0={};
   var MEMBER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_member")||"[]")}catch(e){return []}})().concat(MEMBER0[NAME]||[]);
   function orgOf(fac){ return 공단; }   // 한 지자체만 보므로 시설이 무엇이든 그 공단이다
-  function isMember(fac){ return MEMBER.indexOf(orgOf(fac))>=0; }
+  function isMember(fac){ try{ if(window.CBDR && CBDR.isMember()) return true; }catch(e){} return MEMBER.indexOf(orgOf(fac))>=0; }   // 🆕 11/7 금고에 아이디가 있으면 회원 — 공개 파일에서 이름표를 뺀 뒤 cbdr_member 가 비면 신청 앞에서 「이미 회원이세요」로 맴돌 수 있었다
   function addMember(org){ if(MEMBER.indexOf(org)<0){ MEMBER.push(org); try{localStorage.setItem("cbdr_member",JSON.stringify(MEMBER))}catch(e){} } }
   function visitLine(fac){ return isMember(fac)?" 회원가입은 이미 돼 있으니, 창구에서 신청만 하시면 돼요.":" 창구에서도 회원인지 물어봐요. 가입이 아직 안 돼 있으니, 「가입해 줘」 하시면 제가 먼저 해 둘게요."; }
   function saveProfile(){ try{localStorage.setItem("cbdr_profile",JSON.stringify(PROFILE))}catch(e){} }
@@ -1873,6 +1873,8 @@ input.txt::placeholder{color:var(--mute)}
             좁히기시작(gs.목록, gs.말머리||"", true); return; } }
       }
       // 🔴 9/28 코덱스 R: 「2번 넣어 줘」「그거 신청해 줘」「무료인 걸로 신청해 줘」를 첫 화면에서 하면 아무 말도 안 했다 → 무엇을 넣을지 먼저 골라 드린다
+      if(딴곳안내(t0, text)) return;   // 🆕 11/7 「장안 바리스타 신청해 줘」→ 장안 아무 강좌나 3개 권하던 것
+      var 모2=모르는말(text); if(모2 && 모2.length>=2 && !/^(그거|이거|저거|그걸|이걸)/.test(모2) && !/무료|공짜|돈안드|마감|요일|오전|오후|저녁|아침|주말|평일|시반|\d시|[한두세네]시|[월화수목금토일]요/.test(t0) && !번호(모2)){ info("「"+은는(모2).replace(/(은|는)$/,"」$1")+" 제가 못 찾았어요. 어떤 강좌를 넣을지 「수영」「노래」처럼 말씀해 주세요.","","다시<br>말씀해 주세요"); return; }   // 🆕 11/7 모르는 말인데 아무 강좌나 3개 권하지 않는다
       if(LESSON.length){ var 후L=LESSON.filter(function(x){ return (x.지역||"")===내지역; });
         if(/무료|공짜|돈안드/.test(t0)){ var 무=후L.filter(function(x){ return 돈(x)==="무료"; }); if(무.length) 후L=무; }
         if(/마감/.test(t0)){ info("마감 날짜로는 아직 강좌를 못 골라 드려요. 「수영 뭐 있어」처럼 하고 싶은 걸 먼저 말씀해 주세요.", "", "무엇을<br>넣을까요?"); return; }   // 9/29 코덱스 Z
@@ -1945,6 +1947,7 @@ input.txt::placeholder{color:var(--mute)}
           if(그곳) LESSON.forEach(function(x){ if(x.시설!==그곳 && x.딱지!=="어린이" && !/초등|유아|어린이|아동|키즈/.test(String(x.과목||"")) && (String(x.과목||"")+String(x.종목||"")).replace(/\s+/g,"").indexOf(g.없음)>=0){ var q=짧은곳(x); if(딴곳.indexOf(q)<0) 딴곳.push(q); } });
           if(그곳 && 딴곳.length){ info(짧은곳({시설:그곳})+"에는 "+g.없음+" 반이 없어요. "+은는(g.없음)+" "+딴곳.join(", ")+"에 있어요. 「"+딴곳[0]+" "+g.없음+"」처럼 말씀해 주세요.", "", "여기엔<br>없어요"); return; }
           숙제올리기(text); info(은는(g.없음)+" 아직 제가 못 봤어요. 확인해서 알려드릴게요.", "", "아직<br>못 봤어요"); return; }
+        if(g.메뉴 && 딴곳안내(t0, text)) return;
         if(g.메뉴){ var cm=조건거르기(L, t0.replace(/^(광교|장안|칠보|가족여성)/,"")); if(cm && cm.목록.length) L=cm.목록;
           if(cm && !cm.목록.length){ info("말씀하신 요일·시간에 하는 반은 지금 없어요. 다른 요일이나 시간을 말씀해 주세요.", "", "그런 반은<br>없어요"); return; }   // 🔴 10/3 「일요일 하는 거」 → 아무 강좌 3개를 골라 줬다
           var 모름=모르는말(text);
@@ -2089,19 +2092,39 @@ input.txt::placeholder{color:var(--mute)}
   function 핵이름(n){ return String(n||"").replace(/^\d+월 \d+일 /,"").replace(/^\d{1,2}\.\s*\d{1,2}\.\s*/,"").trim(); }
   // 🆕 11/7 대표 「저번달 배운거 또 신청해줘 이것도 가능하게」 — 재료 = 이 폰 신청 내역(취소 뺌) · 시설+이름이 같은 수첩 줄만 내민다(엉뚱한 반 막기) · 결제는 여전히 확인 화면·사람 손
   //    🔴 이 폰으로 신청한 것만 안다. 수원 사이트 수강내역을 읽어 오지 않는다 · 강좌 이름을 함께 말했는데 내역에 없으면 평소 찾기로 넘긴다
+  // 🆕 11/7 팀AI 검토: 말한 시설에 없는 강좌면 다른 시설을 알려 준다(그 시설 아무 강좌나 내밀거나 다른 시설 반으로 바꾸지 않는다)
+  function 딴곳안내(t0, 말글){ try{ var 곳말=말한시설(t0); if(!곳말) return false;
+      var 원=String(말글||t0).replace(/(장안구민회관|장안|광교웰빙국민체육센터|광교웰빙|웰빙|광교|서수원칠보체육관|칠보체육관|칠보|수원가족여성회관|가족여성회관|가족여성)(에서|에)?/,"").trim(), 뺀=원.replace(/\s+/g,"");
+      var g2=강좌찾기(뺀, 원); if(!g2 || g2.메뉴 || g2.없음 || !g2.목록 || !g2.목록.length || g2.목록.some(function(x){ return x.시설===곳말; })) return false;
+      var 곳들=[]; g2.목록.forEach(function(x){ var q=짧은곳(x); if(곳들.indexOf(q)<0) 곳들.push(q); });
+      var 이름=String(g2.말머리||"").replace(/(은|는)$/,"").replace(/s*[(（].*$/,""); if(!이름 || /걸로|있는|없는|지금/.test(이름)) return false;
+      info(짧은곳({시설:곳말})+"에는 "+이름+" 반이 없어요. "+은는(이름)+" "+곳들.join(", ")+"에 있어요. 「"+곳들[0]+" "+이름+"」처럼 말씀해 주세요.","","여기엔<br>없어요"); return true; }catch(e){ return false; } }
   function 저번강좌길(t0){
     t0=String(t0||"").replace(/\s+/g,"");
-    var 저번말=/(저번|지난|예전|전에).{0,12}(배운|배웠|들은|들었|다닌|다녔|했던|하던|한거|한것|다니던|배우던|듣던)|(배운|배웠던|배우던|들은|듣던|다닌|다니던|다녔던|하던|했던)(거|것|걸|강좌|반|수업).{0,8}(또|다시|계속|그대로)|재등록|재수강|(다음달|이번달)도.{0,6}(신청|다닐|할래|해줘|넣어)/;
-    if(!저번말.test(t0) || /취소|환불|언제|며칠|몇일/.test(t0)) return false;
-    var 본={}, 전체=내역전체().filter(function(y){ if(y.상태==="취소") return false; var k=(y.곳||"")+"|"+핵이름(y.이름).replace(/\s+/g,""); if(본[k]) return false; 본[k]=1; return true; }).sort(function(a,b){ return (b.시각||0)-(a.시각||0); });
-    var 남은=t0.replace(저번말,"").replace(/신청|해줘|해주세요|해주|좀|그거|그걸|또|다시|강좌|수업|하고싶어|하고싶|다니고싶어|배우고싶어|듣고싶어|싶어|할래|거|것|[을를은는도에달]/g,"").replace(/[.,?!~]/g,"");
+    var 뜻=/(저번|지난|예전|전에).{0,14}(배운|배웠|들은|들었|다닌|다녔|했던|하던|한거|한것|다니던|배우던|듣던)|(배운|배웠던|배우던|들은|듣던|다닌|다니던|다녔던|하던|했던)(거|것|걸|강좌|반|수업).{0,8}(또|다시|계속|그대로)|(저번|지난|예전).{0,20}(또|다시|그대로|계속)|재등록|재수강|(다음달|이번달)도(신청해|신청할래|넣어|다닐|할래)/;
+    if(!뜻.test(t0) || /취소|환불|언제|며칠|몇일|왜|안됐|안돼/.test(t0)) return false;
     var 밀이=function(y){ return 핵이름(y.이름).replace(/\s+/g,""); };
-    var 고른=남은.length>=2 ? 전체.filter(function(y){ var n=밀이(y); return n.indexOf(남은)>=0 || 남은.indexOf(n)>=0; }) : 전체;
-    if(!고른.length){ if(남은.length>=2) return false; info("이 폰으로 신청하신 강좌 기록이 없어요. 어떤 강좌였는지 「수영」「탁구」처럼 말씀해 주세요.","","신청 기록이<br>없어요"); return true; }
-    var 줄=[]; 고른.forEach(function(y){ 줄=줄.concat(LESSON.filter(function(x){ return 짧은곳(x)===y.곳 && 핵이름(x.과목).replace(/\s+/g,"")===밀이(y); })); });
-    if(!줄.length && 고른.length===1){ 다시묻기(고른[0].곳, 고른[0].이름); return true; }
-    if(!줄.length){ info("저번에 신청하신 강좌는 "+고른.map(function(y){ return (y.곳?y.곳+" ":"")+핵이름(y.이름); }).join(", ")+"예요. 이번 달 목록에는 같은 이름이 안 보여요. 어떤 강좌를 찾을지 말씀해 주세요.","","저번 강좌"); return true; }
-    목록끝(줄, "저번에 신청하신 강좌는 ", true); return true; }
+    var 본={}, 전체=내역전체().slice().sort(function(a,b){ return (b.시각||0)-(a.시각||0); }).filter(function(y){ if(y.상태==="취소") return false; var k=(y.곳||"")+"|"+밀이(y); if(본[k]) return false; 본[k]=1; return true; });
+    // 🔴 11/7 팀AI 검토: 뜻 찾는 정규식으로 통째로 지우면 「저번에 수영 배운 거」의 수영까지 사라져 다른 강좌가 섞였다 → 군말 낱말만 뺀다 · 조사는 끝에서만(검도·요가의 글자를 지우지 않게)
+    var 남은=t0.replace(/저번달|지난달|저번주|지난주|저번에|지난번|저번|지난|예전에|예전|전에|작년에|배웠던|배웠|배운|배우던|들었던|들었|들은|듣던|다녔던|다녔|다닌|다니던|했던|하던|그대로|계속|다시|재등록|재수강|다음달도|이번달도|다음달|이번달|신청|접수|등록|해주세요|해줘요|해줘|해주|넣어줘|넣어|할래요|할래|하고싶어요|하고싶어|다니고싶어|배우고싶어|듣고싶어|싶어|그거|그걸|거기서|거기|그때|우리|내가|제가|강좌|수업|한거|한것|[.,?!~]/g,"").replace(/^(나|또|좀)+/,"").replace(/(거|것|걸|또|좀|요|을|를|에|은|는|도)+$/,"").replace(/^(거|것|걸|또|좀)+/,"");
+    var 고른=전체;
+    if(남은.length>=2){ 고른=전체.filter(function(y){ var n=밀이(y); return n.indexOf(남은)>=0 || 남은.indexOf(n)>=0 || 핵이름(y.이름).split(/[\s()\[\]&＆\/,·~\-!]+/).some(function(w){ return w.length>=2 && !/^(초급|중급|고급|상급|기초|입문|심화|교실|강좌|\d+반)$/.test(w) && t0.indexOf(w)>=0; }); });
+      if(!고른.length){ // 🆕 11/7 팀AI 문장 시험: 「지난번 신청했던 요가 다시 넣어 줘」— 이 폰에 기록이 없으면 군말을 뗀 강좌 이름으로 평소처럼 찾는다(「지난번」「다시」 때문에 엉뚱한 강좌를 권하던 것)
+        if(/기간|마감|자리|남았|몇명|있어|있나|있니|열려|봐/.test(t0) || !/신청|등록|접수|넣어|할래|다닐|또|다시|계속/.test(t0)) return false;
+        heard(남은.replace(/(구민회관|체육센터|체육관|회관|장안|광교|칠보|가족여성)(에서|에)?/,"$1 ")+" 신청해 줘"); return true; } }
+    if(!고른.length){ 좁히기=null; 지금갈래=null; 이어듣기=null; 들은강좌=null; info("이 폰으로 신청하신 강좌 기록이 없어요. 어떤 강좌였는지 「수영」「탁구」처럼 말씀해 주세요.","","신청 기록이<br>없어요"); return true; }
+    if(/저번달|지난달/.test(t0)){ var 최근=고른.filter(function(y){ return y.시각 && Date.now()-y.시각<75*86400000; }); if(최근.length) 고른=최근; }
+    // 다음 달이라고 하면 다음 달 반만 · 같은 이름이면 전에 듣던 요일·시간 반을 먼저(이름만 같은 다른 시간 반을 「저번 강좌」라고 하지 않는다)
+    var 지금=new Date(), 달월=null; if(/다음달/.test(t0)){ var 다=new Date(지금.getFullYear(), 지금.getMonth()+1, 1); 달월=다.getFullYear()+"-"+("0"+(다.getMonth()+1)).slice(-2); }
+    var 때맞나=function(x,y){ var 글=String(y.요일시간||y.언제||""), 시=글.match(/\d{1,2}:\d{2}/), 날들=(글.match(/[월화수목금토일]/g)||[]).sort().join(""); if(!시) return true; var x날=(String(x.요일||"").match(/[월화수목금토일]/g)||[]).sort().join(""); return String(x.시간||"").indexOf(시[0])===0 && (!날들 || 날들===x날); };
+    var 줄=[], 다른=[]; 고른.forEach(function(y){ var 같은=LESSON.filter(function(x){ return 짧은곳(x)===y.곳 && 핵이름(x.과목).replace(/\s+/g,"")===밀이(y) && (!달월 || x.해당월===달월); }); var 맞=같은.filter(function(x){ return 때맞나(x,y); }); if(맞.length) 줄=줄.concat(맞); else 다른=다른.concat(같은); });
+    좁히기=null; 지금갈래=null; 이어듣기=null; 들은강좌=null;
+    var 이름들=고른.map(function(y){ return (y.곳?y.곳+" ":"")+핵이름(y.이름); }).join(", ");
+    if(달월 && !줄.length && !다른.length){ info("다음 달 "+이름들+" 반은 아직 안 올라왔어요. 올라오면 다시 말씀해 주세요.","","아직<br>안 올라왔어요"); return true; }
+    if(줄.length){ 목록끝(줄, "저번에 신청하신 강좌는 ", true); return true; }
+    if(다른.length){ 목록끝(다른, "", false, "저번에 들으신 시간 반은 지금 안 보여요. 이름이 같은 다른 시간 반이에요. "); return true; }
+    if(고른.length===1){ 다시묻기(고른[0].곳, 고른[0].이름); return true; }
+    info("저번에 신청하신 강좌는 "+이름들+"예요. 이번 달 목록에는 같은 이름이 안 보여요. 어떤 강좌를 찾을지 말씀해 주세요.","","저번 강좌"); return true; }
   function 다시묻기(곳, 이름){ heard((곳||"")+" "+핵이름(이름)+" 신청할 수 있어?"); }
   function 카드(색, 윗, 큰, 아래, 누름){ var d=document.createElement("button"); d.type="button";
     d.style.cssText="display:block;width:100%;text-align:left;margin:0 0 12px;padding:16px 18px;border-radius:16px;background:#fffaf2;border:2px solid #e6d6bf;border-left:10px solid "+색+";font-family:inherit;cursor:pointer";
@@ -2335,7 +2358,7 @@ input.txt::placeholder{color:var(--mute)}
     $("res-note").textContent="결제까지 다 됐어요. 수원도시공사 「나의 수강내역」에도 「"+(o.상태||"신청완료")+"」로 적혀 있어요."; $("res-t").style.marginTop="56px";   // 도장이 긴 이름을 가리지 않게
     var p=document.getElementById("cbdr-pay"); if(p) p.hidden=true; var g=$("resgo"); if(g) g.hidden=true;
     취소단추({곳:곳,이름:이름,원과목:String(o.과목||"")});
-    try{ var 내=JSON.parse(localStorage.getItem("cbdr_내강좌")||"[]"); var 년=new Date().getFullYear(), 끝날=날?(년+"-"+("0"+(+날[1])).slice(-2)+"-"+("0"+(+날[2])).slice(-2)):"";
+    try{ var 내=JSON.parse(localStorage.getItem("cbdr_내강좌")||"[]"); var 년=new Date().getFullYear(); if(날 && +날[1]<new Date().getMonth()+1-6) 년++;   /* 🆕 11/7 12월에 1월 강좌를 결제하면 올해 1월로 적혀 신청함에서 바로 사라졌다 */ var 끝날=날?(년+"-"+("0"+(+날[1])).slice(-2)+"-"+("0"+(+날[2])).slice(-2)):"";
       내=내.filter(function(x){ return !(x.곳===곳 && x.이름===이름 && x.상태!=="취소"); }); 내.unshift({곳:곳,이름:이름,원과목:String(o.과목||""),언제:언제.trim(),요일시간:String(o.요일시간||""),돈:돈,날:끝날,시각:Date.now(),상태:"신청완료"}); localStorage.setItem("cbdr_내강좌",JSON.stringify(내.slice(0,60)));   // 11/02 대표 「주문내역처럼 쌓여야」 — 취소해도 지우지 않는다
       최근신청={종류:"결제완료",반:(곳+" "+이름).trim(),다음:$("res-next").textContent,시각:Date.now()}; localStorage.setItem("cbdr_최근신청",JSON.stringify(최근신청)); }catch(e){}
     try{ draw내강좌(); }catch(e){}
@@ -2403,7 +2426,8 @@ input.txt::placeholder{color:var(--mute)}
       $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
       show("s-progress"); renderSteps("요청","");
       speak("네, 신청하러 갈게요. 사이트에서 찾는 중이에요. 보통 1분쯤 걸려요. 다 되면 이 화면으로 알려드릴게요.");
-      post({type:"신청",예약번호:r.예약번호,시설:r.시설,과목:r.과목,요일:r.요일,시간:r.시간,해당월:r.해당월,원문:r.raw,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      post({type:"신청",예약번호:r.예약번호,시설:r.시설,과목:r.과목,요일:r.요일,시간:r.시간,해당월:r.해당월,상태:"요청"}).then(function(x){ if(!x.ok) throw 0; }).catch(function(){ $("prognote").textContent="잠깐 연결이 안 됐어요. 조금 있다가 다시 눌러 주세요."; });
+      if(!window.CBDR) setTimeout(function(){ if(cur===r && 지금화면()==="s-progress") info("이 화면에서는 신청이 이어지지 않았어요. 신청은 챙겨드림 앱에서 할 수 있어요. 아직 신청되지 않았어요.","","아직<br>신청 안 됐어요"); }, 45000);   // 🆕 11/7 웹 판(아이폰) 「네」 뒤 끝없이 기다리던 것
       return;
     }
     $("proglead").textContent=r.시설+" · "+r.반; $("watchsite").textContent=예약사이트;
