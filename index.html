@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261107140728">
+<meta name="cbdr-version" content="20261108175051">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -937,6 +937,7 @@ input.txt::placeholder{color:var(--mute)}
       var 요=/^[월화수목금토일]{1,7}(?=요일|$|에|만|반|이나|하고)/.exec(tk); if(요) 표(0, 요[0].length);
       군말.forEach(function(w){ var at=tk.indexOf(w); while(at>=0){ 표(at,w.length); at=tk.indexOf(w,at+1); } });
       원천.forEach(function(w){ for(var L=Math.min(w.length,tk.length);L>=2;L--) for(var st=0;st+L<=w.length;st++){ var 조=w.slice(st,st+L), at=tk.indexOf(조); while(at>=0){ 표(at,L); at=tk.indexOf(조,at+1); } } });
+      var 반끝=/반(이|을|은|으로|로|에|도)?$/.exec(tk); if(반끝 && 반끝.index>0 && 덮[반끝.index-1]) 표(반끝.index, 반끝[0].length);   // 🆕 11/8 「타로 배우기 초급반」→ 「초급」은 강좌 이름에 있는데 붙은 「반」만 남아 「초급반은 못 알아들었어요」라고 되물었다
       var 끝=tk.length; while(끝>0 && !덮[끝-1] && /[은는이가을를에로도와과의만요랑]/.test(tk.charAt(끝-1)) && 덮.slice(0,끝-1).some(Boolean)) 끝--;   // 조사는 덮인 말 뒤 끝자리에서만 뗀다
       for(var q=0;q<끝;q++) if(!덮[q]){ 남.push(tk); return; } });
     return 남[0]||""; }
