@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261109124459">
+<meta name="cbdr-version" content="20261109130710">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -860,8 +860,11 @@ input.txt::placeholder{color:var(--mute)}
   //    → 수준(초급·중급…)은 과목 + 요일 + 대상 을 합쳐서 본다. 「초/중급」은 초급·중급 둘 다로 읽는다
   function 급글(x){ var s=String(x.과목||"")+" "+String(x.요일||"")+" "+String(x.대상||""); return s.replace(/초\/?중\/?상급/g,"초급 중급 상급").replace(/초\/?중급/g,"초급 중급").replace(/중\/?상급/g,"중급 상급").replace(/중\/?고급/g,"중급 고급"); }   // 「초중급」(슬래시 없음)도 · 코덱스 2차
   function 조건거르기(L, t){
-    var 쓴=[], R=L, 곳=말한시설(t), 모호=false, 정확수=-1;
+    var 쓴=[], R=L, 곳=말한시설(t), 모호=false, 정확수=-1, 없는말="";
     if(곳){ 쓴.push(0); R=R.filter(function(x){ return x.시설===곳; }); }
+    // 🆕 11/9 「부동산공경매 주간」 — 야간 반만 있는데 말없이 야간을 보여 줬다 → 주간·야간을 조건으로 보고, 없으면 「주간 반은 없어요」
+    var 낮밤=(String(t||"").match(/주간|야간/)||[])[0];
+    if(낮밤){ 쓴.push(1); R=R.filter(function(x){ var n=String(x.과목||""); if(/주간|야간/.test(n)) return n.indexOf(낮밤)>=0; var m=String(x.시간||"").match(/(\d{1,2}):/); if(!m) return true; return 낮밤==="야간" ? +m[1]>=18 : +m[1]<18; }); if(!R.length) 없는말=낮밤; }
     t=String(t||"").replace(/금일|수목원|일일|매일|평일|휴일|내일|일주일|요일마다/g," ");
     t=t.replace(/(^|[^월화수목금토일])([월화수목금토일])요(?!일|가|반)/g,"$1$2요일");   // 🆕 10/30 팀AI 말투 시험: 「토요 바이올린」 — 「요일」 없이 「토요」만 말해도 토요일 · 요가·목요반은 그대로
     t=t.replace(/([월화수목금토일])[,·.\/、](?=[월화수목금토일])/g,"$1");   // 🔴 10/3 전수검사: 「화,목」(쉼표)을 요일로 못 읽어 꽉 찬 화목 대신 월수 반으로 갔다   // 🔴 10/3 코덱스: 「금일」→금+일 · 「수목원」→수+목 · 「일일」→일요일
@@ -912,7 +915,7 @@ input.txt::placeholder{color:var(--mute)}
     var 끝m=t.match(/[가-힣A-Za-z](\d{1,2})(?![\d시분급세명개월일:~])/) || t.match(/[가-힣A-Za-z]([일이삼사오육칠팔구])번/);
     if(끝m){ var 끝수=한숫[끝m[1]]||+끝m[1]; if(끝수) 반거름(new RegExp("[가-힣A-Za-z)]\\s?"+끝수+"(?![\\d급기])")); }   // 「필라테스 2」(띄어 씀)도 · 「영어2급」은 2반이 아니다 · 급은 두 자리(15급)까지(팀AI 검토 10/29)
     if(/무료|공짜|돈안드|돈안들/.test(t)){ 쓴.push(8); R=R.filter(function(x){ return 돈(x)==="무료"; }); }
-    return 쓴.length ? {목록:R, 쓴:쓴, 모호:모호, 정확수:정확수} : null;
+    return 쓴.length ? {목록:R, 쓴:쓴, 모호:모호, 정확수:정확수, 없는말:없는말} : null;
   }
   // 🔴 10/3 코덱스 2차: 같은 이름의 열린 반과 닫힌 반이 같이 있으면, 닫힌 반의 시간·요일을 말해도 「확인 중」을 말하지 않고 다른 시간으로 샜다
   function 닫힌같은(목록, t){ var 이름={}; (목록||[]).forEach(function(x){ 이름[x.과목+"|"+x.시설]=1; });
@@ -1869,12 +1872,12 @@ input.txt::placeholder{color:var(--mute)}
             var cs=조건거르기(gs.목록, t0.replace(/(초급|중급|고급|상급|기초|입문|심화|왕초보)/g,""));   // 9/29 코덱스 Z2: 하나만 잡혀도 「오전반」 같은 모순 조건을 본다   // 9/29 코덱스 Z: 「필라테스 월수금 반 접수해 줘」 — 곳·오전·요일·무료
             if(뜻길){ var 뜻L=(cs && cs.목록.length) ? cs.목록 : gs.목록;   // 🔴 코덱스 1005 2차 P0: 「벽에 공 치는 거 월요일 8시」 — 모호(아침·저녁) 분기가 확인을 건너뛰었다 → 뜻 사전 길은 여기서 먼저
               if(뜻L.length>5){ 좁히기시작(뜻L, gs.말머리||"", true, true); return; }
-              목록끝(뜻L, gs.말머리||"", true, (cs && !cs.목록.length ? "말씀하신 시간·요일 반은 없어요. " : "")+(뜻L.length===1?"말씀하신 게 이 반 같아요. 맞는지 봐 주세요. ":"말씀하신 게 이 중에 있는 것 같아요. 맞는 걸 골라 주세요. "), true); return; }
+              목록끝(뜻L, gs.말머리||"", true, (cs && !cs.목록.length ? (cs.없는말 ? "「"+cs.없는말+"」 반은 없어요. " : "말씀하신 시간·요일 반은 없어요. ") : "")+(뜻L.length===1?"말씀하신 게 이 반 같아요. 맞는지 봐 주세요. ":"말씀하신 게 이 중에 있는 것 같아요. 맞는 걸 골라 주세요. "), true); return; }
             var 닫x=닫힌같은(gs.목록, t0); if(닫x && cs && (!cs.목록.length || (cs.쓴.indexOf(1)>=0 && cs.정확수===0))){ 닫힌반말(닫x); return; }   // 10/3 코덱스 2차: 「성인 종합 상급 7시」(7시만 확인 중)
             if(cs && cs.모호){ 목록끝(cs.목록, gs.말머리||"", true, "아침 반과 저녁 반이 다 있어요. "); return; }   // 10/3: 「7시」 — 아침·저녁 중 고르게(말없이 하나로 신청하지 않는다)
             if(cs && !cs.목록.length && /(시반|:\d{2}|\d{1,2}분)/.test(t0)){ var cs2=조건거르기(gs.목록, t0.replace(/시반/g,"시").replace(/:\d{2}/g,"시").replace(/\d{1,2}분/g,""));
               if(cs2 && cs2.목록.length){ 목록끝(cs2.목록, gs.말머리||"", true, "말씀하신 시각에 딱 맞는 반은 없어서 그 시간대 반을 보여 드려요. ", true); return; } }   // 10/3: 「수영 10시반」 → 10:30 반이 없으면 10시대
-            if(cs && !cs.목록.length){ 목록끝(gs.목록, gs.말머리||"", true, String(gs.말머리||"").replace(/(은|는)$/,"")+" 중에 말씀하신 시간·요일 반은 없어요. 대신 있는 반은 ", true); return; }   // 🔴 10/3: 「없어요」로 끝내지 않는다
+            if(cs && !cs.목록.length){ 목록끝(gs.목록, gs.말머리||"", true, String(gs.말머리||"").replace(/(은|는)$/,"")+" 중에 "+(cs.없는말 ? "「"+cs.없는말+"」" : "말씀하신 시간·요일")+" 반은 없어요. 대신 있는 반은 ", true); return; }   // 🔴 10/3: 「없어요」로 끝내지 않는다
             if(cs) gs={목록:cs.목록, 말머리:gs.말머리};
             if(뒤번>=1 && 뒤번<=gs.목록.length){ var 남b=남는말(text, gs.목록[뒤번-1]); if(남b){ 목록끝(gs.목록, gs.말머리||"", true, "「"+은는(남b).replace(/(은|는)$/,"」$1")+" 제가 잘 못 알아들었어요. 몇 번인지 다시 봐 주세요. ", true); return; } 강좌신청확인(gs.목록[뒤번-1], text); return; }   // 코덱스 1004말투 P0: 「덴쑤 … 1번 신청」이 안전장치를 건너뛰었다
             if(gs.목록.length===1 && 반번호어긋남(text, gs.목록[0])){ 목록끝(gs.목록, gs.말머리||"", true, "말씀하신 "+반번호(text)+"반은 지금 신청할 수 있는 반 중에 없어요. 이 반이 맞는지 봐 주세요. ", true); return; }   // 🔴 11/9 말투 시험: 칠보 필라테스2가 꽉 차자 「두 번째 반」을 무시하고 장안 오전 필라테스 신청서로 바로 갔다
@@ -1967,7 +1970,7 @@ input.txt::placeholder{color:var(--mute)}
         //      맞는 반이 0이면 조건을 버리고 전체를 보여주지 않는다 — 「그런 반은 없어요」
         var cg=조건거르기(L, t0.replace(/^(광교|장안|칠보|가족여성)/,""));
         var 닫g=닫힌같은(L, t0); if(닫g && cg && (!cg.목록.length || (cg.쓴.indexOf(1)>=0 && cg.정확수===0))){ 닫힌반말(닫g); return; }
-        if(cg && !cg.목록.length){ 목록끝(L, g.말머리||"", false, String(g.말머리||"").replace(/(은|는)$/,"")+" 중에 말씀하신 시간·요일 반은 없어요. 대신 있는 반은 "); return; }   // 🔴 10/3 「요가 오후 3시」 → 없어요로 끝났다
+        if(cg && !cg.목록.length){ 목록끝(L, g.말머리||"", false, String(g.말머리||"").replace(/(은|는)$/,"")+" 중에 "+(cg.없는말 ? "「"+cg.없는말+"」" : "말씀하신 시간·요일")+" 반은 없어요. 대신 있는 반은 "); return; }   // 🔴 10/3 「요가 오후 3시」 → 없어요로 끝났다
         if(cg) L=cg.목록;
         if(g.갈래){ 갈래읽기({이름:g.갈래, 목록:L}); return; }
         if(L.length>6){ 좁히기시작(L, g.말머리, false); return; }   // 🔴 9/28 대표 「강좌가 너무 많아」
