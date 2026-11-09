@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261108175051">
+<meta name="cbdr-version" content="20261109124459">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -432,7 +432,7 @@ input.txt::placeholder{color:var(--mute)}
     if(ok.length && ok.length >= (a.length-지난)*0.5){ LESSON=ok; 수첩깨짐=false; }
     else { LESSON=[]; 수첩깨짐=true; }
   }
-  function 돈(x){ var 원=String((x&&x.수강료)||"").trim();
+  function 돈(x){ var 원=String(x&&x.수강료!=null?x.수강료:"").trim();   // 11/9 깊이검토: 숫자 0 을 빈칸으로 읽던 것
     if(/^무료$/.test(원)) return "무료";
     var v=원.replace(/[^\d,]/g,"");
     if(v) return (/^[\d,]+원?$/.test(원) ? v+"원" : 원);   // 「월 35,000원」처럼 앞뒤 말이 있으면 원문 그대로(기간을 잃지 않게)
@@ -463,7 +463,7 @@ input.txt::placeholder{color:var(--mute)}
   }
   // 🔴 「확인해 드릴게요」라고 말만 하고 끝내지 않는다 — 말하는 그 자리에서 숙제로 올린다.
   //    대표: "확인해서 알려드릴께요 하고는 니네 맨날 가만히 있잖아....."
-  var 물어본것=(function(){try{return JSON.parse(localStorage.getItem("cbdr_금액숙제")||"{}")}catch(e){return {}}})();
+  var 물어본것=(function(){try{var o=JSON.parse(localStorage.getItem("cbdr_금액숙제")||"{}");return (o&&typeof o==="object"&&!Array.isArray(o))?o:{}}catch(e){return {}}})();   // 11/9: 「null」 저장값이면 멈췄다
   function 금액숙제(x){
     var 키=(x.시설||"")+"/"+(x.과목||"")+"/"+(x.요일||"")+(x.시간||"");
     if(물어본것[키]) return; 물어본것[키]=1;
@@ -474,7 +474,7 @@ input.txt::placeholder{color:var(--mute)}
   //    대표: "문서가 서로 다른 이런 상황이 제일 무서운 거야" — 숨기지 않고 말한다.
   function 다툼말(x){
     var t=x&&x.다툼; if(!t) return "";
-    var 칸=[]; for(var k in t){ if(t.hasOwnProperty(k)) 칸.push(k); }
+    var 칸=[]; for(var k in t){ if(Object.prototype.hasOwnProperty.call(t,k)) 칸.push(k); }
     if(!칸.length) return "";
     return " (" + 은는(칸.join("·")) + " 안내문마다 달라요. 신청할 때 한 번 더 확인해 드릴게요)";
   }
@@ -692,7 +692,7 @@ input.txt::placeholder{color:var(--mute)}
     var 맨=String(t||"").replace(/\s+/g,"").replace(/[.?!]$/,"");
     var 맨말={"일":1,"이":2,"삼":3,"사":4,"오":5,"육":6,"칠":7,"팔":8,"구":9,"십":10,"십일":11,"십이":12,"십삼":13,"일본":1};   // 「일번」을 「일본」으로 받아 적는다
     if(맨말.hasOwnProperty(맨)) return 맨말[맨];
-    t=String(t||"").replace(/\s+/g,"").replace(/(이요|요|이에요|예요|이오|으로|로|할게|할래|들을래|들을게|주세요|줘|을|를|이|가)$/,"");
+    t=String(t||"").replace(/\s+/g,"").replace(/[.?!,~]+$/,"").replace(/(이요|요|이에요|예요|이오|으로|로|할게|할래|들을래|들을게|주세요|줘|을|를|이|가)$/,"");   // 11/9: 「2번.」이 0 이 되던 것
     var m=t.match(/^([0-9]{1,2})(번|번째|째)?(거|것|꺼|걸)?$/); if(m) return +m[1];   // 9/29 「첫 번째 걸로」의 「걸」
     var 말={"일":1,"하나":1,"한":1,"첫":1,"이":2,"둘":2,"두":2,"삼":3,"셋":3,"세":3,"사":4,"넷":4,"네":4,"오":5,"다섯":5,"육":6,"여섯":6,"칠":7,"일곱":7,"팔":8,"여덟":8,"구":9,"아홉":9,"십":10,"열":10,"십일":11,"열하나":11,"열한":11,"십이":12,"열둘":12,"열두":12,"십삼":13,"열셋":13,"열세":13};
     m=t.match(/^(열하나|열한|열둘|열두|열셋|열세|십일|십이|십삼|다섯|여섯|일곱|여덟|아홉|하나|둘|두|셋|세|넷|네|한|첫|일|이|삼|사|오|육|칠|팔|구|십|열)(번째|번|째)(거|것|꺼|걸)?$/);
@@ -726,7 +726,7 @@ input.txt::placeholder{color:var(--mute)}
   //   → 공지에 오늘이 접수 기간인 시설은 「안 열림」을 믿지 않고 「모름」으로 둔다 → 신청 화면까지 가고, 정말 닫혔으면 사이트가 거절한다
   function 공지기간안(x){ try{ var t=new Date(Date.now()+(typeof 서버차==="number"?서버차:0)); var 오늘=t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);
     return OPEN.some(function(o){ return o.시설===x.시설 && /^\d{4}-\d{2}-\d{2}$/.test(o.시작||"") && /^\d{4}-\d{2}-\d{2}$/.test(o.마감||"") && o.시작<=오늘 && 오늘<=o.마감 && !(/스포츠/.test(o.출처||"") && x.쌍 && String(x.쌍[2])==="1"); }); }catch(e){ return false; } }   // 🆕 10/27: 장안 「스포츠시설」 공지(수영·스쿼시 10/27~31)가 장안 문화강좌(쌍 구분 1 · 경락 등)까지 「모름」으로 열었다 → 스포츠 공지는 문화강좌에 안 씀
-  function 지금상태(x){ if(!x || x.신청상태==null || 오래됨(x)) return null; if(typeof 살핌!=="undefined" && 살핌 && 살핌.못봄[x.시설] && 지난확인(x)) return null;   /* 🔴 10/31 사이트 확인 실패 = 모름 */ var v=+x.신청상태; if(v===2||v===3||v===4) return true; if(v===0||v===1) return "이미"; if(공지기간안(x) && 지난확인(x)) return null; return false; }   // 🔴 10/31: 방금(30분 안) 사이트에 물어 닫혀 있으면 공지 날짜와 상관없이 닫힘
+  function 지금상태(x){ if(!x || x.신청상태==null || String(x.신청상태).trim()==="" || 오래됨(x)) return null; if(typeof 살핌!=="undefined" && 살핌 && 살핌.못봄[x.시설] && 지난확인(x)) return null;   /* 🔴 10/31 사이트 확인 실패 = 모름 */ var v=+x.신청상태; if(v===2||v===3||v===4) return true; if(v===0||v===1) return "이미"; if(공지기간안(x) && 지난확인(x)) return null; return false; }   // 🔴 10/31: 방금(30분 안) 사이트에 물어 닫혀 있으면 공지 날짜와 상관없이 닫힘
   function 지금가능(x){ return 지금상태(x)===true && !꽉참(x) && !자리못봄(x); }
   function 시설전부닫힘(f){ var a=LESSON.filter(function(y){ return y.시설===f && y.신청상태!=null; }); return a.length>0 && a.every(function(y){ return +y.신청상태===-1; }); }   // 새벽 기록처럼 한 시설이 통째로 -1 = 사진이 의심스러움(10/26 칠보 · 10/30 광교) · 몇 반만 -1 이면 그 반은 정말 인터넷 접수 안 함(광교 배드민턴)
   function 지금될듯(x){ return 지금가능(x) || (지금상태(x)===null && x.신청상태!=null && 공지기간안(x) && 시설전부닫힘(x.시설) && !꽉참(x) && !자리못봄(x)); }   // 🔴 10/30 광교 실전: 새벽 기록(-1)이 06시 열기 전 것인데 공지로는 오늘 접수 중 → 「없어요」라고 하면 거짓말 · 이런 반은 「없어요」로 말하지 않고 보여 드린다(신청 때 사이트가 마지막으로 가린다)
@@ -775,7 +775,7 @@ input.txt::placeholder{color:var(--mute)}
     메뉴=갈래나누기(L); 메뉴머리=머리||"지금 신청할 수 있는 강좌 있어요.";   // 「다른 거」「종류」 하면 갈래 번호표로
     이어듣기=null; 좁히기=null; 지금갈래={이름:"골라 드림", 목록:고름};
     var 말=(앞말||"")+고름.length+"개 골라 드릴게요. ";
-    고름.forEach(function(x,i){ 말+=(i+1)+"번, "+짧은강좌말(x)+". "; });
+    고름.forEach(function(x,i){ 말+=(i+1)+"번, "+짧은강좌말(x)+(지금상태(x)===false?", 지금 접수 안 해요":"")+". "; });   // 11/9 깊이검토: 닫힌 반뿐이면 말없이 「신청해 줘」를 권했다
     말+="「1번 신청해 줘」 하시거나, 다른 게 좋으면 「다른 거」라고 하세요.";   // 9/28: 200자 → 줄임
     info(말, "", "골라<br>드렸어요");
     var box=$("infopick"); box.innerHTML="";
@@ -922,6 +922,12 @@ input.txt::placeholder{color:var(--mute)}
   // 🔴 10/4 말투 시험: 말 가운데 강좌 이름·시설 이름·요일·시각·군말 어디에도 없는 낱말(두 글자 이상)이 남으면 돌려준다 — 바로 신청서로 가지 않는 신호
   // 🔴 10/4 말투 시험 + 코덱스: 말 가운데 강좌 이름·시설 이름·요일·시각·군말 어디에도 없는 낱말이 남으면 돌려준다 — 바로 신청서로 가지 않는 신호
   //    띄어 쓴 낱말 단위로 본다(글자 단위로 조사를 먼저 지우니 「요가」의 「가」가 사라져 「요」 한 글자로 빠져나갔다 — 코덱스 1차 P0)
+  // 🆕 11/9 「필라테스 두 번째 반」「줌바 3반」 — 말한 반 번호(이름 끝 숫자)가 고른 반 이름과 다르면 바로 신청서로 가지 않는다 · 「이 반」(이반)은 번호로 안 본다
+  function 반번호(t){ t=String(t||"").replace(/\s+/g,""); var 한={"첫":1,"두":2,"세":3,"네":4,"다섯":5,"여섯":6,"일곱":7,"여덟":8,"아홉":9,"열":10};
+    var m=t.match(/(\d{1,2}|첫|두|세|네|다섯|여섯|일곱|여덟|아홉|열)번째반/); if(m) return 한[m[1]]||+m[1];
+    m=t.match(/(^|[^\d시:~\-])(\d{1,2})반(?!년)/); if(m) return +m[2]; return 0; }
+  function 반번호어긋남(t, x){ var n=반번호(t); if(!n || !x) return false; var 이름=String(x.과목||"");
+    return !(new RegExp("[가-힣A-Za-z)]\\s?"+n+"(?![\\d급기])").test(이름) || new RegExp("(^|\\D)"+n+"\\s*반").test(이름)); }
   function 남는말(t, x){
     t=String(t||"").replace(/[.,?!~]/g," ").replace(/(을|를)?\s*(신청|넣어|접수|등록)[\s\S]*$/,"");
     var 원천=[String(x.과목||""), String(x.시설||"")].map(function(w){ return w.replace(/[()\[\]\s&\/,·~\-]/g,""); });
@@ -1458,7 +1464,7 @@ input.txt::placeholder{color:var(--mute)}
   var PROFILE=(function(){try{return JSON.parse(localStorage.getItem("cbdr_profile")||"{}")}catch(e){return {}}})();
   // ── 누가 어느 공단 회원인지 — 공개 파일이라 실제 이름을 넣지 않는다(11/06)
   var MEMBER0={};
-  var MEMBER=(function(){try{return JSON.parse(localStorage.getItem("cbdr_member")||"[]")}catch(e){return []}})().concat(MEMBER0[NAME]||[]);
+  var MEMBER=(function(){try{var a=JSON.parse(localStorage.getItem("cbdr_member")||"[]");return Array.isArray(a)?a:[]}catch(e){return []}})().concat(MEMBER0[NAME]||[]);   // 11/9: 배열 아닌 저장값이면 시작부터 멈췄다
   function orgOf(fac){ return 공단; }   // 한 지자체만 보므로 시설이 무엇이든 그 공단이다
   function isMember(fac){ try{ if(window.CBDR && CBDR.isMember()) return true; }catch(e){} return MEMBER.indexOf(orgOf(fac))>=0; }   // 🆕 11/7 금고에 아이디가 있으면 회원 — 공개 파일에서 이름표를 뺀 뒤 cbdr_member 가 비면 신청 앞에서 「이미 회원이세요」로 맴돌 수 있었다
   function addMember(org){ if(MEMBER.indexOf(org)<0){ MEMBER.push(org); try{localStorage.setItem("cbdr_member",JSON.stringify(MEMBER))}catch(e){} } }
@@ -1479,6 +1485,7 @@ input.txt::placeholder{color:var(--mute)}
     $("micwrap3").hidden = !!q.버튼만;
     show("s-ask"); speak(q.say||q.title.replace(/<br>/g," ")); }
   function askGot(text){
+    if(!askQ) return;   // 11/9: 예/아니오 뒤 늦게 온 말에 멈췄다
     var v=askQ.parse?askQ.parse(text):text.trim();
     if(!v){ $("askheard").textContent="“"+text+"”"; $("askok").hidden=true; $("askagain").hidden=true; speak("잘 못 알아들었어요. 다시 말씀해 주세요."); return; }
     askVal=v; var shown=askQ.show?askQ.show(v):v; $("askheard").textContent=shown; $("askok").hidden=false; $("askagain").hidden=false; speak(shown+", 맞아요?");
@@ -1488,7 +1495,7 @@ input.txt::placeholder{color:var(--mute)}
   $("askyes").addEventListener("click",function(){ 예아니오답("예"); });
   $("askno").addEventListener("click",function(){ 예아니오답("아니요"); });
   $("askdunno").addEventListener("click",function(){ 예아니오답("모름"); });
-  $("askagain").addEventListener("click",function(){ shutUp(); $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; speak(askQ.say||""); });
+  $("askagain").addEventListener("click",function(){ shutUp(); $("askheard").textContent="…"; $("askok").hidden=true; $("askagain").hidden=true; speak((askQ&&askQ.say)||""); });
   function askAll(qs,i,done){ if(i>=qs.length){ done(); return; } var q=qs[i]; if(PROFILE[q.k]){ askAll(qs,i+1,done); return; } ask(q,function(v){ PROFILE[q.k]=v; saveProfile(); askAll(qs,i+1,done); }); }
   var rec3=null, listening3=false;
   function initRec3(){ var S=window.SpeechRecognition||window.webkitSpeechRecognition; if(!S||rec3) return; rec3=new S(); rec3.lang="ko-KR"; rec3.interimResults=true; rec3.continuous=false;
@@ -1529,7 +1536,7 @@ input.txt::placeholder{color:var(--mute)}
 
   function 회원질문(){ return {k:"회원", 예아니오:true, 모름:true, 버튼만:false,
     title:공단+"에<br>회원가입 돼 있으세요?",
-    lead:"모르시면 「모르겠어요」를 눌러 주세요. 제가 대신 해 드려요",
+    lead:"모르시면 「모르겠어요」를 눌러 주세요. 그다음을 알려 드려요",   // 11/9 깊이검토: 「대신 해 드려요」 뒤에 「직접 하셔야 해요」가 나왔다
     say:공단+"에 회원가입이 돼 있으세요? 모르시면 모르겠어요를 눌러 주세요.",
     parse:function(t){ t=String(t||"").replace(/\s+/g,"");
       if(/모르|몰라|글쎄/.test(t)) return "모름";
@@ -1555,7 +1562,7 @@ input.txt::placeholder{color:var(--mute)}
         }
         // 아니요 · 모름 → 가입부터. 모르면 해 보고 이미 있으면 서버가 알려준다.
         준비끝();
-        speak(공단 + " 회원가입부터 해 드릴게요.");
+        speak(공단 + " 회원가입하는 길을 알려 드릴게요.");
         joinConfirm(공단 + " 가입");
       });
     });
@@ -1757,7 +1764,7 @@ input.txt::placeholder{color:var(--mute)}
       var 신청z=/신청|넣어|접수|등록/.test(t0), nz=번호(t0.replace(/(으로|로)?(신청|넣어|접수|등록).*$/,"")), bz=null;
       if(신청z) 좁히기.신청=true;
       if(nz>=1 && nz<=좁히기.보기.length) bz=좁히기.보기[nz-1];
-      if(!bz){ var 곳z=말한시설(t0); 좁히기.보기.forEach(function(b){ if(!bz && (b.값===곳z || t0.indexOf(String(b.짧).replace(/\s+/g,""))>=0 || t0.indexOf(String(b.값).replace(/\s+/g,""))>=0)) bz=b; }); }
+      if(!bz){ var 곳z=말한시설(t0); 좁히기.보기.forEach(function(b){ var 짧b=String(b.짧==null?"":b.짧).replace(/\s+/g,""), 값b=String(b.값==null?"":b.값).replace(/\s+/g,""); if(!bz && ((곳z && b.값===곳z) || (짧b && t0.indexOf(짧b)>=0) || (값b && t0.indexOf(값b)>=0))) bz=b; }); }   // 11/9 깊이검토: 빈 보기가 아무 말에나 골라졌다
       if(bz){ 좁힘고름(bz); return; }
       if(/^(상관없|아무거나|아무때|다괜찮|전부|다좋아)/.test(t0)){ 좁히기.단계++; 좁히기.보기=null; 좁히기다음(); return; }
       if(t0.length<=12){ var cz=조건거르기(좁히기.목록, t0);
@@ -1829,7 +1836,7 @@ input.txt::placeholder{color:var(--mute)}
     // 🔴 9/28 「이걸로 신청해 줘」「3번 신청해 줘」 — 읽어드린 강좌 하나를 예약번호까지 담아 신청한다
     if((/신청|넣어|접수|등록/.test(t0) || /(걸로|거로|것으로|반으로)해줘(요|세요)?$/.test(t0)) && !/어떻게|방법|해줘야|야돼|언제|되나|돼\?|할수있|있어|있나|뭐|가입|회원|아이디/.test(t회)){
       t0=t0.replace(/(걸로|거로|것으로|반으로)해줘(요|세요)?$/,"$1신청");   // 9/29 코덱스 Z: 「광교 줌바 첫 번째 걸로 해 줘」
-      var 앞s=t0.replace(/(으로|로)?(신청|넣어|접수).*$/,"");
+      var 앞s=t0.replace(/(으로|로)?(신청|넣어|접수|등록).*$/,"");   // 11/9 깊이검토: 「2번으로 등록해 줘」가 번호로 안 읽혔다
       if(지금갈래 && !/^(한번|이번|한번만|이번에)$/.test(앞s)){ var 몇s=번호(앞s.replace(/^(그거|그걸|이거|이걸|요거|저거)/,""));
         if(몇s>=1 && 몇s<=지금갈래.목록.length){ 강좌신청확인(지금갈래.목록[몇s-1], text); return; } }
       var 새이름=false;   // 🔴 코덱스 1004말투 P0: 요가를 들은 뒤 「아니, 장안 아쿠아로빅 그거 한 시로 신청해 줘」 → 「그거」만 보고 요가를 신청했다 — 다른 강좌 이름을 말했으면 들은 강좌가 아니다
@@ -1870,6 +1877,7 @@ input.txt::placeholder{color:var(--mute)}
             if(cs && !cs.목록.length){ 목록끝(gs.목록, gs.말머리||"", true, String(gs.말머리||"").replace(/(은|는)$/,"")+" 중에 말씀하신 시간·요일 반은 없어요. 대신 있는 반은 ", true); return; }   // 🔴 10/3: 「없어요」로 끝내지 않는다
             if(cs) gs={목록:cs.목록, 말머리:gs.말머리};
             if(뒤번>=1 && 뒤번<=gs.목록.length){ var 남b=남는말(text, gs.목록[뒤번-1]); if(남b){ 목록끝(gs.목록, gs.말머리||"", true, "「"+은는(남b).replace(/(은|는)$/,"」$1")+" 제가 잘 못 알아들었어요. 몇 번인지 다시 봐 주세요. ", true); return; } 강좌신청확인(gs.목록[뒤번-1], text); return; }   // 코덱스 1004말투 P0: 「덴쑤 … 1번 신청」이 안전장치를 건너뛰었다
+            if(gs.목록.length===1 && 반번호어긋남(text, gs.목록[0])){ 목록끝(gs.목록, gs.말머리||"", true, "말씀하신 "+반번호(text)+"반은 지금 신청할 수 있는 반 중에 없어요. 이 반이 맞는지 봐 주세요. ", true); return; }   // 🔴 11/9 말투 시험: 칠보 필라테스2가 꽉 차자 「두 번째 반」을 무시하고 장안 오전 필라테스 신청서로 바로 갔다
             if(gs.목록.length===1){ var 남z=남는말(text, gs.목록[0]); if(남z){ 목록끝(gs.목록, gs.말머리||"", true, "「"+은는(남z).replace(/(은|는)$/,"」$1")+" 제가 잘 못 알아들었어요. 이 반이 맞는지 봐 주세요. ", true); return; } 강좌신청확인(gs.목록[0], text); return; }   // 🔴 10/4 말투 시험: 「시니어 덴스 중급」→ 「시니어」만 보고 시니어 컴퓨터(중급) 신청서
             좁히기시작(gs.목록, gs.말머리||"", true); return; } }
       }
