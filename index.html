@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="챙겨드림">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="cbdr-version" content="20261110153700">
+<meta name="cbdr-version" content="20261110183949">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
 <style>
 :root{--paper:#EDE8DD;--ink:#2A2B28;--sub:#6E675E;--mute:#9A8E80;--terra:#CF5F2A;--terra2:#A94A1D;--sheet:#F6F3EA;--line:rgba(90,70,50,.14);--green:#3F7A5C;--hl:rgba(255,196,80,.55)}
@@ -383,7 +383,7 @@ input.txt::placeholder{color:var(--mute)}
   function 구조다듬기(){ (OPEN||[]).forEach(function(o){ if(o&&o.구조) o.구조=String(o.구조).replace(/\s*[^.!?]*제가 [^.!?]*?(넣을게요|넣어 드릴게요|해 둘게요|확인해 드릴게요|확인해서 알려 ?드려요)[.!?]?/g,"").replace(/(확정은 아니에요),\s*$/,"$1."); }); }
   구조다듬기();
   // ── 서버가 공지를 읽어 쓴 목록(목록.json · 공지읽기.py 가 갱신)을 열 때마다 받아온다. 못 받으면 위 내장 목록 그대로
-  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; 구조다듬기(); try{ drawDday(); try{draw내강좌();}catch(e){} }catch(e){} } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 구조다듬기(); 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.시설전화) 시설전화표=j.시설전화; try{ drawDday(); try{draw내강좌();}catch(e){} }catch(e){} if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
+  (function(){ try{ fetch("목록.json?_="+Date.now(),{cache:"no-store"}).then(function(r){ try{ var sd=Date.parse(r.headers.get("Date")||""); if(sd && r.headers.get("Date")) 서버차=sd-Date.now(); }catch(e){} return r.json()}).then(function(j){ if(Array.isArray(j)&&j.length){ OPEN=j; 구조다듬기(); try{ drawDday(); try{draw내강좌();}catch(e){} }catch(e){} } else if(j&&j.공지){ if(j.공지.length){ OPEN=j.공지; 구조다듬기(); 내지역=j.지역||(OPEN[0]&&OPEN[0].지역)||내지역; REGION=내지역; try{ if(window.CBDR&&CBDR.watchArea&&내지역) CBDR.watchArea(내지역); }catch(e){}   /* 🆕 11/10 대표 「처음 어르신은 찜·지난달 강좌가 없는데 알림을 어떻게 받아?」 → 물어본 적 없어도 동네 새 인터넷 접수 날짜는 기본으로 알림(앱 판) */ if(j.지자체) 공단=j.지자체; if(j.예약사이트) 예약사이트=j.예약사이트; if(j.경로할인&&j.경로할인.시설) 경로할인=j.경로할인; if(j.시설별칭) 시설별칭=j.시설별칭; } if(j.시설전화) 시설전화표=j.시설전화; try{ drawDday(); try{draw내강좌();}catch(e){} }catch(e){} if(j.강좌&&j.강좌.length){ 수첩넣기(j.강좌, j.강좌월||""); } else { 수첩깨짐=true; } } else { 수첩깨짐=true; } }).catch(function(){ 수첩깨짐=true; }); }catch(e){ 수첩깨짐=true; } })();
 
   // ── 2층: 강좌 목록(목록.json 의 "강좌") — 가격·정원·딱지가 여기 있다
   var 서버차=null;   // 코덱스 6차: 수첩을 받을 때 서버가 알려 준 지금 시각(HTTP Date) − 폰 시각. 있으면 폰 시계가 빠르든 느리든 서버 시각으로 「오래됨」을 잰다
